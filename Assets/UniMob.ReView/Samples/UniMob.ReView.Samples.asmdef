@@ -1,0 +1,16 @@
+{
+    "name": "UniMob.ReView.Samples",
+    "references": [
+        "UniMob.Async",
+        "UniMob.ReView",
+        "Unity.TextMeshPro"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
+}
