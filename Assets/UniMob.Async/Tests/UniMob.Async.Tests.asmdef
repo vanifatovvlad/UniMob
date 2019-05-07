@@ -1,5 +1,5 @@
 {
-    "name": "CodeWriter.Async.Tests",
+    "name": "UniMob.Async.Tests",
     "references": [
         "UniMob.Async"
     ],

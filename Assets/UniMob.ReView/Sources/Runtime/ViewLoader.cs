@@ -7,17 +7,18 @@ namespace UniMob.ReView
 {
     public interface IViewLoader
     {
-        IView LoadViewPrefab([NotNull] IState model, [NotNull] string path);
+        IView LoadViewPrefab([NotNull] IState model);
     }
 
     internal class BuiltinResourcesViewLoader : IViewLoader
     {
         private readonly Dictionary<string, IView> _viewPrefabCache = new Dictionary<string, IView>();
 
-        public IView LoadViewPrefab([NotNull] IState model, [NotNull] string path)
+        public IView LoadViewPrefab(IState model)
         {
             if (model == null) throw new ArgumentNullException(nameof(model));
-            if (path == null) throw new ArgumentNullException(nameof(path));
+
+            var path = model.ViewPath;
 
             if (_viewPrefabCache.TryGetValue(path, out var view))
                 return view;

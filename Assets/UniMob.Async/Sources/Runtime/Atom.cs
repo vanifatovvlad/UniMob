@@ -43,5 +43,25 @@ namespace UniMob.Async
         }
 
         public static void Push<T>(MutableAtom<T> atom, T value) => atom.Push(value);
+
+        public static NoLinkScopeStruct NoLinkScope => new NoLinkScopeStruct(null);
+        
+        public static AtomBase CurrentScope => AtomBase.Stack;
+
+        public readonly struct NoLinkScopeStruct : IDisposable
+        {
+            private readonly AtomBase _parent;
+
+            internal NoLinkScopeStruct(AtomBase self)
+            {
+                _parent = AtomBase.Stack;
+                AtomBase.Stack = self;
+            }
+
+            public void Dispose()
+            {
+                AtomBase.Stack = _parent;
+            }
+        }
     }
 }

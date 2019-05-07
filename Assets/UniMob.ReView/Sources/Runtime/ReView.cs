@@ -1,5 +1,6 @@
 using System;
 using JetBrains.Annotations;
+using UniMob.Async;
 
 namespace UniMob.ReView
 {
@@ -11,7 +12,10 @@ namespace UniMob.ReView
             if (builder == null) throw new ArgumentNullException(nameof(builder));
 
             var context = new AppContext();
-            container.SetSource(State.Create(context, builder));
+            var state = State.Create(context, builder);
+            var render = Atom.Reaction(() => container.SetSource(state.Value));
+
+            render.Get();
         }
 
         private class AppContext : BuildContext

@@ -192,7 +192,7 @@ namespace UniMob.Async
             }
         }
 
-        protected static AtomBase Stack;
+        internal static AtomBase Stack;
 
         private static readonly Queue<AtomBase> Updating = new Queue<AtomBase>();
         private static readonly List<AtomBase> Reaping = new List<AtomBase>();

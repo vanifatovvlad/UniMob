@@ -32,7 +32,7 @@ namespace UniMob.ReView.Samples.TodoMvc.Views
             activeVisibleButton.interactable = filter != VisibilityFilter.Active;
             completedVisibleButton.interactable = filter != VisibilityFilter.Completed;
             
-            todosContainer.SetSource(State.Todos);
+            todosContainer.SetSource(State.Todos.Value);
         }
     }
 

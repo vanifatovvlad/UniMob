@@ -15,7 +15,7 @@ namespace UniMob.ReView
         private TState _state;
 
         private bool _hasSource;
-        private readonly MutableAtom<Atom<IState>> _source = Atom.Value(default(Atom<IState>));
+        private readonly MutableAtom<TState> _source = Atom.Value(default(TState));
 
         private ReactionAtom _renderAtom;
 
@@ -23,15 +23,23 @@ namespace UniMob.ReView
 
         [NotNull] protected TState State => _state;
 
-        void IView.SetSource(Atom<IState> newSource)
+        void IView.SetSource(IState newSource)
         {
+            if (!(newSource is TState nextState))
+            {
+                var expected = typeof(TState).Name;
+                var actual = newSource.GetType().Name;
+                Debug.LogError($"Wrong model type at '{name}': expected={expected}, actual={actual}");
+                return;
+            }
+
             RenderScope.Link(this);
 
             if (_renderAtom == null)
                 _renderAtom = Atom.Reaction(RenderAction);
 
             _hasSource = true;
-            _source.Value = newSource;
+            _source.Value = nextState;
 
             _renderAtom.Update();
         }
@@ -59,7 +67,10 @@ namespace UniMob.ReView
 
             try
             {
-                Deactivate();
+                using (Atom.NoLinkScope)
+                {
+                    Deactivate();
+                }
             }
             catch (Exception ex)
             {
@@ -72,7 +83,10 @@ namespace UniMob.ReView
 
                 try
                 {
-                    _state.DidViewUnmount();
+                    using (Atom.NoLinkScope)
+                    {
+                        _state.DidViewUnmount();
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -95,45 +109,40 @@ namespace UniMob.ReView
         {
             Assert.IsTrue(_hasSource, "!hasSource");
 
-            IState nextStateUntyped = _source.Value.Value;
-            if (nextStateUntyped == null)
+            var nextState = _source.Value;
+            if (nextState == null)
             {
-                Debug.LogError("Model == null", this);
+                Debug.LogWarning("Model == null", this);
                 return;
             }
 
-            if (!(nextStateUntyped is TState nextState))
+            using (Atom.NoLinkScope)
             {
-                var expected = typeof(TState).Name;
-                var actual = nextStateUntyped.GetType().Name;
-                Debug.LogError($"Wrong model type at '{name}': expected={expected}, actual={actual}");
-                return;
-            }
-
-            if (!_hasState || !nextState.Equals(_state))
-            {
-                if (_hasState)
+                if (!_hasState || !nextState.Equals(_state))
                 {
+                    if (_hasState)
+                    {
+                        try
+                        {
+                            Deactivate();
+                        }
+                        catch (Exception ex)
+                        {
+                            Zone.Current.HandleUncaughtException(ex);
+                        }
+                    }
+
+                    _hasState = true;
+                    _state = nextState;
+
                     try
                     {
-                        Deactivate();
+                        Activate();
                     }
                     catch (Exception ex)
                     {
                         Zone.Current.HandleUncaughtException(ex);
                     }
-                }
-
-                _hasState = true;
-                _state = nextState;
-
-                try
-                {
-                    Activate();
-                }
-                catch (Exception ex)
-                {
-                    Zone.Current.HandleUncaughtException(ex);
                 }
             }
 
@@ -156,7 +165,11 @@ namespace UniMob.ReView
                     if (!_mounted)
                     {
                         _mounted = true;
-                        _state.DidViewMount();
+
+                        using (Atom.NoLinkScope)
+                        {
+                            _state.DidViewMount();
+                        }
                     }
                 }
             }
@@ -220,9 +233,8 @@ namespace UniMob.ReView
         // ReSharper disable once InconsistentNaming
         RectTransform rectTransform { get; }
 
-        void SetSource(Atom<IState> source);
+        void SetSource(IState source);
         void ResetSource();
-
         Vector2 CalcSize(IState model);
     }
 

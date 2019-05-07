@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UniMob.Async;
 using JetBrains.Annotations;
 using UnityEngine.Assertions;
@@ -7,89 +9,293 @@ namespace UniMob.ReView
 {
     public abstract class State : IState, IDisposable
     {
+        public BuildContext Context { get; internal set; }
+
         public string ViewPath { get; }
+
+        internal Widget Widget { get; private set; }
 
         protected State([NotNull] string view)
         {
+            Assert.IsNull(Atom.CurrentScope);
             ViewPath = view ?? throw new ArgumentNullException(nameof(view));
         }
 
-        internal abstract void SetWidget(Widget widget);
-        internal abstract void SetContext(BuildContext context);
-
-        public virtual void InitState()
+        internal virtual void Update(Widget widget)
         {
+            Widget = widget;
         }
 
-        public virtual void Dispose()
+        internal void Mount(BuildContext context)
         {
-        }
+            Assert.IsNull(Atom.CurrentScope);
 
-        public virtual void DidViewMount()
-        {
-        }
-
-        public virtual void DidViewUnmount()
-        {
-        }
-        
-        internal static Atom<IState> Create(BuildContext context, WidgetBuilder builder)
-        {
-            Widget oldWidget = null;
-            State state = null;
-            return Atom.Func<IState>(() =>
-            {
-                var newWidget = builder(context);
-
-                bool changed = false;
-                if (oldWidget == null || (changed = oldWidget.GetType() != newWidget.GetType() || oldWidget.Key != newWidget.Key))
-                {
-                    if (changed)
-                    {
-                        Assert.IsNotNull(state);
-                        state.Dispose();
-                    }
-
-                    oldWidget = newWidget;
-
-                    state = newWidget.CreateState();
-                    state.SetContext(context);
-                    state.SetWidget(newWidget);
-                    state.InitState();
-                }
-                else
-                {
-                    Assert.IsNotNull(state);
-                    state.SetWidget(newWidget);
-                }
-
-                return state;
-            });
-        }
-    }
-
-    public abstract class State<TWidget> : State, BuildContext
-        where TWidget : Widget
-    {
-        protected State([NotNull] string view) : base(view)
-        {
-        }
-
-        public TWidget Widget { get; private set; }
-        public BuildContext Context { get; internal set; }
-
-        internal override void SetContext(BuildContext context)
-        {
             if (Context != null)
                 throw new InvalidOperationException();
 
             Context = context;
         }
 
-        internal sealed override void SetWidget(Widget widget)
+        public virtual void InitState()
         {
+            Assert.IsNull(Atom.CurrentScope);
+        }
+
+        public virtual void Dispose()
+        {
+            Assert.IsNull(Atom.CurrentScope);
+        }
+
+        public virtual void DidViewMount()
+        {
+            Assert.IsNull(Atom.CurrentScope);
+        }
+
+        public virtual void DidViewUnmount()
+        {
+            Assert.IsNull(Atom.CurrentScope);
+        }
+
+        internal static bool CanUpdateWidget(Widget oldWidget, Widget newWidget)
+        {
+            return oldWidget.GetType() == newWidget.GetType() &&
+                   oldWidget.Key == newWidget.Key;
+        }
+
+        internal static Atom<IState> Create(BuildContext context, WidgetBuilder builder)
+        {
+            Assert.IsNull(Atom.CurrentScope);
+
+            State state = null;
+            return Atom.Func<IState>(() =>
+            {
+                var newWidget = builder(context);
+                using (Atom.NoLinkScope)
+                {
+                    state = UpdateChild(context, state, newWidget);
+                }
+
+                return state;
+            });
+        }
+
+        internal static Atom<IState[]> CreateList(BuildContext context, Func<BuildContext, WidgetList> builder)
+        {
+            Assert.IsNull(Atom.CurrentScope);
+
+            var states = new State[0];
+            return Atom.Func<IState[]>(() =>
+            {
+                var newWidgets = builder.Invoke(context);
+                using (Atom.NoLinkScope)
+                {
+                    states = UpdateChildren(context, states, newWidgets);
+                }
+
+                // ReSharper disable once CoVariantArrayConversion
+                return states.ToArray();
+            });
+        }
+
+        private static State[] UpdateChildren(BuildContext context, State[] oldChildren, WidgetList newWidgets)
+        {
+            var newChildrenTop = 0;
+            var oldChildrenTop = 0;
+            var newChildrenBottom = newWidgets.Count - 1;
+            var oldChildrenBottom = oldChildren.Length - 1;
+
+            var newChildren = oldChildren.Length == newWidgets.Count ? oldChildren : new State[newWidgets.Count];
+
+            // Update the top of the list.
+            while ((oldChildrenTop <= oldChildrenBottom) && (newChildrenTop <= newChildrenBottom))
+            {
+                var oldChild = oldChildren[oldChildrenTop];
+                var newWidget = newWidgets[newChildrenTop];
+
+                if (!CanUpdateWidget(oldChild.Widget, newWidget))
+                    break;
+
+                var newChild = UpdateChild(context, oldChild, newWidget);
+                newChildren[newChildrenTop] = newChild;
+                newChildrenTop += 1;
+                oldChildrenTop += 1;
+            }
+
+
+            // Scan the bottom of the list.
+            while ((oldChildrenTop <= oldChildrenBottom) && (newChildrenTop <= newChildrenBottom))
+            {
+                var oldChild = oldChildren[oldChildrenBottom];
+                var newWidget = newWidgets[newChildrenBottom];
+
+                if (!CanUpdateWidget(oldChild.Widget, newWidget))
+                    break;
+
+                oldChildrenBottom -= 1;
+                newChildrenBottom -= 1;
+            }
+
+            // Scan the old children in the middle of the list.
+            var haveOldChildren = oldChildrenTop <= oldChildrenBottom;
+            Dictionary<Key, State> oldKeyedChildren = null;
+            if (haveOldChildren)
+            {
+                oldKeyedChildren = ClassPools.GetKeyStateDictionary();
+                while (oldChildrenTop <= oldChildrenBottom)
+                {
+                    var oldChild = oldChildren[oldChildrenTop];
+                    if (oldChild.Widget.Key != null)
+                    {
+                        oldKeyedChildren[oldChild.Widget.Key] = oldChild;
+                    }
+                    else
+                    {
+                        DeactivateChild(oldChild);
+                    }
+
+                    oldChildrenTop += 1;
+                }
+            }
+
+            // Update the middle of the list.
+            while (newChildrenTop <= newChildrenBottom)
+            {
+                State oldChild = null;
+                var newWidget = newWidgets[newChildrenTop];
+                if (haveOldChildren)
+                {
+                    var key = newWidget.Key;
+                    if (key != null)
+                    {
+                        if (oldKeyedChildren.TryGetValue(key, out oldChild))
+                        {
+                            if (CanUpdateWidget(oldChild.Widget, newWidget))
+                            {
+                                // we found a match!
+                                // remove it from oldKeyedChildren so we don't unsync it later
+                                oldKeyedChildren.Remove(key);
+                            }
+                            else
+                            {
+                                // Not a match, let's pretend we didn't see it for now.
+                                oldChild = null;
+                            }
+                        }
+                    }
+                }
+
+                var newChild = UpdateChild(context, oldChild, newWidget);
+                newChildren[newChildrenTop] = newChild;
+                newChildrenTop += 1;
+            }
+
+            // We've scanned the whole list.
+            Assert.IsTrue(oldChildrenTop == oldChildrenBottom + 1);
+            Assert.IsTrue(newChildrenTop == newChildrenBottom + 1);
+            Assert.IsTrue(newWidgets.Count - newChildrenTop == oldChildren.Length - oldChildrenTop);
+            newChildrenBottom = newWidgets.Count - 1;
+            oldChildrenBottom = oldChildren.Length - 1;
+
+            // Update the bottom of the list.
+            while ((oldChildrenTop <= oldChildrenBottom) && (newChildrenTop <= newChildrenBottom))
+            {
+                var oldChild = oldChildren[oldChildrenTop];
+                var newWidget = newWidgets[newChildrenTop];
+                var newChild = UpdateChild(context, oldChild, newWidget);
+                newChildren[newChildrenTop] = newChild;
+                newChildrenTop += 1;
+                oldChildrenTop += 1;
+            }
+
+            // Clean up any of the remaining middle nodes from the old list.
+            if (haveOldChildren && oldKeyedChildren.Count > 0)
+            {
+                foreach (var pair in oldKeyedChildren)
+                {
+                    var oldChild = pair.Value;
+                    DeactivateChild(oldChild);
+                }
+            }
+
+            if (oldKeyedChildren != null)
+            {
+                ClassPools.Recycle(oldKeyedChildren);
+            }
+
+            return newChildren;
+        }
+
+        private static void DeactivateChild([NotNull] State child)
+        {
+            if (child == null) throw new ArgumentNullException(nameof(child));
+            Assert.IsNull(Atom.CurrentScope);
+
+            child.Dispose();
+        }
+
+        private static State UpdateChild(BuildContext context, [CanBeNull] State child, [NotNull] Widget newWidget)
+        {
+            Assert.IsNull(Atom.CurrentScope);
+
+            //if (newWidget == null)
+            //{
+            //    if (child != null)
+            //    {
+            //        DeactivateChild(child);
+            //    }
+            //
+            //    return null;
+            //}
+
+            if (child != null)
+            {
+                if (child.Widget == newWidget)
+                {
+                    return child;
+                }
+
+                if (CanUpdateWidget(child.Widget, newWidget))
+                {
+                    child.Update(newWidget);
+                    return child;
+                }
+
+                DeactivateChild(child);
+            }
+
+            return InflateWidget(context, newWidget);
+        }
+
+        private static State InflateWidget(BuildContext context, [NotNull] Widget newWidget)
+        {
+            if (newWidget == null) throw new ArgumentNullException(nameof(newWidget));
+            Assert.IsNull(Atom.CurrentScope);
+
+            var newChild = newWidget.CreateState();
+            newChild.Mount(context);
+            newChild.Update(newWidget);
+            newChild.InitState();
+            return newChild;
+        }
+    }
+
+    public abstract class State<TWidget> : State, BuildContext
+        where TWidget : Widget
+    {
+        private readonly MutableAtom<TWidget> _widget = Atom.Value(default(TWidget));
+
+        protected State([NotNull] string view) : base(view)
+        {
+        }
+
+        public new TWidget Widget => _widget.Value;
+
+        internal sealed override void Update(Widget widget)
+        {
+            base.Update(widget);
+
             var oldWidget = Widget;
-            Widget = (TWidget) widget;
+            _widget.Value = (TWidget) widget;
 
             if (oldWidget != null)
             {
@@ -99,6 +305,7 @@ namespace UniMob.ReView
 
         public virtual void DidUpdateWidget([NotNull] TWidget oldWidget)
         {
+            Assert.IsNull(Atom.CurrentScope);
         }
 
         protected Atom<IState> CreateChild(WidgetBuilder builder) => Create(this, builder);

@@ -26,6 +26,7 @@ namespace UniMob.ReView
 
         public override bool Equals(Key other) => Equals(other as ObjectKey);
         public override int GetHashCode() => Value.GetHashCode();
+        public override string ToString() => $"[Key: {Value}]";
 
         public bool Equals(ObjectKey other)
         {
@@ -49,6 +50,7 @@ namespace UniMob.ReView
 
         public override bool Equals(Key other) => Equals(other as GlobalKey<T>);
         public override int GetHashCode() => typeof(T).GetHashCode();
+        public override string ToString() => $"[GlobalKey: {typeof(T)}]";
 
         public bool Equals(GlobalKey<T> other) => ReferenceEquals(other, this);
     }

@@ -1,6 +1,5 @@
-using UniMob.ReView.Samples.TodoMvc.Views;
 using JetBrains.Annotations;
-using UnityEngine;
+using UniMob.ReView.Samples.TodoMvc.Views;
 
 namespace UniMob.ReView.Samples.TodoMvc.Vanilla.Widgets
 {
@@ -17,20 +16,6 @@ namespace UniMob.ReView.Samples.TodoMvc.Vanilla.Widgets
     {
         public TodoListState() : base("TodoList")
         {
-        }
-
-        public override void InitState()
-        {
-            base.InitState();
-            
-            Debug.Log("Init List");
-        }
-
-        public override void Dispose()
-        {
-            base.Dispose();
-            
-            Debug.Log("Dispose List");
         }
     }
 }
