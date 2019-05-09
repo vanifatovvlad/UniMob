@@ -16,7 +16,7 @@ namespace UniMob.ReView.Samples.Counter
         {
         }
 
-        public Atom<string> Counter => $"Counter: {_counter.Value}";
+        public string Counter => $"Counter: {_counter.Value}";
 
         public void Increment() => ++_counter.Value;
         public void Decrement() => _counter.Value = Math.Max(0, _counter.Value - 1);

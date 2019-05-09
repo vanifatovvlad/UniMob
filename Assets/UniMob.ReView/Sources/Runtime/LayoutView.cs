@@ -23,8 +23,8 @@ namespace UniMob.ReView
             switch (State)
             {
                 case IMultiChildLayoutState multiChildLayoutState:
-                    var children = multiChildLayoutState.Children.Value;
-                    var crossAxis = multiChildLayoutState.CrossAxisAlignment.Value;
+                    var children = multiChildLayoutState.Children;
+                    var crossAxis = multiChildLayoutState.CrossAxisAlignment;
 
                     var anchorX = crossAxis == CrossAxisAlignment.Start ? 0f
                         : crossAxis == CrossAxisAlignment.End ? 1f
@@ -125,14 +125,14 @@ namespace UniMob.ReView
 
     public interface ISingleChildLayoutState : ILayoutState
     {
-        Atom<IState> Child { get; }
+        IState Child { get; }
     }
 
     public interface IMultiChildLayoutState : ILayoutState
     {
-        Atom<IState[]> Children { get; }
+        IState[] Children { get; }
 
-        Atom<CrossAxisAlignment> CrossAxisAlignment { get; }
+        CrossAxisAlignment CrossAxisAlignment { get; }
     }
 
 
@@ -143,13 +143,15 @@ namespace UniMob.ReView
     public class MultiChildLayoutState<TWidget> : State<TWidget>, IMultiChildLayoutState
         where TWidget : MultiChildLayoutWidget
     {
+        private readonly Atom<IState[]> _children;
+        
         public MultiChildLayoutState() : base("UniMob.ReView.Layout")
         {
-            Children = CreateList(this, context => Widget.Children);
+            _children = CreateList(this, context => Widget.Children);
         }
 
-        public Atom<IState[]> Children { get; }
-        public Atom<CrossAxisAlignment> CrossAxisAlignment => Widget.CrossAxisAlignment;
+        public IState[] Children => _children.Value;
+        public CrossAxisAlignment CrossAxisAlignment => Widget.CrossAxisAlignment;
     }
 
     public class Column : MultiChildLayoutWidget

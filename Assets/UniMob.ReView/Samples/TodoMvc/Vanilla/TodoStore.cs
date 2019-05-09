@@ -7,13 +7,13 @@ namespace UniMob.ReView.Samples.TodoMvc.Vanilla
     {
         private readonly MutableAtom<Todo[]> _todos = Atom.Value(new Todo[0]);
 
-        public Atom<bool> AllCompleted => _todos.Value.All(todo => todo.Completed.Value);
-        public Atom<bool> HasCompletedTodos => _todos.Value.Any(todo => todo.Completed.Value);
+        public bool AllCompleted => _todos.Value.All(todo => todo.Completed.Value);
+        public bool HasCompletedTodos => _todos.Value.Any(todo => todo.Completed.Value);
 
-        public Atom<int> NumActive => _todos.Value.Aggregate(0, (sum, todo) => !todo.Completed.Value ? ++sum : sum);
-        public Atom<int> NumCompleted => _todos.Value.Aggregate(0, (sum, todo) => todo.Completed.Value ? ++sum : sum);
+        public int NumActive => _todos.Value.Aggregate(0, (sum, todo) => !todo.Completed.Value ? ++sum : sum);
+        public int NumCompleted => _todos.Value.Aggregate(0, (sum, todo) => todo.Completed.Value ? ++sum : sum);
 /*
-        public Atom<Todo[]> FilteredTodos(VisibilityFilter activeFilter) => _todos.Value
+        public Todo[] FilteredTodos(VisibilityFilter activeFilter) => _todos.Value
             .Where(todo =>
             {
                 switch (activeFilter)

@@ -20,26 +20,26 @@ namespace UniMob.ReView.Samples.TodoMvc.Views
 
             addButton.Click(() => State.AddTodo);
 
-            allVisibleButton.Click(() => State.ActiveFilter.Value = VisibilityFilter.All);
-            activeVisibleButton.Click(() => State.ActiveFilter.Value = VisibilityFilter.Active);
-            completedVisibleButton.Click(() => State.ActiveFilter.Value = VisibilityFilter.Completed);
+            allVisibleButton.Click(() => State.ActiveFilter = VisibilityFilter.All);
+            activeVisibleButton.Click(() => State.ActiveFilter = VisibilityFilter.Active);
+            completedVisibleButton.Click(() => State.ActiveFilter = VisibilityFilter.Completed);
         }
 
         protected override void Render()
         {
-            var filter = State.ActiveFilter.Value;
+            var filter = State.ActiveFilter;
             allVisibleButton.interactable = filter != VisibilityFilter.All;
             activeVisibleButton.interactable = filter != VisibilityFilter.Active;
             completedVisibleButton.interactable = filter != VisibilityFilter.Completed;
             
-            todosContainer.SetSource(State.Todos.Value);
+            todosContainer.SetSource(State.Todos);
         }
     }
 
     public interface IHomeState : IState
     {
-        MutableAtom<VisibilityFilter> ActiveFilter { get; }
-        Atom<IState> Todos { get; }
+        VisibilityFilter ActiveFilter { get; set; }
+        IState Todos { get; }
 
         void AddTodo();
     }

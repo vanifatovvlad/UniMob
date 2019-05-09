@@ -18,24 +18,34 @@ namespace UniMob.ReView.Samples.TodoMvc.Vanilla
 
     public class HomeScreenState : State<HomeScreen>, IHomeState
     {
-        public MutableAtom<VisibilityFilter> ActiveFilter { get; } = Atom.Value(VisibilityFilter.All);
-        public Atom<IState> Todos { get; }
+        private readonly MutableAtom<VisibilityFilter> _activeFilter = Atom.Value(VisibilityFilter.All);
+        private readonly Atom<IState> _todos;
 
         public HomeScreenState() : base("TodoHomeScreen")
         {
-            Todos = CreateChild(context =>
-            {
-                return new Column(new WidgetList
-                {
-                    new TodoList(),
-                    new TodoList(),
-                    new TodoList(),
-                }, CrossAxisAlignment.Stretch);
-            });
+            _todos = CreateChild(BuildTodos);
         }
+
+        public VisibilityFilter ActiveFilter
+        {
+            get => _activeFilter.Value;
+            set => _activeFilter.Value = value;
+        }
+
+        public IState Todos => _todos.Value;
 
         public void AddTodo()
         {
+        }
+
+        private Widget BuildTodos(BuildContext context)
+        {
+            return new Column(new WidgetList
+            {
+                new TodoList(),
+                new TodoList(),
+                new TodoList(),
+            }, CrossAxisAlignment.Stretch);
         }
     }
 }

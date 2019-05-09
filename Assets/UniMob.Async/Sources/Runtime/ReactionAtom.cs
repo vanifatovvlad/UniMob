@@ -4,11 +4,11 @@ namespace UniMob.Async
 {
     public class ReactionAtom : AtomBase
     {
-        private readonly Action m_reaction;
+        private readonly Action _reaction;
 
         public ReactionAtom(Action reaction) : base(null, null)
         {
-            m_reaction = reaction ?? throw new ArgumentNullException(nameof(reaction));
+            _reaction = reaction ?? throw new ArgumentNullException(nameof(reaction));
         }
 
         public void Get()
@@ -19,7 +19,7 @@ namespace UniMob.Async
         protected override void Evaluate()
         {
             State = AtomState.Actual;
-            m_reaction();
+            _reaction();
         }
 
         public override string ToString()

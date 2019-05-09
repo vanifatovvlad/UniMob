@@ -1,4 +1,3 @@
-using UniMob.Async;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,13 +21,13 @@ namespace UniMob.ReView.Samples.Counter
 
         protected override void Render()
         {
-            counterText.text = State.Counter.Value;
+            counterText.text = State.Counter;
         }
     }
 
     public interface ICounterState : IState
     {
-        Atom<string> Counter { get; }
+        string Counter { get; }
 
         void Increment();
         void Decrement();
