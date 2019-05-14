@@ -5,10 +5,6 @@ namespace UniMob.ReView.Samples.TodoMvc.Vanilla.Widgets
 {
     public class TodoList : Widget
     {
-        public TodoList([CanBeNull] Key key = null) : base(key)
-        {
-        }
-
         public override State CreateState() => new TodoListState();
     }
 

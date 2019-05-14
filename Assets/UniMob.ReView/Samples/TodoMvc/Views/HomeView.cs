@@ -1,4 +1,3 @@
-using UniMob.Async;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,7 +5,7 @@ namespace UniMob.ReView.Samples.TodoMvc.Views
 {
     public class HomeView : View<IHomeState>
     {
-        [SerializeField] private ViewContainer todosContainer;
+        [SerializeField] private ContainerView todosContainer;
 
         [SerializeField] private Button addButton;
 
@@ -32,7 +31,7 @@ namespace UniMob.ReView.Samples.TodoMvc.Views
             activeVisibleButton.interactable = filter != VisibilityFilter.Active;
             completedVisibleButton.interactable = filter != VisibilityFilter.Completed;
             
-            todosContainer.SetSource(State.Todos);
+            todosContainer.SetState(State.Todos);
         }
     }
 

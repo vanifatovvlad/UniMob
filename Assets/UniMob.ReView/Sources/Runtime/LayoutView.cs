@@ -6,90 +6,81 @@ using UnityEngine;
 
 namespace UniMob.ReView
 {
-    public class LayoutView : View<ILayoutState>
+    public abstract class LayoutView<TState> : View<TState>
+        where TState : IState
     {
-        private ViewMapperBase _mapper;
+        protected ViewMapperBase Mapper { get; private set; }
 
         protected override void Activate()
         {
             base.Activate();
 
-            if (_mapper == null)
-                _mapper = new PooledViewMapper(transform);
+            if (Mapper == null)
+                Mapper = new PooledViewMapper(transform);
+        }
+/*
+        protected static void ApplySizeAndPosition(IState viewState, IView view, Alignment alignment, Vector2 position)
+        {
+            ApplySize(viewState, view, alignment.ToAnchor());
+            
+            var pivot = view.rectTransform.pivot;
+            view.rectTransform.anchoredPosition =
+                RectTools.PositionToAnchored(position, pivot, viewState.Size, alignment);
+        }
+        
+        protected static void ApplySize(IState viewState, IView view, Vector2 anchor)
+        {
+            var size = viewState.Size;
+
+            var layoutState = viewState as ILayoutState;
+            var widthStretch = layoutState?.StretchHorizontal ?? false;
+            var heightStretch = layoutState?.StretchVertical ?? false;
+            
+            SetSize(view.rectTransform, size, anchor, widthStretch, heightStretch);
+        }*/
+
+        protected static void SetPosition(RectTransform rt, Vector2 size, Vector2 position, Alignment corner)
+        {
+            var pivot = rt.pivot;
+            rt.anchoredPosition = RectTools.PositionToAnchored(position, pivot, size, corner);
         }
 
-        protected override void Render()
+        protected static void SetSize(RectTransform rt, Vector2 size, Vector2 anchor,
+            bool widthStretch, bool heightStretch)
         {
-            switch (State)
+            var sizeDelta = size;
+            var anchorMin = anchor;
+            var anchorMax = anchor;
+
+            if (widthStretch)
             {
-                case IMultiChildLayoutState multiChildLayoutState:
-                    var children = multiChildLayoutState.Children;
-                    var crossAxis = multiChildLayoutState.CrossAxisAlignment;
-
-                    var anchorX = crossAxis == CrossAxisAlignment.Start ? 0f
-                        : crossAxis == CrossAxisAlignment.End ? 1f
-                        : 0.5f;
-
-                    var corner = crossAxis == CrossAxisAlignment.Start ? RectTools.Corner.TopLeft
-                        : crossAxis == CrossAxisAlignment.End ? RectTools.Corner.TopRight
-                        : RectTools.Corner.TopCenter;
-
-                    float y = 0;
-
-                    try
-                    {
-                        _mapper.BeginRender();
-                        foreach (var child in children)
-                        {
-                            var childSize = CalcChildSize(child);
-                            var childView = _mapper.RenderItem(child);
-
-                            var position = new Vector2(0, -y);
-                            var pivot = childView.rectTransform.pivot;
-
-                            if (crossAxis == CrossAxisAlignment.Stretch)
-                            {
-                                childView.rectTransform.anchorMin = new Vector2(0, 1f);
-                                childView.rectTransform.anchorMax = new Vector2(1, 1f);
-
-                                childView.rectTransform.anchoredPosition =
-                                    RectTools.CornerPositionToAnchored(position, pivot, childSize, corner);
-                            }
-                            else
-                            {
-                                childView.rectTransform.anchorMin =
-                                    childView.rectTransform.anchorMax = new Vector2(anchorX, 1f);
-                                childView.rectTransform.anchoredPosition =
-                                    RectTools.CornerPositionToAnchored(position, pivot, childSize, corner);
-                            }
-
-                            y += childSize.y;
-                        }
-                    }
-                    finally
-                    {
-                        _mapper.EndRender();
-                    }
-
-                    break;
+                sizeDelta.x = 0;
+                anchorMin.x = 0;
+                anchorMax.x = 1;
             }
-        }
 
-        private static Vector2 CalcChildSize(IState state)
-        {
-            var view = ResolveChildViewPrefab(state);
-            return view.CalcSize(state);
-        }
+            if (heightStretch)
+            {
+                sizeDelta.y = 0;
+                anchorMin.y = 0;
+                anchorMax.y = 1;
+            }
 
-        private static IView ResolveChildViewPrefab(IState state)
-        {
-            return ViewContext.Loader.LoadViewPrefab(state);
+            rt.anchorMin = anchorMin;
+            rt.anchorMax = anchorMax;
+            rt.sizeDelta = sizeDelta;
         }
+    }
+
+    public abstract class LayoutWidget : Widget
+    {
+        public bool StretchHorizontal { get; set; }
+        public bool StretchVertical { get; set; }
     }
 
     public abstract class SingleChildLayoutWidget : Widget
     {
-        protected SingleChildLayoutWidget([NotNull] Widget child, Key key = null) : base(key)
+        protected SingleChildLayoutWidget([NotNull] Widget child)
         {
             Child = child ?? throw new ArgumentNullException(nameof(child));
         }
@@ -97,30 +88,20 @@ namespace UniMob.ReView
         public Widget Child { get; }
     }
 
-    public abstract class MultiChildLayoutWidget : Widget
+    public abstract class MultiChildLayoutWidget : LayoutWidget
     {
-        protected MultiChildLayoutWidget(
-            [NotNull] WidgetList children,
-            CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.Center,
-            MainAxisAlignment mainAxisAlignment = MainAxisAlignment.Start,
-            MainAxisSize mainAxisSize = MainAxisSize.Min,
-            [CanBeNull] Key key = null)
-            : base(key)
+        protected MultiChildLayoutWidget([NotNull] WidgetList children)
         {
             Children = children ?? throw new ArgumentNullException(nameof(children));
-            CrossAxisAlignment = crossAxisAlignment;
-            MainAxisAlignment = mainAxisAlignment;
-            MainAxisSize = mainAxisSize;
         }
 
         public WidgetList Children { get; }
-        public CrossAxisAlignment CrossAxisAlignment { get; }
-        public MainAxisAlignment MainAxisAlignment { get; }
-        public MainAxisSize MainAxisSize { get; }
     }
 
     public interface ILayoutState : IState
     {
+        bool StretchVertical { get; }
+        bool StretchHorizontal { get; }
     }
 
     public interface ISingleChildLayoutState : ILayoutState
@@ -131,8 +112,6 @@ namespace UniMob.ReView
     public interface IMultiChildLayoutState : ILayoutState
     {
         IState[] Children { get; }
-
-        CrossAxisAlignment CrossAxisAlignment { get; }
     }
 
 
@@ -140,32 +119,33 @@ namespace UniMob.ReView
     {
     }
 
-    public class MultiChildLayoutState<TWidget> : State<TWidget>, IMultiChildLayoutState
+    public abstract class SingleChildLayoutState<TWidget> : State<TWidget>, ISingleChildLayoutState
+        where TWidget : SingleChildLayoutWidget
+    {
+        private readonly Atom<IState> _child;
+
+        protected SingleChildLayoutState([NotNull] string view) : base(view)
+        {
+            _child = Create(this, context => Widget.Child);
+        }
+
+        public IState Child => _child.Value;
+        public bool StretchVertical => false;
+        public bool StretchHorizontal => false;
+    }
+
+    public abstract class MultiChildLayoutState<TWidget> : State<TWidget>, IMultiChildLayoutState
         where TWidget : MultiChildLayoutWidget
     {
         private readonly Atom<IState[]> _children;
-        
-        public MultiChildLayoutState() : base("UniMob.ReView.Layout")
+
+        protected MultiChildLayoutState(string view) : base(view)
         {
             _children = CreateList(this, context => Widget.Children);
         }
 
         public IState[] Children => _children.Value;
-        public CrossAxisAlignment CrossAxisAlignment => Widget.CrossAxisAlignment;
-    }
-
-    public class Column : MultiChildLayoutWidget
-    {
-        public Column(
-            [NotNull] WidgetList children,
-            CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.Center,
-            MainAxisAlignment mainAxisAlignment = MainAxisAlignment.Start,
-            MainAxisSize mainAxisSize = MainAxisSize.Max,
-            [CanBeNull] Key key = null)
-            : base(children, crossAxisAlignment, mainAxisAlignment, mainAxisSize, key)
-        {
-        }
-
-        public override State CreateState() => new MultiChildLayoutState<Column>();
+        public bool StretchVertical => Widget.StretchVertical;
+        public bool StretchHorizontal => Widget.StretchHorizontal;
     }
 }

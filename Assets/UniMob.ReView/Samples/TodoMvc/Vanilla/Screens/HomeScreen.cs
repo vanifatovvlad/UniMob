@@ -6,9 +6,10 @@ namespace UniMob.ReView.Samples.TodoMvc.Vanilla
 {
     public class HomeScreen : Widget
     {
-        public HomeScreen(TodoStore store) : base(GlobalKey.Of<HomeScreen>())
+        public HomeScreen(TodoStore store)
         {
             Store = store;
+            Key = GlobalKey.Of<HomeScreen>();
         }
 
         public TodoStore Store { get; }
@@ -16,7 +17,7 @@ namespace UniMob.ReView.Samples.TodoMvc.Vanilla
         public override State CreateState() => new HomeScreenState();
     }
 
-    public class HomeScreenState : State<HomeScreen>, IHomeState
+    public class HomeScreenState : State<HomeScreen>, IHomeState, ILayoutState
     {
         private readonly MutableAtom<VisibilityFilter> _activeFilter = Atom.Value(VisibilityFilter.All);
         private readonly Atom<IState> _todos;
@@ -43,9 +44,21 @@ namespace UniMob.ReView.Samples.TodoMvc.Vanilla
             return new Column(new WidgetList
             {
                 new TodoList(),
+                new Column(new WidgetList
+                {
+                    new TodoList(),
+                    new TodoList(),
+                    new TodoList(),
+                }) {CrossAxisAlignment = CrossAxisAlignment.Center, StretchHorizontal = true},
                 new TodoList(),
-                new TodoList(),
-            }, CrossAxisAlignment.Stretch);
+            })
+            {
+                CrossAxisAlignment = CrossAxisAlignment.Start, StretchHorizontal = true, StretchVertical = true,
+                MainAxisAlignment = MainAxisAlignment.End
+            };
         }
+
+        public bool StretchVertical { get; } = true;
+        public bool StretchHorizontal { get; } = true;
     }
 }

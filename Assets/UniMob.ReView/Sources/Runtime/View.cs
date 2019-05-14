@@ -175,26 +175,6 @@ namespace UniMob.ReView
             }
         }
 
-        Vector2 IView.CalcSize(IState state)
-        {
-            if (state == null)
-                throw new ArgumentNullException(nameof(state));
-
-            if (!(state is TState stateTyped))
-            {
-                var expected = typeof(TState).Name;
-                var actual = state.GetType().Name;
-                throw new ArgumentException($"Unexpected state type: expected={expected} actual={actual}");
-            }
-
-            return CalcSize(stateTyped);
-        }
-
-        protected virtual Vector2 CalcSize(TState state)
-        {
-            return rectTransform.rect.size;
-        }
-
         protected override void OnEnable()
         {
             base.OnEnable();
@@ -217,14 +197,6 @@ namespace UniMob.ReView
         protected abstract void Render();
     }
 
-    public interface IState
-    {
-        string ViewPath { get; }
-
-        void DidViewMount();
-        void DidViewUnmount();
-    }
-
     public interface IView
     {
         // ReSharper disable once InconsistentNaming
@@ -235,7 +207,6 @@ namespace UniMob.ReView
 
         void SetSource(IState source);
         void ResetSource();
-        Vector2 CalcSize(IState model);
     }
 
     public interface IViewTreeElement

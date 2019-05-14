@@ -3,22 +3,38 @@ using System.Collections.Generic;
 using System.Linq;
 using UniMob.Async;
 using JetBrains.Annotations;
+using UnityEngine;
 using UnityEngine.Assertions;
 
 namespace UniMob.ReView
 {
+    public interface IState
+    {
+        Vector2 Size { get; }
+
+        string ViewPath { get; }
+
+        void DidViewMount();
+        void DidViewUnmount();
+    }
+
     public abstract class State : IState, IDisposable
     {
+        private Atom<Vector2> _size;
+        
         public BuildContext Context { get; internal set; }
 
         public string ViewPath { get; }
 
         internal Widget Widget { get; private set; }
 
+        public Vector2 Size => _size.Value;
+
         protected State([NotNull] string view)
         {
             Assert.IsNull(Atom.CurrentScope);
             ViewPath = view ?? throw new ArgumentNullException(nameof(view));
+            _size = Atom.Func(CalculateSize);
         }
 
         internal virtual void Update(Widget widget)
@@ -54,6 +70,12 @@ namespace UniMob.ReView
         public virtual void DidViewUnmount()
         {
             Assert.IsNull(Atom.CurrentScope);
+        }
+
+        public virtual Vector2 CalculateSize()
+        {
+            var prefab = ViewContext.Loader.LoadViewPrefab(this);
+            return prefab.rectTransform.rect.size;
         }
 
         internal static bool CanUpdateWidget(Widget oldWidget, Widget newWidget)

@@ -4,7 +4,7 @@ namespace UniMob.ReView.Samples.Counter
 {
     public class CounterApp : MonoBehaviour
     {
-        [SerializeField] private ViewContainer root;
+        [SerializeField] private ContainerView root;
 
         private void Start()
         {
