@@ -231,6 +231,32 @@ namespace UniMob.Async.Tests.Atoms
             Assert.IsFalse(ReferenceEquals(v2, v3));
         });
 
+        [Test]
+        public void WhenAtom() => TestZone.Run(tick =>
+        {
+            var source = Atom.Value(0);
+
+            string watch = "";
+
+            Atom.When(() => source.Value > 1)
+                .Then(() => watch += "B");
+
+            tick(0);
+            Assert.AreEqual("", watch);
+
+            source.Value = 1;
+            tick(0);
+            Assert.AreEqual("", watch);
+
+            source.Value = 2;
+            tick(0);
+            Assert.AreEqual("B", watch);
+
+            source.Value = 3;
+            tick(0);
+            Assert.AreEqual("B", watch);
+        });
+
         class TestComparer<T> : IEqualityComparer<T>
         {
             private readonly Func<T, T, bool> _comparison;

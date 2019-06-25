@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace UniMob.ReView
+namespace UniMob.ReView.Widgets
 {
     internal static class RectTools
     {

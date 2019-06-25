@@ -8,20 +8,10 @@ using UnityEngine.Assertions;
 
 namespace UniMob.ReView
 {
-    public interface IState
-    {
-        Vector2 Size { get; }
-
-        string ViewPath { get; }
-
-        void DidViewMount();
-        void DidViewUnmount();
-    }
-
     public abstract class State : IState, IDisposable
     {
-        private Atom<Vector2> _size;
-        
+        private readonly Atom<Vector2> _size;
+
         public BuildContext Context { get; internal set; }
 
         public string ViewPath { get; }
@@ -37,7 +27,7 @@ namespace UniMob.ReView
             _size = Atom.Func(CalculateSize);
         }
 
-        internal virtual void Update(Widget widget)
+        protected virtual void Update(Widget widget)
         {
             Widget = widget;
         }
@@ -80,8 +70,9 @@ namespace UniMob.ReView
 
         internal static bool CanUpdateWidget(Widget oldWidget, Widget newWidget)
         {
-            return oldWidget.GetType() == newWidget.GetType() &&
-                   oldWidget.Key == newWidget.Key;
+            return oldWidget.Key == newWidget.Key &&
+                   //TODO: optimize GetType() call
+                   oldWidget.GetType() == newWidget.GetType();
         }
 
         internal static Atom<IState> Create(BuildContext context, WidgetBuilder builder)
@@ -92,7 +83,7 @@ namespace UniMob.ReView
             return Atom.Func<IState>(() =>
             {
                 var newWidget = builder(context);
-                using (Atom.NoLinkScope)
+                using (Atom.NoWatch)
                 {
                     state = UpdateChild(context, state, newWidget);
                 }
@@ -109,7 +100,7 @@ namespace UniMob.ReView
             return Atom.Func<IState[]>(() =>
             {
                 var newWidgets = builder.Invoke(context);
-                using (Atom.NoLinkScope)
+                using (Atom.NoWatch)
                 {
                     states = UpdateChildren(context, states, newWidgets);
                 }
@@ -162,7 +153,7 @@ namespace UniMob.ReView
             Dictionary<Key, State> oldKeyedChildren = null;
             if (haveOldChildren)
             {
-                oldKeyedChildren = ClassPools.GetKeyStateDictionary();
+                oldKeyedChildren = Pools.KeyToState.Get();
                 while (oldChildrenTop <= oldChildrenBottom)
                 {
                     var oldChild = oldChildren[oldChildrenTop];
@@ -241,7 +232,7 @@ namespace UniMob.ReView
 
             if (oldKeyedChildren != null)
             {
-                ClassPools.Recycle(oldKeyedChildren);
+                Pools.KeyToState.Recycle(oldKeyedChildren);
             }
 
             return newChildren;
@@ -258,16 +249,6 @@ namespace UniMob.ReView
         private static State UpdateChild(BuildContext context, [CanBeNull] State child, [NotNull] Widget newWidget)
         {
             Assert.IsNull(Atom.CurrentScope);
-
-            //if (newWidget == null)
-            //{
-            //    if (child != null)
-            //    {
-            //        DeactivateChild(child);
-            //    }
-            //
-            //    return null;
-            //}
 
             if (child != null)
             {
@@ -310,9 +291,9 @@ namespace UniMob.ReView
         {
         }
 
-        public new TWidget Widget => _widget.Value;
+        protected new TWidget Widget => _widget.Value;
 
-        internal sealed override void Update(Widget widget)
+        protected sealed override void Update(Widget widget)
         {
             base.Update(widget);
 

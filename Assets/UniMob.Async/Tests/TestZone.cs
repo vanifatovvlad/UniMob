@@ -6,18 +6,14 @@ namespace UniMob.Async.Tests
 {
     internal class TestZone : IZone, IDisposable
     {
+        private readonly Action<Exception> _exceptionHandler;
         private readonly TimerDispatcher _dispatcher;
-
-        public Action<Exception> HandleUncaughtException { get; }
-        public Action<Action> Invoke => _dispatcher.Invoke;
-        public Action<float, Action> InvokeDelayed => _dispatcher.InvokeDelayed;
 
         public TestZone(Action<Exception> exceptionHandler)
         {
-            HandleUncaughtException = exceptionHandler;
-
+            _exceptionHandler = exceptionHandler;
             var mainThreadId = Thread.CurrentThread.ManagedThreadId;
-            _dispatcher = new TimerDispatcher(mainThreadId, HandleUncaughtException);
+            _dispatcher = new TimerDispatcher(mainThreadId, exceptionHandler);
 
             if (Zone.Current != null)
                 throw new InvalidOperationException("Zone != null");
@@ -44,10 +40,25 @@ namespace UniMob.Async.Tests
         {
             using (var zone = new TestZone(exceptionHandler))
             {
-                scope(zone.Tick);                
+                scope(zone.Tick);
             }
         }
 
         public delegate void Ticker(float time);
+
+        public void HandleUncaughtException(Exception exception)
+        {
+            _exceptionHandler(exception);
+        }
+
+        public void Invoke(Action action)
+        {
+            _dispatcher.Invoke(action);
+        }
+
+        public void InvokeDelayed(float delay, Action action)
+        {
+            _dispatcher.InvokeDelayed(delay, action);
+        }
     }
 }

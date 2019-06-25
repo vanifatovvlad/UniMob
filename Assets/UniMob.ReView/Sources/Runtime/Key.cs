@@ -39,7 +39,7 @@ namespace UniMob.ReView
             return Value.Equals(other.Value);
         }
     }
-
+    
     internal class GlobalKey<T> : Key, IEquatable<GlobalKey<T>>
     {
         public static readonly GlobalKey<T> Instance = new GlobalKey<T>();

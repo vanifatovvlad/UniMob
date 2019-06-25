@@ -1,14 +1,20 @@
 using System;
+using System.Collections.Generic;
 using UniMob.Async;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.EventSystems;
 
 namespace UniMob.ReView
 {
-    public abstract class View<TState> : ViewBase, IView
+    [RequireComponent(typeof(RectTransform))]
+    public abstract class View<TState> : UIBehaviour, IView, IViewTreeElement
         where TState : IState
     {
+        [NotNull] private readonly ViewRenderScope _renderScope = new ViewRenderScope();
+        [NotNull] private readonly List<IViewTreeElement> _children = new List<IViewTreeElement>();
+
         private bool _mounted;
 
         private bool _hasState;
@@ -19,9 +25,12 @@ namespace UniMob.ReView
 
         private ReactionAtom _renderAtom;
 
-        public bool HasState => _hasState;
-
         [NotNull] protected TState State => _state;
+
+        // ReSharper disable once InconsistentNaming
+        public RectTransform rectTransform => (RectTransform) transform;
+
+        public void SetState(TState state) => ((IView) this).SetSource(state);
 
         void IView.SetSource(IState newSource)
         {
@@ -33,10 +42,10 @@ namespace UniMob.ReView
                 return;
             }
 
-            RenderScope.Link(this);
+            _renderScope.Link(this);
 
             if (_renderAtom == null)
-                _renderAtom = Atom.Reaction(RenderAction);
+                _renderAtom = Atom.CreateReaction(RenderAction);
 
             _hasSource = true;
             _source.Value = nextState;
@@ -44,7 +53,7 @@ namespace UniMob.ReView
             _renderAtom.Update();
         }
 
-        protected sealed override void Unmount()
+        protected void Unmount()
         {
             if (!_hasSource)
             {
@@ -67,7 +76,7 @@ namespace UniMob.ReView
 
             try
             {
-                using (Atom.NoLinkScope)
+                using (Atom.NoWatch)
                 {
                     Deactivate();
                 }
@@ -83,7 +92,7 @@ namespace UniMob.ReView
 
                 try
                 {
-                    using (Atom.NoLinkScope)
+                    using (Atom.NoWatch)
                     {
                         _state.DidViewUnmount();
                     }
@@ -94,13 +103,26 @@ namespace UniMob.ReView
                 }
             }
 
-            base.Unmount();
+            foreach (var child in _children)
+            {
+                child.Unmount();
+            }
 
             _state = default;
             _hasState = false;
         }
 
         void IView.ResetSource()
+        {
+            Unmount();
+        }
+        
+        void IViewTreeElement.AddChild(IViewTreeElement view)
+        {
+            _children.Add(view);
+        }
+
+        void IViewTreeElement.Unmount()
         {
             Unmount();
         }
@@ -116,7 +138,7 @@ namespace UniMob.ReView
                 return;
             }
 
-            using (Atom.NoLinkScope)
+            using (Atom.NoWatch)
             {
                 if (!_hasState || !nextState.Equals(_state))
                 {
@@ -146,12 +168,12 @@ namespace UniMob.ReView
                 }
             }
 
-            Assert.IsNotNull(RenderScope, "renderScope == null");
-            using (RenderScope.Enter(this))
+            Assert.IsNotNull(_renderScope, "renderScope == null");
+            using (_renderScope.Enter(this))
             {
                 if (isActiveAndEnabled && gameObject.activeSelf)
                 {
-                    Children.Clear();
+                    _children.Clear();
 
                     try
                     {
@@ -166,7 +188,7 @@ namespace UniMob.ReView
                     {
                         _mounted = true;
 
-                        using (Atom.NoLinkScope)
+                        using (Atom.NoWatch)
                         {
                             _state.DidViewMount();
                         }
@@ -195,105 +217,5 @@ namespace UniMob.ReView
         }
 
         protected abstract void Render();
-    }
-
-    public interface IView
-    {
-        // ReSharper disable once InconsistentNaming
-        GameObject gameObject { get; }
-
-        // ReSharper disable once InconsistentNaming
-        RectTransform rectTransform { get; }
-
-        void SetSource(IState source);
-        void ResetSource();
-    }
-
-    public interface IViewTreeElement
-    {
-        void AddChild(IViewTreeElement view);
-        void Unmount();
-    }
-
-    public class ViewRenderScope
-    {
-        private readonly Scope _scope = new Scope();
-
-        public void Link(IViewTreeElement self)
-        {
-            _scope.Link(self);
-        }
-
-        public IDisposable Enter(IViewTreeElement self)
-        {
-            _scope.Enter(self);
-            return _scope;
-        }
-
-        private class Scope : IDisposable
-        {
-            private bool _linkedFirstRender;
-            private int _linkedChildIndex;
-
-            private IViewTreeElement _prevElement;
-            private bool _prevFirstRender;
-            private int _prevChildIndex;
-
-            public void Link(IViewTreeElement self)
-            {
-                if (ViewContext.CurrentElement != null)
-                    ViewContext.CurrentElement.AddChild(self);
-
-                _linkedFirstRender = ViewContext.FirstRender;
-                _linkedChildIndex = ViewContext.ChildIndex;
-            }
-
-            public void Enter(IViewTreeElement self)
-            {
-                _prevElement = ViewContext.CurrentElement;
-                ViewContext.CurrentElement = self;
-
-                _prevFirstRender = ViewContext.FirstRender;
-                _prevChildIndex = ViewContext.ChildIndex;
-                ViewContext.FirstRender = _linkedFirstRender;
-                ViewContext.ChildIndex = _linkedChildIndex;
-            }
-
-            public void Dispose()
-            {
-                _linkedFirstRender = false;
-                ViewContext.FirstRender = _prevFirstRender;
-                ViewContext.ChildIndex = _prevChildIndex;
-
-                ViewContext.CurrentElement = _prevElement;
-            }
-        }
-    }
-
-    public static class ViewContext
-    {
-        internal static IViewTreeElement CurrentElement;
-        internal static IViewLoader Loader = new BuiltinResourcesViewLoader();
-
-        public static bool FirstRender;
-        public static int ChildIndex;
-
-        public static IDisposable FirstRenderScope() => new FirstRenderScopeStruct(true);
-
-        private struct FirstRenderScopeStruct : IDisposable
-        {
-            private readonly bool _old;
-
-            public FirstRenderScopeStruct(bool firstRender)
-            {
-                _old = FirstRender;
-                FirstRender = firstRender;
-            }
-
-            public void Dispose()
-            {
-                FirstRender = _old;
-            }
-        }
     }
 }

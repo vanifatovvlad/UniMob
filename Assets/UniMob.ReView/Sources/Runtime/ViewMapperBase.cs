@@ -32,19 +32,7 @@ namespace UniMob.ReView
             RemoveAll();
         }
 
-        public void Render(IState[] states, Action<IView, IState> postRender = null)
-        {
-            Render(states, 0, states.Length, postRender);
-        }
-
-        public void Render(IState[] states, int startIndex, int count, Action<IView, IState> postRender = null)
-        {
-            BeginRender();
-            RenderItems(states, startIndex, count, postRender);
-            EndRender();
-        }
-
-        public void RenderItems(IState[] states, int startIndex, int count, Action<IView, IState> postRender = null)
+        private void RenderItems(IState[] states, int startIndex, int count, Action<IView, IState> postRender = null)
         {
             if (states == null)
                 throw new ArgumentNullException(nameof(states));
@@ -66,7 +54,7 @@ namespace UniMob.ReView
             }
         }
 
-        public IView RenderItem(IState states)
+        private IView RenderItem(IState states)
         {
             if (_activeRender == null)
                 throw new InvalidOperationException("Must call BeginRender() before RenderItem()");
@@ -82,7 +70,7 @@ namespace UniMob.ReView
                 var view = ResolveView(state);
                 view.SetSource(state);
                 item = new Item {State = state, View = view};
-                using (Atom.NoLinkScope)
+                using (Atom.NoWatch)
                 {
                     state.DidViewMount();
                 }
@@ -90,16 +78,39 @@ namespace UniMob.ReView
             else
             {
                 _items.Remove(item);
-                //item.View.SetSource(state);
-                //item.State = state;
+                item.View.SetSource(state);
+                item.State = state;
             }
 
             _next.Add(item);
 
             return item;
         }
+        
+        public struct ViewMapperRenderScope : IDisposable
+        {
+            private readonly ViewMapperBase _mapper;
+            public ViewMapperRenderScope(ViewMapperBase mapper)
+            {
+                _mapper = mapper;
+                _mapper.BeginRender();
+            }
 
-        public void BeginRender()
+            void IDisposable.Dispose() => _mapper.EndRender();
+
+            public void RenderItems(IState[] states, Action<IView, IState> postRender = null)
+                => _mapper.RenderItems(states, 0, states.Length, postRender);
+
+            public void RenderItems(IState[] states, int startIndex, int count, Action<IView, IState> postRender = null)
+                => _mapper.RenderItems(states, startIndex, count, postRender);
+
+            public IView RenderItem(IState state) 
+                => _mapper.RenderItem(state);
+        }
+
+        public ViewMapperRenderScope CreateRender() => new ViewMapperRenderScope(this);
+        
+        private void BeginRender()
         {
             if (_activeRender != null)
                 throw new InvalidOperationException("Must not call Render() inside other Render()");
@@ -110,7 +121,7 @@ namespace UniMob.ReView
             PrepareRender();
         }
 
-        public void EndRender()
+        private void EndRender()
         {
             if (_activeRender == null)
                 throw new InvalidOperationException("Must not call EndRender() without BeginRender()");
@@ -140,7 +151,7 @@ namespace UniMob.ReView
             if (list.Count == 0)
                 return;
 
-            using (Atom.NoLinkScope)
+            using (Atom.NoWatch)
             {
                 foreach (var removed in list)
                 {

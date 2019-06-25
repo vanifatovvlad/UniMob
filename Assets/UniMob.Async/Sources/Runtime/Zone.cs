@@ -9,8 +9,8 @@ namespace UniMob.Async
 
     public interface IZone
     {
-        Action<Exception> HandleUncaughtException { get; }
-        Action<Action> Invoke { get; }
-        Action<float, Action> InvokeDelayed { get; }
+        void HandleUncaughtException(Exception exception);
+        void Invoke(Action action);
+        void InvokeDelayed(float delay, Action action);
     }
 }

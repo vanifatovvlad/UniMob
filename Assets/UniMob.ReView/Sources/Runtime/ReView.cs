@@ -1,6 +1,7 @@
 using System;
 using JetBrains.Annotations;
 using UniMob.Async;
+using UniMob.ReView.Widgets;
 
 namespace UniMob.ReView
 {
@@ -13,14 +14,13 @@ namespace UniMob.ReView
 
             var context = new AppContext();
             var state = State.Create(context, builder);
-            var render = Atom.Reaction(() => container.SetState(state.Value));
+            var render = Atom.CreateReaction(() => container.SetState(state.Value));
 
             render.Get();
         }
 
         private class AppContext : BuildContext
         {
-            public BuildContext Context { get; } = null;
         }
     }
 }

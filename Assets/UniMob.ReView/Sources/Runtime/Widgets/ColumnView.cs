@@ -1,8 +1,6 @@
-using System.Collections.Generic;
-using JetBrains.Annotations;
 using UnityEngine;
 
-namespace UniMob.ReView
+namespace UniMob.ReView.Widgets
 {
     [AddComponentMenu("UniMob/Views/Column")]
     public class ColumnView : LayoutView<ColumnState>
@@ -26,15 +24,13 @@ namespace UniMob.ReView
                 : mainAxis == MainAxisAlignment.End ? 1f
                 : 0.5f;
 
-            try
+            using (var render = Mapper.CreateRender())
             {
-                Mapper.BeginRender();
-
                 float y = -containerSize.y * posMultY;
                 foreach (var child in children)
                 {
                     var childSize = child.Size;
-                    var childView = Mapper.RenderItem(child);
+                    var childView = render.RenderItem(child);
                     var layoutState = child as ILayoutState;
                     var wStretch = layoutState?.StretchHorizontal ?? false;
                     var hStretch = layoutState?.StretchVertical ?? false;
@@ -49,47 +45,6 @@ namespace UniMob.ReView
                     y += childSize.y;
                 }
             }
-            finally
-            {
-                Mapper.EndRender();
-            }
-        }
-    }
-
-    public class Column : MultiChildLayoutWidget
-    {
-        public Column([NotNull] WidgetList children) : base(children)
-        {
-        }
-
-        public CrossAxisAlignment CrossAxisAlignment { get; set; } = CrossAxisAlignment.Start;
-        public MainAxisAlignment MainAxisAlignment { get; set; } = MainAxisAlignment.Start;
-
-        public override State CreateState() => new ColumnState();
-    }
-
-    public class ColumnState : MultiChildLayoutState<Column>
-    {
-        public ColumnState() : base("UniMob.Column")
-        {
-        }
-
-        public CrossAxisAlignment CrossAxisAlignment => Widget.CrossAxisAlignment;
-        public MainAxisAlignment MainAxisAlignment => Widget.MainAxisAlignment;
-
-        public override Vector2 CalculateSize()
-        {
-            float height = 0;
-            float width = 0;
-
-            foreach (var child in Children)
-            {
-                var childSize = child.Size;
-                height += childSize.y;
-                width = Mathf.Max(width, childSize.x);
-            }
-
-            return new Vector2(width, height);
         }
     }
 }

@@ -62,7 +62,7 @@ namespace UniMob.Async
 
             var value = _pull();
 
-            using (Atom.NoLinkScope)
+            using (Atom.NoWatch)
             {
                 if (_hasCache && _comparer.Equals(value, _cache))
                     return;
@@ -101,7 +101,7 @@ namespace UniMob.Async
                 throw new InvalidOperationException(message);
             }
 
-            using (Atom.NoLinkScope)
+            using (Atom.NoWatch)
             {
                 if (_hasCache && _comparer.Equals(value, _cache))
                     return;

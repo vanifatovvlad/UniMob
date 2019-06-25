@@ -1,15 +1,16 @@
 using UniMob.Async;
 using UniMob.ReView.Samples.TodoMvc.Vanilla.Widgets;
 using UniMob.ReView.Samples.TodoMvc.Views;
+using UniMob.ReView.Widgets;
 
 namespace UniMob.ReView.Samples.TodoMvc.Vanilla
 {
     public class HomeScreen : Widget
     {
         public HomeScreen(TodoStore store)
+            : base(GlobalKey.Of<HomeScreen>())
         {
             Store = store;
-            Key = GlobalKey.Of<HomeScreen>();
         }
 
         public TodoStore Store { get; }
@@ -41,21 +42,27 @@ namespace UniMob.ReView.Samples.TodoMvc.Vanilla
 
         private Widget BuildTodos(BuildContext context)
         {
-            return new Column(new WidgetList
-            {
-                new TodoList(),
-                new Column(new WidgetList
+            return new Column(
+                children: new WidgetList
                 {
                     new TodoList(),
+                    new Column(
+                        children: new WidgetList
+                        {
+                            new TodoList(),
+                            new TodoList(),
+                            new TodoList(),
+                        },
+                        crossAxisAlignment: CrossAxisAlignment.End,
+                        stretchHorizontal: true
+                    ),
                     new TodoList(),
-                    new TodoList(),
-                }) {CrossAxisAlignment = CrossAxisAlignment.Center, StretchHorizontal = true},
-                new TodoList(),
-            })
-            {
-                CrossAxisAlignment = CrossAxisAlignment.Start, StretchHorizontal = true, StretchVertical = true,
-                MainAxisAlignment = MainAxisAlignment.End
-            };
+                },
+                crossAxisAlignment: CrossAxisAlignment.Center,
+                mainAxisAlignment: MainAxisAlignment.Center,
+                stretchHorizontal: true,
+                stretchVertical: true
+            );
         }
 
         public bool StretchVertical { get; } = true;
