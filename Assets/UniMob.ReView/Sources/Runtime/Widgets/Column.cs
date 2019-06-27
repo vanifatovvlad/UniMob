@@ -13,17 +13,20 @@ namespace UniMob.ReView.Widgets
             bool stretchVertical = false
         ) : base(
             children,
-            key,
-            stretchHorizontal,
-            stretchVertical
+            key
         )
         {
             CrossAxisAlignment = crossAxisAlignment;
             MainAxisAlignment = mainAxisAlignment;
+            StretchHorizontal = stretchHorizontal;
+            StretchVertical = stretchVertical;
         }
 
         public CrossAxisAlignment CrossAxisAlignment { get; }
         public MainAxisAlignment MainAxisAlignment { get; }
+        
+        public bool StretchHorizontal { get; }
+        public bool StretchVertical { get; }
 
         public override State CreateState() => new ColumnState();
     }

@@ -18,7 +18,7 @@ namespace UniMob.ReView.Samples.TodoMvc.Vanilla
         public override State CreateState() => new HomeScreenState();
     }
 
-    public class HomeScreenState : State<HomeScreen>, IHomeState, ILayoutState
+    public class HomeScreenState : State<HomeScreen>, IHomeState
     {
         private readonly MutableAtom<VisibilityFilter> _activeFilter = Atom.Value(VisibilityFilter.All);
         private readonly Atom<IState> _todos;
@@ -53,19 +53,24 @@ namespace UniMob.ReView.Samples.TodoMvc.Vanilla
                             new TodoList(),
                             new TodoList(),
                         },
-                        crossAxisAlignment: CrossAxisAlignment.End,
+                        crossAxisAlignment: (
+                            ActiveFilter == VisibilityFilter.All ? CrossAxisAlignment.Start :
+                            ActiveFilter == VisibilityFilter.Active ? CrossAxisAlignment.Center :
+                            CrossAxisAlignment.End
+                        ),
                         stretchHorizontal: true
                     ),
                     new TodoList(),
                 },
                 crossAxisAlignment: CrossAxisAlignment.Center,
-                mainAxisAlignment: MainAxisAlignment.Center,
+                mainAxisAlignment: (
+                    ActiveFilter == VisibilityFilter.All ? MainAxisAlignment.Start :
+                    ActiveFilter == VisibilityFilter.Active ? MainAxisAlignment.Center :
+                    MainAxisAlignment.End
+                ),
                 stretchHorizontal: true,
                 stretchVertical: true
             );
         }
-
-        public bool StretchVertical { get; } = true;
-        public bool StretchHorizontal { get; } = true;
     }
 }

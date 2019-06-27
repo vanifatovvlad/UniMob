@@ -11,19 +11,52 @@ namespace UniMob.ReView.Widgets
         public CrossAxisAlignment CrossAxisAlignment => Widget.CrossAxisAlignment;
         public MainAxisAlignment MainAxisAlignment => Widget.MainAxisAlignment;
 
-        public override Vector2 CalculateSize()
+        public override WidgetSize CalculateOuterSize()
+        {
+            var wStretch = Widget.StretchHorizontal;
+            var hStretch = Widget.StretchVertical;
+
+            if (wStretch && hStretch)
+            {
+                return WidgetSize.Stretched;
+            }
+            
+            var size = base.CalculateOuterSize();
+
+            float? width = null;
+            float? height = null;
+
+            if (size.IsWidthFixed && !wStretch) width = size.Width;
+            if (size.IsHeightFixed && !hStretch) height = size.Height;
+            
+            return new WidgetSize(width, height);
+        }
+
+        public override WidgetSize CalculateInnerSize()
         {
             float height = 0;
-            float width = 0;
+            float? width = 0;
 
             foreach (var child in Children)
             {
-                var childSize = child.Size;
-                height += childSize.y;
-                width = Mathf.Max(width, childSize.x);
+                var childSize = child.OuterSize;
+
+                if (childSize.IsHeightFixed)
+                {
+                    height += childSize.Height;
+                }
+
+                if (width.HasValue && childSize.IsWidthFixed)
+                {
+                    width = Mathf.Max(width.Value, childSize.Width);
+                }
+                else
+                {
+                    width = null;
+                }
             }
 
-            return new Vector2(width, height);
+            return new WidgetSize(width, height);
         }
     }
 }

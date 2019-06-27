@@ -15,28 +15,31 @@ namespace UniMob.ReView.Widgets
                 Mapper = new PooledViewMapper(transform);
         }
 
-        protected static void SetPosition(RectTransform rt, Vector2 size, Vector2 position, Alignment corner)
+        protected static void SetPosition(RectTransform rt, WidgetSize size, Vector2 position, Alignment corner)
         {
-            rt.anchoredPosition = RectTools.PositionToAnchored(position, rt.pivot, size, corner);
+            var sizeDeltaX = size.IsWidthFixed ? size.Width : 0;
+            var sizeDeltaY = size.IsHeightFixed ? size.Height : 0;
+            var sizeDelta = new Vector2(sizeDeltaX, sizeDeltaY);
+            rt.anchoredPosition = RectTools.PositionToAnchored(position, rt.pivot, sizeDelta, corner);
         }
 
-        protected static void SetSize(RectTransform rt, Vector2 size, Vector2 anchor,
-            bool widthStretch, bool heightStretch)
+        protected static void SetSize(RectTransform rt, WidgetSize size, Vector2 anchor)
         {
-            var sizeDelta = size;
+            var sizeDeltaX = size.IsWidthFixed ? size.Width : 0;
+            var sizeDeltaY = size.IsHeightFixed ? size.Height : 0;
+            var sizeDelta = new Vector2(sizeDeltaX, sizeDeltaY);
+            
             var anchorMin = anchor;
             var anchorMax = anchor;
 
-            if (widthStretch)
+            if (size.IsWidthStretched)
             {
-                sizeDelta.x = 0;
                 anchorMin.x = 0;
                 anchorMax.x = 1;
             }
 
-            if (heightStretch)
+            if (size.IsHeightStretched)
             {
-                sizeDelta.y = 0;
                 anchorMin.y = 0;
                 anchorMax.y = 1;
             }

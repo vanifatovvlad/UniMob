@@ -3,17 +3,13 @@ using JetBrains.Annotations;
 
 namespace UniMob.ReView.Widgets
 {
-    public abstract class MultiChildLayoutWidget : LayoutWidget
+    public abstract class MultiChildLayoutWidget : Widget
     {
         protected MultiChildLayoutWidget(
             [NotNull] WidgetList children,
-            [CanBeNull] Key key,
-            bool stretchHorizontal,
-            bool stretchVertical
+            [CanBeNull] Key key
         ) : base(
-            key,
-            stretchHorizontal,
-            stretchVertical)
+            key)
         {
             Children = children ?? throw new ArgumentNullException(nameof(children));
         }

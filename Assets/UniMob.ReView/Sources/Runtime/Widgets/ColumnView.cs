@@ -10,7 +10,7 @@ namespace UniMob.ReView.Widgets
             var children = State.Children;
             var crossAxis = State.CrossAxisAlignment;
             var mainAxis = State.MainAxisAlignment;
-            var containerSize = State.Size;
+            var columnSize = State.InnerSize;
 
             var alignX = crossAxis == CrossAxisAlignment.Start ? Alignment.TopLeft.X
                 : crossAxis == CrossAxisAlignment.End ? Alignment.TopRight.X
@@ -20,29 +20,36 @@ namespace UniMob.ReView.Widgets
                 : mainAxis == MainAxisAlignment.End ? Alignment.BottomCenter.Y
                 : Alignment.Center.Y;
 
-            var posMultY = mainAxis == MainAxisAlignment.Start ? 0
+            var offsetMultiplierY = mainAxis == MainAxisAlignment.Start ? 0
                 : mainAxis == MainAxisAlignment.End ? 1f
                 : 0.5f;
 
             using (var render = Mapper.CreateRender())
             {
-                float y = -containerSize.y * posMultY;
+                float y = -columnSize.Height * offsetMultiplierY;
+                
                 foreach (var child in children)
                 {
-                    var childSize = child.Size;
-                    var childView = render.RenderItem(child);
-                    var layoutState = child as ILayoutState;
-                    var wStretch = layoutState?.StretchHorizontal ?? false;
-                    var hStretch = layoutState?.StretchVertical ?? false;
+                    var childSize = child.OuterSize;
+
+                    if (childSize.IsHeightStretched)
+                    {
+                        Debug.LogError("Cannot render vertically stretched widgets inside Column.");
+                        continue;
+                    }
                     
-                    var anchor = new Alignment(wStretch ? Alignment.Center.X : alignX, alignY);
-                    SetSize(childView.rectTransform, childSize, anchor.ToAnchor(), wStretch, hStretch);
+                    var childView = render.RenderItem(child);
+
+                    var localAlignX = childSize.IsWidthStretched ? Alignment.Center.X : alignX;
+                    
+                    var anchor = new Alignment(localAlignX, alignY);
+                    SetSize(childView.rectTransform, childSize, anchor.ToAnchor());
                     
                     var position = new Vector2(0, y);
-                    var corner = new Alignment(wStretch ? Alignment.Center.X : alignX, Alignment.TopCenter.Y);
+                    var corner = new Alignment(localAlignX, Alignment.TopCenter.Y);
                     SetPosition(childView.rectTransform, childSize, position, corner);
 
-                    y += childSize.y;
+                    y += childSize.Height;
                 }
             }
         }

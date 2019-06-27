@@ -1,10 +1,9 @@
-using UnityEngine;
-
 namespace UniMob.ReView
 {
     public interface IState
     {
-        Vector2 Size { get; }
+        WidgetSize InnerSize { get; }
+        WidgetSize OuterSize { get; }
 
         string ViewPath { get; }
 

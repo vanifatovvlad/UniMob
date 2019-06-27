@@ -3,7 +3,7 @@ using UniMob.Async;
 
 namespace UniMob.ReView.Widgets
 {
-    public abstract class SingleChildLayoutState<TWidget> : State<TWidget>, ILayoutState
+    public abstract class SingleChildLayoutState<TWidget> : State<TWidget>
         where TWidget : SingleChildLayoutWidget
     {
         private readonly Atom<IState> _child;
@@ -14,7 +14,5 @@ namespace UniMob.ReView.Widgets
         }
 
         public IState Child => _child.Value;
-        public bool StretchVertical => false;
-        public bool StretchHorizontal => false;
     }
 }

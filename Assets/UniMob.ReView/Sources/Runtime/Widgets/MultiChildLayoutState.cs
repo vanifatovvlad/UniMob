@@ -2,7 +2,7 @@ using UniMob.Async;
 
 namespace UniMob.ReView.Widgets
 {
-    public abstract class MultiChildLayoutState<TWidget> : State<TWidget>, ILayoutState
+    public abstract class MultiChildLayoutState<TWidget> : State<TWidget>
         where TWidget : MultiChildLayoutWidget
     {
         private readonly Atom<IState[]> _children;
@@ -13,7 +13,5 @@ namespace UniMob.ReView.Widgets
         }
 
         public IState[] Children => _children.Value;
-        public bool StretchVertical => Widget.StretchVertical;
-        public bool StretchHorizontal => Widget.StretchHorizontal;
     }
 }
