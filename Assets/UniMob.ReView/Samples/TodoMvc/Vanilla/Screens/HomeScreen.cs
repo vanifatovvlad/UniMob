@@ -2,6 +2,7 @@ using UniMob.Async;
 using UniMob.ReView.Samples.TodoMvc.Vanilla.Widgets;
 using UniMob.ReView.Samples.TodoMvc.Views;
 using UniMob.ReView.Widgets;
+using UnityEngine;
 
 namespace UniMob.ReView.Samples.TodoMvc.Vanilla
 {
@@ -40,37 +41,44 @@ namespace UniMob.ReView.Samples.TodoMvc.Vanilla
         {
         }
 
-        private Widget BuildTodos(BuildContext context)
-        {
-            return new Column(
-                children: new WidgetList
-                {
-                    new TodoList(),
-                    new Column(
-                        children: new WidgetList
-                        {
-                            new TodoList(),
-                            new TodoList(),
-                            new TodoList(),
-                        },
-                        crossAxisAlignment: (
-                            ActiveFilter == VisibilityFilter.All ? CrossAxisAlignment.Start :
-                            ActiveFilter == VisibilityFilter.Active ? CrossAxisAlignment.Center :
-                            CrossAxisAlignment.End
-                        ),
-                        stretchHorizontal: true
+        private Widget BuildTodos(BuildContext context) =>
+            new Container(
+                child: new Column(
+                    children: new WidgetList
+                    {
+                        new TodoList(),
+                        BuildSubContainer(),
+                        new TodoList(),
+                    },
+                    crossAxisAlignment: CrossAxisAlignment.Center,
+                    mainAxisAlignment: (
+                        ActiveFilter == VisibilityFilter.All ? MainAxisAlignment.Start :
+                        ActiveFilter == VisibilityFilter.Active ? MainAxisAlignment.Center :
+                        MainAxisAlignment.End
                     ),
-                    new TodoList(),
-                },
-                crossAxisAlignment: CrossAxisAlignment.Center,
-                mainAxisAlignment: (
-                    ActiveFilter == VisibilityFilter.All ? MainAxisAlignment.Start :
-                    ActiveFilter == VisibilityFilter.Active ? MainAxisAlignment.Center :
-                    MainAxisAlignment.End
+                    stretchHorizontal: true,
+                    stretchVertical: true
                 ),
-                stretchHorizontal: true,
-                stretchVertical: true
+                color: Color.cyan
             );
-        }
+
+        private Widget BuildSubContainer() =>
+            new Container(
+                child: new Column(
+                    children: new WidgetList
+                    {
+                        new TodoList(),
+                        new TodoList(),
+                        new TodoList(),
+                    },
+                    crossAxisAlignment: (
+                        ActiveFilter == VisibilityFilter.All ? CrossAxisAlignment.Start :
+                        ActiveFilter == VisibilityFilter.Active ? CrossAxisAlignment.Center :
+                        CrossAxisAlignment.End
+                    ),
+                    stretchHorizontal: true
+                ),
+                color: Color.grey
+            );
     }
 }
