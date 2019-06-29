@@ -39,7 +39,7 @@ namespace UniMob.Async
 
         public void HandleUncaughtException(Exception exception)
         {
-            Debug.Log(exception);
+            Debug.LogException(exception);
         }
 
         public void Invoke(Action action)

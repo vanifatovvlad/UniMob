@@ -15,26 +15,20 @@ namespace UniMob.Async
             return new MutableAtom<T>(() => value, next => value = next, merge, onActive, onInactive, comparer);
         }
 
-        public static Atom<T> Func<T>(
+        public static MutableAtom<T> Computed<T>(
             AtomPull<T> pull,
-            AtomMerge<T> merge = null,
-            Action onActive = null,
-            Action onInactive = null,
-            IEqualityComparer<T> comparer = null)
-        {
-            return new MutableAtom<T>(
-                pull, null, merge, onActive, onInactive, comparer);
-        }
-
-        public static MutableAtom<T> Func<T>(
-            AtomPull<T> pull,
-            AtomPush<T> push,
+            AtomPush<T> push = null,
             AtomMerge<T> merge = null,
             Action onActive = null,
             Action onInactive = null,
             IEqualityComparer<T> comparer = null)
         {
             return new MutableAtom<T>(pull, push, merge, onActive, onInactive, comparer);
+        }
+        
+        public static MutableAtom<T> Property<T>(AtomPull<T> pull, AtomPush<T> push)
+        {
+            return new MutableAtom<T>(pull, push);
         }
 
         public static ReactionAtom CreateReaction(Action reaction)

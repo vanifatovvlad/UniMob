@@ -10,7 +10,7 @@ namespace UniMob.Async
         private List<AtomBase> _children;
         private List<AtomBase> _listeners;
         private bool _deactivated = true;
-        
+
         protected AtomState State = AtomState.Obsolete;
 
         protected enum AtomState
@@ -20,7 +20,7 @@ namespace UniMob.Async
             Pulling,
             Actual,
         }
-        
+
         public bool Deactivated => _deactivated;
 
         protected AtomBase(Action onActive, Action onInactive)
@@ -75,13 +75,15 @@ namespace UniMob.Async
             {
                 if (!force && State == AtomState.Checking)
                 {
-                    _children.ForEach(child =>
+                    void ActualizeChild(AtomBase child)
                     {
                         if (State != AtomState.Checking)
                             return;
 
                         child.Actualize();
-                    });
+                    }
+
+                    _children.ForEach(ActualizeChild);
 
                     if (State == AtomState.Checking)
                     {
@@ -96,7 +98,8 @@ namespace UniMob.Async
                     {
                         _children = null;
 
-                        oldChildren.ForEach(child => child.RemoveListener(this));
+                        void RemoveChildListener(AtomBase child) => child.RemoveListener(this);
+                        oldChildren.ForEach(RemoveChildListener);
                         DeleteList(ref oldChildren);
                     }
 
@@ -220,7 +223,7 @@ namespace UniMob.Async
             if (_scheduled == Zone.Current)
                 return;
 
-            Zone.Current.Invoke(() =>
+            void DoSync()
             {
                 if (_scheduled == null)
                     return;
@@ -234,7 +237,9 @@ namespace UniMob.Async
 #if UNITY_EDITOR
                 UnityEngine.Profiling.Profiler.EndSample();
 #endif
-            });
+            }
+
+            Zone.Current.Invoke(DoSync);
 
             _scheduled = Zone.Current;
         }

@@ -25,8 +25,8 @@ namespace UniMob.ReView
         {
             Assert.IsNull(Atom.CurrentScope);
             ViewPath = view ?? throw new ArgumentNullException(nameof(view));
-            _innerSize = Atom.Func(CalculateInnerSize);
-            _outerSize = Atom.Func(CalculateOuterSize);
+            _innerSize = Atom.Computed(CalculateInnerSize);
+            _outerSize = Atom.Computed(CalculateOuterSize);
         }
 
         protected virtual void Update(Widget widget)
@@ -90,7 +90,7 @@ namespace UniMob.ReView
             Assert.IsNull(Atom.CurrentScope);
 
             State state = null;
-            return Atom.Func<IState>(() =>
+            return Atom.Computed<IState>(() =>
             {
                 var newWidget = builder(context);
                 using (Atom.NoWatch)
@@ -107,7 +107,7 @@ namespace UniMob.ReView
             Assert.IsNull(Atom.CurrentScope);
 
             var states = new State[0];
-            return Atom.Func<IState[]>(() =>
+            return Atom.Computed<IState[]>(() =>
             {
                 var newWidgets = builder.Invoke(context);
                 using (Atom.NoWatch)

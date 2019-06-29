@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace UniMob.Async
 {
-    public delegate T AtomPull<T>();
+    public delegate T AtomPull<out T>();
 
-    public delegate T AtomPush<T>(T value);
+    public delegate void AtomPush<in T>(T value);
 
     public delegate T AtomMerge<T>(T prevValue, T nextValue);
 
@@ -106,13 +106,14 @@ namespace UniMob.Async
                 if (_hasCache && _comparer.Equals(value, _cache))
                     return;
 
-                State = AtomState.Actual;
-                _hasCache = true;
+                State = AtomState.Obsolete;
+                _cache = default;
+                _hasCache = false;
 
                 try
                 {
                     _isRunningSetter = true;
-                    _cache = _push(value);
+                    _push(value);
                 }
                 finally
                 {

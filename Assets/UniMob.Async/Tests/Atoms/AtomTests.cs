@@ -13,7 +13,7 @@ namespace UniMob.Async.Tests.Atoms
             var value = new int[0];
 
             var source = Atom.Value(1);
-            var atom = Atom.Func(
+            var atom = Atom.Computed(
                 pull: () => value = new[] {Math.Abs(source.Value)},
                 merge: (prev, next) => next.SequenceEqual(prev) ? prev : next);
 
@@ -29,7 +29,7 @@ namespace UniMob.Async.Tests.Atoms
         {
             var activation = "";
 
-            var atom = Atom.Func(
+            var atom = Atom.Computed(
                 pull: () => 1,
                 onActive: () => activation += "A",
                 onInactive: () => activation += "D");
@@ -48,11 +48,11 @@ namespace UniMob.Async.Tests.Atoms
         {
             var activation = "";
 
-            var atom = Atom.Func(
+            var atom = Atom.Computed(
                 pull: () => 1,
                 onActive: () => activation += "A",
                 onInactive: () => activation += "D");
-            var listener = Atom.Func(() => atom.Value + 1);
+            var listener = Atom.Computed(() => atom.Value + 1);
 
             Assert.AreEqual("", activation);
 
@@ -71,13 +71,13 @@ namespace UniMob.Async.Tests.Atoms
         {
             var activation = "";
 
-            var activationSource = Atom.Func(
+            var activationSource = Atom.Computed(
                 pull: () => 1,
                 onActive: () => activation += "A",
                 onInactive: () => activation += "D");
 
             var modifiedSource = Atom.Value(1);
-            var listener = Atom.Func(() => activationSource.Value + modifiedSource.Value);
+            var listener = Atom.Computed(() => activationSource.Value + modifiedSource.Value);
 
             Assert.AreEqual("", activation);
 
@@ -116,7 +116,7 @@ namespace UniMob.Async.Tests.Atoms
         public void Caching() => TestZone.Run(tick =>
         {
             var random = new Random();
-            var atom = Atom.Func(() => random.Next());
+            var atom = Atom.Computed(() => random.Next());
 
             Assert.AreEqual(atom.Value, atom.Value);
         });
@@ -125,7 +125,7 @@ namespace UniMob.Async.Tests.Atoms
         public void Lazy() => TestZone.Run(tick =>
         {
             var value = 0;
-            var atom = Atom.Func(() => value = 1);
+            var atom = Atom.Computed(() => value = 1);
 
             tick(0f);
             Assert.AreEqual(0, value);
@@ -138,8 +138,8 @@ namespace UniMob.Async.Tests.Atoms
         public void InstantActualization() => TestZone.Run(tick =>
         {
             var source = Atom.Value(1);
-            var middle = Atom.Func(() => source.Value + 1);
-            var target = Atom.Func(() => middle.Value + 1);
+            var middle = Atom.Computed(() => source.Value + 1);
+            var target = Atom.Computed(() => middle.Value + 1);
 
             Assert.AreEqual(3, target.Value);
 
@@ -154,8 +154,8 @@ namespace UniMob.Async.Tests.Atoms
             var targetUpdates = 0;
 
             var source = Atom.Value(1);
-            var middle = Atom.Func(() => Math.Abs(source.Value));
-            var target = Atom.Func(() =>
+            var middle = Atom.Computed(() => Math.Abs(source.Value));
+            var target = Atom.Computed(() =>
             {
                 ++targetUpdates;
                 return middle.Value;
@@ -176,17 +176,17 @@ namespace UniMob.Async.Tests.Atoms
             var actualization = "";
 
             var source = Atom.Value(1);
-            var middle = Atom.Func(() =>
+            var middle = Atom.Computed(() =>
             {
                 actualization += "M";
                 return source.Value;
             });
-            var target = Atom.Func(() =>
+            var target = Atom.Computed(() =>
             {
                 actualization += "T";
                 source.Get();
                 return middle.Value;
-            }, value => value);
+            });
 
             target.Get();
             Assert.AreEqual("TM", actualization);
@@ -203,8 +203,8 @@ namespace UniMob.Async.Tests.Atoms
             int targetValue = 0;
 
             var source = Atom.Value(1);
-            var middle = Atom.Func(() => source.Value + 1);
-            var target = Atom.Func(() => targetValue = middle.Value + 1);
+            var middle = Atom.Computed(() => source.Value + 1);
+            var target = Atom.Computed(() => targetValue = middle.Value + 1);
 
             target.Get();
             Assert.AreEqual(3, targetValue);
