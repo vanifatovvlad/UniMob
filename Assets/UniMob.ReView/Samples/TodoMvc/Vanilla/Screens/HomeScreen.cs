@@ -56,8 +56,8 @@ namespace UniMob.ReView.Samples.TodoMvc.Vanilla
                         ActiveFilter == VisibilityFilter.Active ? MainAxisAlignment.Center :
                         MainAxisAlignment.End
                     ),
-                    stretchHorizontal: true,
-                    stretchVertical: true
+                    crossAxisSize: AxisSize.Max,
+                    mainAxisSize: AxisSize.Max
                 ),
                 color: Color.cyan
             );
@@ -76,7 +76,7 @@ namespace UniMob.ReView.Samples.TodoMvc.Vanilla
                         ActiveFilter == VisibilityFilter.Active ? CrossAxisAlignment.Center :
                         CrossAxisAlignment.End
                     ),
-                    stretchHorizontal: true
+                    crossAxisSize: AxisSize.Max
                 ),
                 color: Color.grey
             );

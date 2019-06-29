@@ -10,8 +10,8 @@ namespace UniMob.ReView.Widgets
             [CanBeNull] Key key = null,
             CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.Start,
             MainAxisAlignment mainAxisAlignment = MainAxisAlignment.Start,
-            bool stretchHorizontal = false,
-            bool stretchVertical = false
+            AxisSize crossAxisSize = AxisSize.Min,
+            AxisSize mainAxisSize = AxisSize.Min
         ) : base(
             children,
             key
@@ -19,19 +19,19 @@ namespace UniMob.ReView.Widgets
         {
             CrossAxisAlignment = crossAxisAlignment;
             MainAxisAlignment = mainAxisAlignment;
-            StretchHorizontal = stretchHorizontal;
-            StretchVertical = stretchVertical;
+            CrossAxisSize = crossAxisSize;
+            MainAxisSize = mainAxisSize;
         }
 
         public CrossAxisAlignment CrossAxisAlignment { get; }
         public MainAxisAlignment MainAxisAlignment { get; }
-        
-        public bool StretchHorizontal { get; }
-        public bool StretchVertical { get; }
+
+        public AxisSize CrossAxisSize { get; }
+        public AxisSize MainAxisSize { get; }
 
         public override State CreateState() => new ColumnState();
     }
-    
+
     internal sealed class ColumnState : MultiChildLayoutState<Column>, IColumnState
     {
         public ColumnState() : base("UniMob.Column")
@@ -43,14 +43,14 @@ namespace UniMob.ReView.Widgets
 
         public override WidgetSize CalculateOuterSize()
         {
-            var wStretch = Widget.StretchHorizontal;
-            var hStretch = Widget.StretchVertical;
+            var wStretch = Widget.CrossAxisSize == AxisSize.Max;
+            var hStretch = Widget.MainAxisSize == AxisSize.Max;
 
             if (wStretch && hStretch)
             {
                 return WidgetSize.Stretched;
             }
-            
+
             var size = base.CalculateOuterSize();
 
             float? width = null;
@@ -58,7 +58,7 @@ namespace UniMob.ReView.Widgets
 
             if (size.IsWidthFixed && !wStretch) width = size.Width;
             if (size.IsHeightFixed && !hStretch) height = size.Height;
-            
+
             return new WidgetSize(width, height);
         }
 
