@@ -5,7 +5,7 @@ namespace UniMob.ReView.Widgets
     public abstract class LayoutView<TState> : View<TState>
         where TState : IState
     {
-        protected ViewMapperBase Mapper { get; private set; }
+        internal ViewMapperBase Mapper { get; private set; }
 
         protected override void Activate()
         {

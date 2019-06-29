@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 
 namespace UniMob.ReView
 {
-    internal class ClassPool<TType>
+    internal sealed class ClassPool<TType>
     {
         private readonly Stack<TType> _pool = new Stack<TType>();
         private readonly Func<TType> _create;

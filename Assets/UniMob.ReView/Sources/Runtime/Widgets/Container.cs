@@ -1,14 +1,15 @@
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace UniMob.ReView.Widgets
 {
-    public class Container : SingleChildLayoutWidget
+    public sealed class Container : SingleChildLayoutWidget
     {
         public Container(
-            Widget child,
-            Key key = null,
-            Color? color = null,
-            Alignment? alignment = null)
+            [NotNull] Widget child,
+            [CanBeNull] Key key = null,
+            [CanBeNull] Color? color = null,
+            [CanBeNull] Alignment? alignment = null)
             : base(child, key)
         {
             Color = color ?? Color.clear;
@@ -21,7 +22,7 @@ namespace UniMob.ReView.Widgets
         public override State CreateState() => new ContainerState();
     }
 
-    public class ContainerState : SingleChildLayoutState<Container>, IContainerState
+    internal sealed class ContainerState : SingleChildLayoutState<Container>, IContainerState
     {
         public ContainerState() : base("UniMob.Container")
         {

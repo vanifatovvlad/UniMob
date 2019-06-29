@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace UniMob.ReView
 {
-    public class PooledViewMapper : ViewMapperBase
+    internal sealed class PooledViewMapper : ViewMapperBase
     {
         private readonly Func<Transform> _parentSelector;
         private readonly bool _worldPositionStays;

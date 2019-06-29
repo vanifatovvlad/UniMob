@@ -3,7 +3,8 @@ using UnityEngine.UI;
 
 namespace UniMob.ReView.Widgets
 {
-    public class ContainerView : LayoutView<IContainerState>
+    [AddComponentMenu("UniMob/Views/Container")]
+    public sealed class ContainerView : LayoutView<IContainerState>
     {
         [SerializeField] private Image backgroundImage;
 

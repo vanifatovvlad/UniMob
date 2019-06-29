@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace UniMob.ReView
 {
-    internal class Engine
+    internal static class Engine
     {
         public static bool IsApplicationQuiting { get; private set; }
 

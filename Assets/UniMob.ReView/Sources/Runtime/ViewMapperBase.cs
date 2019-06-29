@@ -4,7 +4,7 @@ using UniMob.Async;
 
 namespace UniMob.ReView
 {
-    public abstract class ViewMapperBase : IViewTreeElement
+    internal abstract class ViewMapperBase : IViewTreeElement
     {
         private List<Item> _items = new List<Item>();
         private List<Item> _next = new List<Item>();

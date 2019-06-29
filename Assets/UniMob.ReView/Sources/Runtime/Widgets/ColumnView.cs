@@ -3,7 +3,7 @@ using UnityEngine;
 namespace UniMob.ReView.Widgets
 {
     [AddComponentMenu("UniMob/Views/Column")]
-    public class ColumnView : LayoutView<ColumnState>
+    public sealed class ColumnView : LayoutView<IColumnState>
     {
         protected override void Render()
         {
@@ -27,7 +27,7 @@ namespace UniMob.ReView.Widgets
             using (var render = Mapper.CreateRender())
             {
                 float y = -columnSize.Height * offsetMultiplierY;
-                
+
                 foreach (var child in children)
                 {
                     var childSize = child.OuterSize;
@@ -37,14 +37,14 @@ namespace UniMob.ReView.Widgets
                         Debug.LogError("Cannot render vertically stretched widgets inside Column.");
                         continue;
                     }
-                    
+
                     var childView = render.RenderItem(child);
 
                     var localAlignX = childSize.IsWidthStretched ? Alignment.Center.X : alignX;
-                    
+
                     var anchor = new Alignment(localAlignX, alignY);
                     SetSize(childView.rectTransform, childSize, anchor.ToAnchor());
-                    
+
                     var position = new Vector2(0, y);
                     var corner = new Alignment(localAlignX, Alignment.TopCenter.Y);
                     SetPosition(childView.rectTransform, childSize, position, corner);
@@ -53,5 +53,12 @@ namespace UniMob.ReView.Widgets
                 }
             }
         }
+    }
+
+    public interface IColumnState : IState
+    {
+        IState[] Children { get; }
+        CrossAxisAlignment CrossAxisAlignment { get; }
+        MainAxisAlignment MainAxisAlignment { get; }
     }
 }

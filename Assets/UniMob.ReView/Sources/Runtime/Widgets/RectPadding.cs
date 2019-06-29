@@ -4,7 +4,7 @@ using UnityEngine;
 namespace UniMob.ReView.Widgets
 {
     [Serializable]
-    public class RectPadding
+    public struct RectPadding
     {
         [SerializeField] private float left;
         [SerializeField] private float right;

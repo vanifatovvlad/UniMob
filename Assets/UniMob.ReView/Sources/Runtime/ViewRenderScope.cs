@@ -2,7 +2,7 @@ using System;
 
 namespace UniMob.ReView
 {
-    public class ViewRenderScope
+    public sealed class ViewRenderScope
     {
         private readonly Scope _scope = new Scope();
 
