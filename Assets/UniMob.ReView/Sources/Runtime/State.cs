@@ -7,13 +7,13 @@ using UnityEngine.Assertions;
 
 namespace UniMob.ReView
 {
-    public abstract class State : IState, IDisposable
+    public abstract partial class State : IState, IDisposable
     {
         private readonly Atom<WidgetSize> _innerSize;
         private readonly Atom<WidgetSize> _outerSize;
 
         public BuildContext Context { get; internal set; }
-
+        
         public string ViewPath { get; }
 
         internal Widget Widget { get; private set; }
@@ -300,6 +300,8 @@ namespace UniMob.ReView
         protected State([NotNull] string view) : base(view)
         {
         }
+
+        BuildContext BuildContext.Parent => Context;
 
         protected new TWidget Widget => _widget.Value;
 
