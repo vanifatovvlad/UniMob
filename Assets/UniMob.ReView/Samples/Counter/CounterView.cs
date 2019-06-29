@@ -7,11 +7,14 @@ namespace UniMob.ReView.Samples.Counter
     public class CounterView : View<ICounterState>
     {
         [Header("Texts")]
-        [SerializeField] private TMP_Text counterText;
-        
+        [SerializeField]
+        private TMP_Text counterText = default;
+
         [Header("Buttons")]
-        [SerializeField] private Button incrementButton;
-        [SerializeField] private Button decrementButton;
+        [SerializeField]
+        private Button incrementButton = default;
+
+        [SerializeField] private Button decrementButton = default;
 
         protected override void Awake()
         {

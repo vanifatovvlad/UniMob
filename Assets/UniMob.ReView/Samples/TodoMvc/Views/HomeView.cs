@@ -6,13 +6,13 @@ namespace UniMob.ReView.Samples.TodoMvc.Views
 {
     public class HomeView : View<IHomeState>
     {
-        [SerializeField] private ViewPanel todosContainer;
+        [SerializeField] private ViewPanel todosContainer = default;
 
-        [SerializeField] private Button addButton;
+        [SerializeField] private Button addButton = default;
 
-        [SerializeField] private Button allVisibleButton;
-        [SerializeField] private Button activeVisibleButton;
-        [SerializeField] private Button completedVisibleButton;
+        [SerializeField] private Button allVisibleButton = default;
+        [SerializeField] private Button activeVisibleButton = default;
+        [SerializeField] private Button completedVisibleButton = default;
 
         protected override void Awake()
         {
