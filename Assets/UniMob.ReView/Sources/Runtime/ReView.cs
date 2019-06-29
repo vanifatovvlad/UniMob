@@ -7,14 +7,14 @@ namespace UniMob.ReView
 {
     public static class ReView
     {
-        public static void RunApp([NotNull] ContainerView container, [NotNull] WidgetBuilder builder)
+        public static void RunApp([NotNull] ViewPanel root, [NotNull] WidgetBuilder builder)
         {
-            if (container == null) throw new ArgumentNullException(nameof(container));
+            if (root == null) throw new ArgumentNullException(nameof(root));
             if (builder == null) throw new ArgumentNullException(nameof(builder));
 
             var context = new AppContext();
             var state = State.Create(context, builder);
-            var render = Atom.CreateReaction(() => container.SetState(state.Value));
+            var render = Atom.CreateReaction(() => root.SetState(state.Value));
 
             render.Get();
         }

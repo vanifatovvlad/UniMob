@@ -5,7 +5,7 @@ namespace UniMob.ReView.Samples.TodoMvc.Vanilla
 {
     public class TodoMvcVanillaApp : MonoBehaviour
     {
-        [SerializeField] private ContainerView root;
+        [SerializeField] private ViewPanel root;
 
         private readonly TodoStore _store = new TodoStore();
 

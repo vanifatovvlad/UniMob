@@ -6,7 +6,7 @@ namespace UniMob.ReView.Samples.TodoMvc.Views
 {
     public class HomeView : View<IHomeState>
     {
-        [SerializeField] private ContainerView todosContainer;
+        [SerializeField] private ViewPanel todosContainer;
 
         [SerializeField] private Button addButton;
 

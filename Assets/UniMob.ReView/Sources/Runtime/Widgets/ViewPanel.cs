@@ -2,8 +2,8 @@ using UnityEngine;
 
 namespace UniMob.ReView.Widgets
 {
-    [AddComponentMenu("UniMob/Views/Container")]
-    public sealed class ContainerView : LayoutView<IState>
+    [AddComponentMenu("UniMob/Views/ViewPanel")]
+    public sealed class ViewPanel : LayoutView<IState>
     {
         protected override void Render()
         {
