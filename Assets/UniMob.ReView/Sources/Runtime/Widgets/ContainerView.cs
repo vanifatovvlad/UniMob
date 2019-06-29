@@ -6,7 +6,7 @@ namespace UniMob.ReView.Widgets
     [AddComponentMenu("UniMob/Views/Container")]
     public sealed class ContainerView : LayoutView<IContainerState>
     {
-        [SerializeField] private Image backgroundImage;
+        [SerializeField] private Image backgroundImage = default;
 
         protected override void Render()
         {

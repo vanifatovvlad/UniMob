@@ -11,6 +11,14 @@ namespace UniMob.ReView.Widgets
         [SerializeField] private float top;
         [SerializeField] private float bottom;
 
+        public RectPadding(float left, float right, float top, float bottom)
+        {
+            this.left = left;
+            this.right = right;
+            this.top = top;
+            this.bottom = bottom;
+        }
+
         public float Left => left;
         public float Right => right;
         public float Top => top;
