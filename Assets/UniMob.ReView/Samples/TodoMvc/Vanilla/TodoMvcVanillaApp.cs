@@ -1,3 +1,4 @@
+using System;
 using UniMob.ReView.Widgets;
 using UnityEngine;
 
@@ -9,13 +10,20 @@ namespace UniMob.ReView.Samples.TodoMvc.Vanilla
 
         private readonly TodoStore _store = new TodoStore();
 
-        private void Start()
+        private IDisposable _render;
+        
+        private void OnEnable()
         {
-            ReView.RunApp(root, context =>
+            _render = ReView.RunApp(root, context =>
             {
                 //
                 return new HomeScreen(store: _store);
             });
+        }
+
+        private void OnDisable()
+        {
+            _render.Dispose();
         }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using UniMob.ReView.Widgets;
 using UnityEngine;
 
@@ -7,9 +8,16 @@ namespace UniMob.ReView.Samples.Counter
     {
         [SerializeField] private ViewPanel root;
 
-        private void Start()
+        private IDisposable _render;
+
+        private void OnEnable()
         {
-            ReView.RunApp(root, context => new Counter());
+            _render = ReView.RunApp(root, context => new Counter());
+        }
+
+        private void OnDisable()
+        {
+            _render.Dispose();
         }
     }
 }

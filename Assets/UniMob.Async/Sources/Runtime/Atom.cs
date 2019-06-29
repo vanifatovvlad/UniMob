@@ -42,6 +42,13 @@ namespace UniMob.Async
             return new ReactionAtom(reaction);
         }
 
+        public static ReactionAtom RunReaction(Action reaction)
+        {
+            var atom = CreateReaction(reaction);
+            atom.Get();
+            return atom;
+        }
+
         public static void Push<T>(MutableAtom<T> atom, T value) => atom.Push(value);
 
         public static WatchScope NoWatch => new WatchScope(null);
