@@ -22,6 +22,9 @@ namespace UniMob.ReView
             _height = height;
         }
 
+        public WidgetSize WithWidth(float? width) => new WidgetSize(width, _height);
+        public WidgetSize WithHeight(float? height) => new WidgetSize(_width, height);
+
         public static WidgetSize Fixed(float width, float height) => new WidgetSize(width, height);
         public static WidgetSize FixedWidth(float width) => new WidgetSize(width, null);
         public static WidgetSize FixedHeight(float height) => new WidgetSize(null, height);

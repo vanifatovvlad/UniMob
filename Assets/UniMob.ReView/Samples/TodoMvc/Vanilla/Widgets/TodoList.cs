@@ -1,4 +1,4 @@
-using JetBrains.Annotations;
+using UniMob.Async;
 using UniMob.ReView.Samples.TodoMvc.Views;
 
 namespace UniMob.ReView.Samples.TodoMvc.Vanilla.Widgets
@@ -10,8 +10,22 @@ namespace UniMob.ReView.Samples.TodoMvc.Vanilla.Widgets
 
     public class TodoListState : State<TodoList>, ITodoListState
     {
+        private readonly MutableAtom<bool> _full = Atom.Value(false);
+
         public TodoListState() : base("TodoList")
         {
+        }
+
+        public override WidgetSize CalculateInnerSize()
+        {
+            var size = base.CalculateInnerSize();
+            if (_full.Value) size = size.WithHeight(200);
+            return size;
+        }
+
+        public void OnTap()
+        {
+            _full.Value = !_full.Value;
         }
     }
 }
