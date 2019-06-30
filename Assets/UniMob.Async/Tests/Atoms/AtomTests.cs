@@ -232,6 +232,38 @@ namespace UniMob.Async.Tests.Atoms
         });
 
         [Test]
+        public void ThrowException() => TestZone.Run(tick =>
+        {
+            var source = Atom.Value(0);
+            var exception = new Exception();
+
+            var middle = Atom.Computed(() =>
+            {
+                if (source.Value == 0)
+                    throw exception;
+
+                return source.Value + 1;
+            });
+
+            var stack = new Stack<Exception>();
+
+            var reaction = Atom.CreateReaction(
+                reaction: () => middle.Get(),
+                exceptionHandler: ex => stack.Push(ex));
+
+            reaction.Get();
+
+            Assert.AreEqual(1, stack.Count);
+            Assert.AreEqual(exception, stack.Peek());
+            Assert.Throws<Exception>(() => middle.Get());
+
+            source.Value = 1;
+            tick(0);
+
+            Assert.AreEqual(2, middle.Value);
+        });
+
+        [Test]
         public void WhenAtom() => TestZone.Run(tick =>
         {
             var source = Atom.Value(0);

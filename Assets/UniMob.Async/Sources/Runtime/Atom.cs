@@ -31,9 +31,9 @@ namespace UniMob.Async
             return new MutableAtom<T>(pull, push);
         }
 
-        public static ReactionAtom CreateReaction(Action reaction)
+        public static ReactionAtom CreateReaction(Action reaction, Action<Exception> exceptionHandler = null)
         {
-            return new ReactionAtom(reaction);
+            return new ReactionAtom(reaction, exceptionHandler);
         }
 
         public static ReactionAtom RunReaction(Action reaction)
@@ -44,6 +44,7 @@ namespace UniMob.Async
         }
 
         public static void Push<T>(MutableAtom<T> atom, T value) => atom.Push(value);
+        public static void PushException<T>(MutableAtom<T> atom, Exception exception) => atom.PushException(exception);
 
         public static WatchScope NoWatch => new WatchScope(null);
         

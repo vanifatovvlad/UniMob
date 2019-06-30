@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
+using JetBrains.Annotations;
 
 namespace UniMob.Async
 {
@@ -24,17 +24,12 @@ namespace UniMob.Async
 
         private bool _hasCache;
         private T _cache;
+        private Exception _cacheException;
 
         private bool _isRunningSetter;
 
-        public T Value
-        {
-            get => Get();
-            set => Set(value);
-        }
-
         public MutableAtom(
-            AtomPull<T> pull,
+            [NotNull] AtomPull<T> pull,
             AtomPush<T> push = null,
             AtomMerge<T> merge = null,
             Action onActive = null,
@@ -48,93 +43,130 @@ namespace UniMob.Async
             _comparer = comparer ?? EqualityComparer<T>.Default;
         }
 
+        public T Value
+        {
+            get
+            {
+                Update();
+                StackPush();
+
+                if (_cacheException != null)
+                {
+                    throw _cacheException;
+                }
+                
+                return _cache;
+            }
+            set
+            {
+                if (_push == null)
+                    throw new InvalidOperationException("It is not possible to assign a new value to a readonly Atom");
+
+                if (_isRunningSetter)
+                {
+                    var message = "The setter of MutableAtom is trying to update itself. " +
+                                  "Did you intend to invoke Atom.Push(..), instead of the setter?";
+                    throw new InvalidOperationException(message);
+                }
+
+                try
+                {
+                    using (Atom.NoWatch)
+                    {
+                        if (_hasCache && _comparer.Equals(value, _cache))
+                            return;
+
+                        State = AtomState.Obsolete;
+                        _cache = default;
+                        _cacheException = null;
+                        _hasCache = false;
+
+                        _isRunningSetter = true;
+                        _push(value);
+                    }
+                }
+                finally
+                {
+                    _isRunningSetter = false;
+                    ObsoleteListeners();
+                }
+            }
+        }
+
         public override void Deactivate()
         {
             base.Deactivate();
 
             _hasCache = false;
             _cache = default;
+            _cacheException = null;
         }
 
         protected override void Evaluate()
         {
             State = AtomState.Actual;
 
-            var value = _pull();
-
-            using (Atom.NoWatch)
+            try
             {
-                if (_hasCache && _comparer.Equals(value, _cache))
-                    return;
+                var value = _pull();
 
-                if (_merge != null && _hasCache)
+                using (Atom.NoWatch)
                 {
+                    if (_hasCache && _comparer.Equals(value, _cache))
+                        return;
+                    
+                    if (_merge != null && _hasCache)
+                    {
+                        _cache = _merge(_cache, value);
+                    }
+                    else
+                    {
+                        _cache = value;
+                    }
+
+                    _cacheException = null;
                     _hasCache = true;
-                    _cache = _merge(_cache, value);
-                }
-                else
-                {
-                    _hasCache = true;
-                    _cache = value;
                 }
             }
-
-            ObsoleteListeners();
-        }
-
-        public T Get()
-        {
-            Update();
-            StackPush();
-            return _cache;
-        }
-
-        public void Set(T value)
-        {
-            if (_push == null)
-                throw new InvalidOperationException("It is not possible to assign a new value to a readonly Atom");
-
-            if (_isRunningSetter)
+            catch (Exception exception)
             {
-                var message = "The setter of MutableAtom is trying to update itself. " +
-                              "Did you intend to invoke Atom.Push(..), instead of the setter?";
-                throw new InvalidOperationException(message);
-            }
-
-            using (Atom.NoWatch)
-            {
-                if (_hasCache && _comparer.Equals(value, _cache))
-                    return;
-
-                State = AtomState.Obsolete;
-                _cache = default;
                 _hasCache = false;
-
-                try
-                {
-                    _isRunningSetter = true;
-                    _push(value);
-                }
-                finally
-                {
-                    _isRunningSetter = false;
-                }
+                _cache = default;
+                _cacheException = exception;
             }
 
             ObsoleteListeners();
         }
+
+        public T Get() => Value;
+
+        public void Set(T value) => Value = value;
 
         internal void Push(T value)
         {
             State = AtomState.Actual;
             _hasCache = true;
             _cache = value;
+            _cacheException = null;
 
+            ObsoleteListeners();
+        }
+
+        internal void PushException(Exception exception)
+        {
+            State = AtomState.Actual;
+            _hasCache = false;
+            _cache = default;
+            _cacheException = exception ?? new NullReferenceException();
+            
             ObsoleteListeners();
         }
 
         public override string ToString()
         {
+            if (_cacheException != null)
+                return _cacheException.ToString();
+
             return _hasCache ? Convert.ToString(_cache) : "[undefined]";
         }
     }
