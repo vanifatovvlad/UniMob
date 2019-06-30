@@ -45,7 +45,7 @@ namespace UniMob.ReView
             _renderScope.Link(this);
 
             if (_renderAtom == null)
-                _renderAtom = Atom.CreateReaction(RenderAction);
+                _renderAtom =new ReactionAtom(RenderAction);
 
             _hasSource = true;
             _source.Value = nextState;

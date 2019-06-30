@@ -28,7 +28,7 @@ namespace UniMob.Async
 
         private bool _isRunningSetter;
 
-        public MutableAtom(
+        internal MutableAtom(
             [NotNull] AtomPull<T> pull,
             AtomPush<T> push = null,
             AtomMerge<T> merge = null,

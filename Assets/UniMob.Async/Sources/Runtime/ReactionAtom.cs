@@ -2,7 +2,7 @@ using System;
 
 namespace UniMob.Async
 {
-    public class ReactionAtom : AtomBase
+    public class ReactionAtom : AtomBase, IDisposable
     {
         private readonly Action _reaction;
         private readonly Action<Exception> _exceptionHandler;
@@ -12,6 +12,11 @@ namespace UniMob.Async
         {
             _reaction = reaction ?? throw new ArgumentNullException(nameof(reaction));
             _exceptionHandler = exceptionHandler ?? Zone.Current.HandleUncaughtException;
+        }
+
+        public void Dispose()
+        {
+            Deactivate();
         }
 
         public void Get()

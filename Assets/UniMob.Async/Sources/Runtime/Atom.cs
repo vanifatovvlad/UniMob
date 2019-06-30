@@ -25,20 +25,49 @@ namespace UniMob.Async
         {
             return new MutableAtom<T>(pull, push, merge, onActive, onInactive, comparer);
         }
-        
+
         public static MutableAtom<T> Property<T>(AtomPull<T> pull, AtomPush<T> push)
         {
             return new MutableAtom<T>(pull, push);
         }
 
-        public static ReactionAtom CreateReaction(Action reaction, Action<Exception> exceptionHandler = null)
+        public static IDisposable Reaction<T>(
+            AtomPull<T> pull,
+            Action<T, IDisposable> reaction,
+            IEqualityComparer<T> comparer = null,
+            bool fireImmediately = false,
+            Action<Exception> exceptionHandler = null)
         {
-            return new ReactionAtom(reaction, exceptionHandler);
+            var valueAtom = Computed(pull, comparer: comparer);
+            bool firstRun = true;
+
+            ReactionAtom atom = null;
+            atom = new ReactionAtom(() =>
+            {
+                var value = valueAtom.Value;
+
+                using (NoWatch)
+                {
+                    if (firstRun)
+                    {
+                        firstRun = false;
+
+                        if (!fireImmediately)
+                            return;
+                    }
+
+                    // ReSharper disable once AccessToModifiedClosure
+                    reaction(value, atom);
+                }
+            }, exceptionHandler);
+
+            atom.Get();
+            return atom;
         }
 
-        public static ReactionAtom RunReaction(Action reaction)
+        public static IDisposable AutoRun(Action reaction, Action<Exception> exceptionHandler = null)
         {
-            var atom = CreateReaction(reaction);
+            var atom = new ReactionAtom(reaction, exceptionHandler);
             atom.Get();
             return atom;
         }
@@ -47,7 +76,7 @@ namespace UniMob.Async
         public static void PushException<T>(MutableAtom<T> atom, Exception exception) => atom.PushException(exception);
 
         public static WatchScope NoWatch => new WatchScope(null);
-        
+
         public static AtomBase CurrentScope => AtomBase.Stack;
 
         public readonly struct WatchScope : IDisposable
@@ -65,7 +94,7 @@ namespace UniMob.Async
                 AtomBase.Stack = _parent;
             }
         }
-        
+
         /// <summary>
         /// Creates Future which completes when condition becomes True.
         /// If condition throw exception, Future completes with exception.
@@ -75,9 +104,14 @@ namespace UniMob.Async
         public static Future<AsyncUnit> When(Func<bool> cond)
         {
             var future = new Future<AsyncUnit>();
+            When(cond, () => future.Complete(AsyncUnit.Unit), future.CompleteException);
+            return future;
+        }
 
-            ReactionAtom watcher = null;
-            watcher = CreateReaction(() =>
+        public static IDisposable When(Func<bool> cond, Action callback, Action<Exception> exceptionHandler)
+        {
+            IDisposable watcher = null;
+            return watcher = AutoRun(() =>
             {
                 Exception exception = null;
                 try
@@ -91,18 +125,14 @@ namespace UniMob.Async
 
                 using (NoWatch)
                 {
-                    if (exception != null) future.CompleteException(exception);
-                    else future.Complete(AsyncUnit.Unit);
+                    if (exception != null) exceptionHandler(exception);
+                    else callback();
 
                     // ReSharper disable once AccessToModifiedClosure
-                    watcher?.Deactivate();
+                    watcher?.Dispose();
                     watcher = null;
                 }
             });
-            
-            watcher.Get();
-
-            return future;
         }
     }
 }

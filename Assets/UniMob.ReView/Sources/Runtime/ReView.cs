@@ -15,12 +15,12 @@ namespace UniMob.ReView
             IView view = root;
             var context = new AppContext();
             var state = State.Create(context, builder);
-            var render = Atom.RunReaction(() => view.SetSource(state.Value));
+            var render = Atom.AutoRun(() => view.SetSource(state.Value));
 
             // ReSharper disable once ImplicitlyCapturedClosure
             return new ActionDisposable(() =>
             {
-                render.Deactivate();
+                render.Dispose();
 
                 if (!Engine.IsApplicationQuiting)
                 {

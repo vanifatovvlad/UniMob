@@ -247,7 +247,7 @@ namespace UniMob.Async.Tests.Atoms
 
             var stack = new Stack<Exception>();
 
-            var reaction = Atom.CreateReaction(
+            var reaction = new ReactionAtom(
                 reaction: () => middle.Get(),
                 exceptionHandler: ex => stack.Push(ex));
 
@@ -271,7 +271,7 @@ namespace UniMob.Async.Tests.Atoms
 
             string actualization = "";
 
-            Atom.RunReaction(() =>
+            Atom.AutoRun(() =>
             {
                 source.Get();
                 actualization += "T";
@@ -281,9 +281,33 @@ namespace UniMob.Async.Tests.Atoms
             Assert.AreEqual("T", actualization);
 
             source.Invalidate();
-            
+
             tick(0);
             Assert.AreEqual("TT", actualization);
+        });
+
+        [Test]
+        public void AutoRun() => TestZone.Run(tick =>
+        {
+            var source = Atom.Value(0);
+
+            int runs = 0;
+            var disposer = Atom.AutoRun(() =>
+            {
+                source.Get();
+                ++runs;
+            });
+            Assert.AreEqual(1, runs);
+
+            source.Value++;
+            tick(0);
+
+            Assert.AreEqual(2, runs);
+
+            disposer.Dispose();
+            source.Value++;
+            tick(0);
+            Assert.AreEqual(2, runs);
         });
 
         [Test]
@@ -310,6 +334,41 @@ namespace UniMob.Async.Tests.Atoms
             source.Value = 3;
             tick(0);
             Assert.AreEqual("B", watch);
+        });
+
+        [Test]
+        public void Reaction() => TestZone.Run(tick =>
+        {
+            var source = Atom.Value(0);
+            var result = 0;
+            var errors = 0;
+
+            Atom.Reaction(
+                pull: () => source.Value,
+                reaction: (value, disposable) =>
+                {
+                    result = value;
+                    if (value == 2) disposable.Dispose();
+                },
+                exceptionHandler: ex => ++errors);
+
+            Assert.AreEqual(0, result);
+
+            source.Value = 1;
+            tick(0);
+            Assert.AreEqual(1, result);
+
+            Atom.PushException(source, new Exception());
+            tick(0);
+            Assert.AreEqual(1, errors);
+
+            source.Value = 2;
+            tick(0);
+            Assert.AreEqual(2, result);
+
+            source.Value = 3;
+            tick(0);
+            Assert.AreEqual(2, result);
         });
 
         class TestComparer<T> : IEqualityComparer<T>
