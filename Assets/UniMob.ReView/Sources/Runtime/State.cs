@@ -310,7 +310,15 @@ namespace UniMob.ReView
             base.Update(widget);
 
             var oldWidget = Widget;
-            _widget.Value = (TWidget) widget;
+            
+            if (widget is TWidget typedWidget)
+            {
+                _widget.Value = typedWidget;
+            }
+            else
+            {
+                throw new Exception($"Trying to pass {widget.GetType()}, but expected {typeof(TWidget)}");
+            }
 
             if (oldWidget != null)
             {

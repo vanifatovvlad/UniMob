@@ -43,7 +43,7 @@ namespace UniMob.ReView.Samples.TodoMvc.Vanilla
 
         private Widget BuildTodos(BuildContext context) =>
             new Container(
-                child: new Column(
+                child: new Row(
                     children: new WidgetList
                     {
                         new TodoList(),
@@ -71,12 +71,13 @@ namespace UniMob.ReView.Samples.TodoMvc.Vanilla
                         new TodoList(),
                         new TodoList(),
                     },
-                    crossAxisAlignment: (
-                        ActiveFilter == VisibilityFilter.All ? CrossAxisAlignment.Start :
-                        ActiveFilter == VisibilityFilter.Active ? CrossAxisAlignment.Center :
-                        CrossAxisAlignment.End
+                    crossAxisAlignment: CrossAxisAlignment.Center,
+                    mainAxisAlignment: (
+                        ActiveFilter == VisibilityFilter.All ? MainAxisAlignment.Start :
+                        ActiveFilter == VisibilityFilter.Active ? MainAxisAlignment.Center :
+                        MainAxisAlignment.End
                     ),
-                    crossAxisSize: AxisSize.Max
+                    mainAxisSize: AxisSize.Max
                 ),
                 color: Color.grey
             );
