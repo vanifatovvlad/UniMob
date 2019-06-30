@@ -142,6 +142,16 @@ namespace UniMob.Async
 
         public void Set(T value) => Value = value;
 
+        public void Invalidate()
+        {
+            State = AtomState.Obsolete;
+            _hasCache = false;
+            _cache = default;
+            _cacheException = null;
+            
+            ObsoleteListeners();
+        }
+
         internal void Push(T value)
         {
             State = AtomState.Actual;

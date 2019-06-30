@@ -264,6 +264,29 @@ namespace UniMob.Async.Tests.Atoms
         });
 
         [Test]
+        public void Invalidate() => TestZone.Run(tick =>
+        {
+            //
+            var source = Atom.Value(0);
+
+            string actualization = "";
+
+            Atom.RunReaction(() =>
+            {
+                source.Get();
+                actualization += "T";
+            });
+
+            tick(0);
+            Assert.AreEqual("T", actualization);
+
+            source.Invalidate();
+            
+            tick(0);
+            Assert.AreEqual("TT", actualization);
+        });
+
+        [Test]
         public void WhenAtom() => TestZone.Run(tick =>
         {
             var source = Atom.Value(0);
