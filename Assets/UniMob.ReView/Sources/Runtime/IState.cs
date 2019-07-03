@@ -2,8 +2,7 @@ namespace UniMob.ReView
 {
     public interface IState
     {
-        WidgetSize InnerSize { get; }
-        WidgetSize OuterSize { get; }
+        WidgetSize Size { get; }
 
         string ViewPath { get; }
 

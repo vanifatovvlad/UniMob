@@ -1,4 +1,5 @@
 using JetBrains.Annotations;
+using UniMob.Async;
 using UnityEngine;
 
 namespace UniMob.ReView.Widgets
@@ -34,14 +35,18 @@ namespace UniMob.ReView.Widgets
 
     internal sealed class RowState : MultiChildLayoutState<Row>, IRowState
     {
+        private readonly Atom<WidgetSize> _innerSize;
+
         public RowState() : base("UniMob.Row")
         {
+            _innerSize = Atom.Computed(CalculateInnerSize);
         }
 
         public CrossAxisAlignment CrossAxisAlignment => Widget.CrossAxisAlignment;
         public MainAxisAlignment MainAxisAlignment => Widget.MainAxisAlignment;
+        public WidgetSize InnerSize => _innerSize.Value;
 
-        public override WidgetSize CalculateOuterSize()
+        public override WidgetSize CalculateSize()
         {
             var wStretch = Widget.MainAxisSize == AxisSize.Max;
             var hStretch = Widget.CrossAxisSize == AxisSize.Max;
@@ -51,7 +56,7 @@ namespace UniMob.ReView.Widgets
                 return WidgetSize.Stretched;
             }
 
-            var size = base.CalculateOuterSize();
+            var size = CalculateInnerSize();
 
             float? width = null;
             float? height = null;
@@ -62,14 +67,14 @@ namespace UniMob.ReView.Widgets
             return new WidgetSize(width, height);
         }
 
-        public override WidgetSize CalculateInnerSize()
+        private WidgetSize CalculateInnerSize()
         {
             float width = 0;
             float? height = 0;
 
             foreach (var child in Children)
             {
-                var childSize = child.OuterSize;
+                var childSize = child.Size;
 
                 if (childSize.IsWidthFixed)
                 {

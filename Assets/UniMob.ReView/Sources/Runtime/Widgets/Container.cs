@@ -32,9 +32,6 @@ namespace UniMob.ReView.Widgets
 
         public Alignment Alignment => Widget.Alignment;
 
-        public override WidgetSize CalculateInnerSize()
-        {
-            return Child.OuterSize;
-        }
+        public override WidgetSize CalculateSize() => Child.Size;
     }
 }

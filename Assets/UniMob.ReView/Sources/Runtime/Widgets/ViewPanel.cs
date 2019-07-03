@@ -10,7 +10,7 @@ namespace UniMob.ReView.Widgets
             using (var render = Mapper.CreateRender())
             {
                 var childView = render.RenderItem(State);
-                var childSize = State.OuterSize;
+                var childSize = State.Size;
 
                 var alignment = Alignment.Center;
                 SetSize(childView.rectTransform, childSize, alignment.ToAnchor());

@@ -20,7 +20,7 @@ namespace UniMob.ReView.Widgets
             {
                 var child = State.Child;
                 var childView = render.RenderItem(child);
-                var childSize = child.OuterSize;
+                var childSize = child.Size;
 
                 var alignment = State.Alignment;
                 SetSize(childView.rectTransform, childSize, alignment.ToAnchor());

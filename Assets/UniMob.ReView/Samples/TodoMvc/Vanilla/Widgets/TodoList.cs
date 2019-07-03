@@ -16,9 +16,9 @@ namespace UniMob.ReView.Samples.TodoMvc.Vanilla.Widgets
         {
         }
 
-        public override WidgetSize CalculateInnerSize()
+        public override WidgetSize CalculateSize()
         {
-            var size = base.CalculateInnerSize();
+            var size = base.CalculateSize();
             if (_full.Value) size = new WidgetSize(250, 250);
             return size;
         }

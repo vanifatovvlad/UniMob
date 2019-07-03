@@ -30,7 +30,7 @@ namespace UniMob.ReView.Widgets
 
                 foreach (var child in children)
                 {
-                    var childSize = child.OuterSize;
+                    var childSize = child.Size;
 
                     if (childSize.IsWidthStretched)
                     {
@@ -57,6 +57,7 @@ namespace UniMob.ReView.Widgets
 
     public interface IRowState : IState
     {
+        WidgetSize InnerSize { get; }
         IState[] Children { get; }
         CrossAxisAlignment CrossAxisAlignment { get; }
         MainAxisAlignment MainAxisAlignment { get; }

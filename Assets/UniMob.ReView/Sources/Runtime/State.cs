@@ -9,8 +9,7 @@ namespace UniMob.ReView
 {
     public abstract partial class State : IState, IDisposable
     {
-        private readonly Atom<WidgetSize> _innerSize;
-        private readonly Atom<WidgetSize> _outerSize;
+        private readonly Atom<WidgetSize> _size;
 
         public BuildContext Context { get; internal set; }
         
@@ -18,15 +17,13 @@ namespace UniMob.ReView
 
         internal Widget Widget { get; private set; }
 
-        public WidgetSize InnerSize => _innerSize.Value;
-        public WidgetSize OuterSize => _outerSize.Value;
+        public WidgetSize Size => _size.Value;
 
         protected State([NotNull] string view)
         {
             Assert.IsNull(Atom.CurrentScope);
             ViewPath = view ?? throw new ArgumentNullException(nameof(view));
-            _innerSize = Atom.Computed(CalculateInnerSize);
-            _outerSize = Atom.Computed(CalculateOuterSize);
+            _size = Atom.Computed(CalculateSize);
         }
 
         protected virtual void Update(Widget widget)
@@ -64,18 +61,13 @@ namespace UniMob.ReView
             Assert.IsNull(Atom.CurrentScope);
         }
 
-        public virtual WidgetSize CalculateInnerSize()
+        public virtual WidgetSize CalculateSize()
         {
             var prefab = ViewContext.Loader.LoadViewPrefab(this);
             var size = prefab.rectTransform.sizeDelta;
             return new WidgetSize(
                 size.x > 0 ? size.x : default(float?),
                 size.y > 0 ? size.y : default(float?));
-        }
-
-        public virtual WidgetSize CalculateOuterSize()
-        {
-            return CalculateInnerSize();
         }
 
         internal static bool CanUpdateWidget(Widget oldWidget, Widget newWidget)
