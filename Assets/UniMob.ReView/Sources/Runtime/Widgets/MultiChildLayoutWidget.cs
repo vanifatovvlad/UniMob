@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using JetBrains.Annotations;
 using UniMob.Async;
 
@@ -7,7 +8,7 @@ namespace UniMob.ReView.Widgets
     public abstract class MultiChildLayoutWidget : Widget
     {
         protected MultiChildLayoutWidget(
-            [NotNull] WidgetList children,
+            [NotNull] List<Widget> children,
             [CanBeNull] Key key
         ) : base(
             key)
@@ -15,7 +16,7 @@ namespace UniMob.ReView.Widgets
             Children = children ?? throw new ArgumentNullException(nameof(children));
         }
 
-        [NotNull] public WidgetList Children { get; }
+        [NotNull] public List<Widget> Children { get; }
     }
     
     internal abstract class MultiChildLayoutState<TWidget> : State<TWidget>

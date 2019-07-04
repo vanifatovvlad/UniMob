@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UniMob.Async;
 using UniMob.ReView.Samples.TodoMvc.Vanilla.Widgets;
 using UniMob.ReView.Samples.TodoMvc.Views;
@@ -44,7 +45,7 @@ namespace UniMob.ReView.Samples.TodoMvc.Vanilla
         private Widget BuildTodos(BuildContext context) =>
             new Container(
                 child: new Row(
-                    children: new WidgetList
+                    children: new List<Widget>
                     {
                         new TodoList(),
                         BuildSubContainer(),
@@ -65,7 +66,7 @@ namespace UniMob.ReView.Samples.TodoMvc.Vanilla
         private Widget BuildSubContainer() =>
             new Container(
                 child: new Column(
-                    children: new WidgetList
+                    children: new List<Widget>
                     {
                         new TodoList(),
                         new TodoList(),

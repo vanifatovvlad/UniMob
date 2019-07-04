@@ -94,7 +94,7 @@ namespace UniMob.ReView
             });
         }
 
-        internal static Atom<IState[]> CreateList(BuildContext context, Func<BuildContext, WidgetList> builder)
+        internal static Atom<IState[]> CreateList(BuildContext context, Func<BuildContext, List<Widget>> builder)
         {
             Assert.IsNull(Atom.CurrentScope);
 
@@ -112,7 +112,7 @@ namespace UniMob.ReView
             });
         }
 
-        private static State[] UpdateChildren(BuildContext context, State[] oldChildren, WidgetList newWidgets)
+        private static State[] UpdateChildren(BuildContext context, State[] oldChildren, List<Widget> newWidgets)
         {
             var newChildrenTop = 0;
             var oldChildrenTop = 0;

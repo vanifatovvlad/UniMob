@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using JetBrains.Annotations;
 using UniMob.Async;
 using UnityEngine;
@@ -7,7 +8,7 @@ namespace UniMob.ReView.Widgets
     public sealed class Column : MultiChildLayoutWidget
     {
         public Column(
-            [NotNull] WidgetList children,
+            [NotNull] List<Widget> children,
             [CanBeNull] Key key = null,
             CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.Start,
             MainAxisAlignment mainAxisAlignment = MainAxisAlignment.Start,
