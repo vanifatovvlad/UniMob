@@ -1,6 +1,7 @@
 {
     "name": "UniMob.Async.Samples",
     "references": [
+        "UniMob",
         "UniMob.Async"
     ],
     "optionalUnityReferences": [],
@@ -10,5 +11,6 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": []
+    "defineConstraints": [],
+    "versionDefines": []
 }

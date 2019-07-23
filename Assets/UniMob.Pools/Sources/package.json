@@ -3,9 +3,9 @@
   "displayName": "UniMob.Pools",
   "description": "Pooling library for Unity",
   "version": "0.1.0",
-  "unity": "2018.3",
+  "unity": "2019.1",
   "license": "MIT",
-  "author": "VladV (https://github.com/vanifatovvlad)",
+  "author": "Vanifatov Vlad (https://github.com/vanifatovvlad)",
   "homepage": "https://github.com/vanifatovvlad/UniMob#readme",
   "dependencies": {}
 }

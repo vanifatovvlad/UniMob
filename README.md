@@ -4,10 +4,13 @@ Framework for building reactive app
 
 ## Content
 
+### [UniMob](https://github.com/vanifatovvlad/UniMob/tree/master/Assets/UniMob/Sources)
+Reactive state management for Unity
+
 ### [UniMob.Async](https://github.com/vanifatovvlad/UniMob/tree/master/Assets/UniMob.Async/Sources)
 Async computation library for Unity
 
-### [UniMob.ReView](https://github.com/vanifatovvlad/UniMob/tree/master/Assets/UniMob.ReView/Sources)
+### [UniMob.UI](https://github.com/vanifatovvlad/UniMob/tree/master/Assets/UniMob.UI/Sources)
 A declarative library for building reactive user interface
 
 ### [UniMob.Pools](https://github.com/vanifatovvlad/UniMob/tree/master/Assets/UniMob.Pools/Sources)
@@ -17,4 +20,4 @@ Pooling library for Unity
 * MIT
 
 ## Authors
-* [VladV](https://github.com/vanifatovvlad)
+* [Vanifatov Vlad](https://github.com/vanifatovvlad)

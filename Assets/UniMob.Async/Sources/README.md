@@ -6,4 +6,4 @@ Async computation library for Unity
 * MIT
 
 ## Authors
-* [VladV](https://github.com/vanifatovvlad)
+* [Vanifatov Vlad](https://github.com/vanifatovvlad)
