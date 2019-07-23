@@ -2,10 +2,18 @@
 Framework for building reactive app
 <br>
 
-## Content
+---
 
 ### [UniMob](https://github.com/vanifatovvlad/UniMob/tree/master/Assets/UniMob/Sources)
-Reactive state management for Unity
+UniMob - это простая и масштабируемая библиотека управления состояниями, в которой прозрачно применяется объектно-ориентированное реактивное программирование (OORP). Принцип проектирования UniMob очень прост:
+
+> _Все, что может быть вычислено из состояния приложения, должно быть вычислено. Автоматически._
+
+Это включает в себя пользовательский интерфейс, сериализацию данных, взаимодействие с сервером и т. д.
+
+[Подробнее...](https://github.com/vanifatovvlad/UniMob/tree/master/Assets/UniMob/Sources)
+
+---
 
 ### [UniMob.Async](https://github.com/vanifatovvlad/UniMob/tree/master/Assets/UniMob.Async/Sources)
 Async computation library for Unity
@@ -15,9 +23,3 @@ A declarative library for building reactive user interface
 
 ### [UniMob.Pools](https://github.com/vanifatovvlad/UniMob/tree/master/Assets/UniMob.Pools/Sources)
 Pooling library for Unity
-
-## License
-* MIT
-
-## Authors
-* [Vanifatov Vlad](https://github.com/vanifatovvlad)
