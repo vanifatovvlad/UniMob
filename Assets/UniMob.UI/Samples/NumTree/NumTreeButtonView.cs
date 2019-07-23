@@ -5,7 +5,7 @@ namespace UniMob.UI.Samples.NumTree
 {
     public class NumTreeButtonView : View<INumTreeButtonState>
     {
-        [SerializeField] private Button button;
+        [SerializeField] private Button button = default;
 
         protected override void Awake()
         {
