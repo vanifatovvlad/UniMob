@@ -1,4 +1,4 @@
-# UniMob [![Github license](https://img.shields.io/github/license/vanifatovvlad/UniMob.svg)](#) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#) [![Stars](https://img.shields.io/github/stars/vanifatovvlad/UniMob.svg?style=social)](https://github.com/vanifatovvlad/UniMob/stargazers) [![Watchers](https://img.shields.io/github/watchers/vanifatovvlad/UniMob.svg?style=social)](https://github.com/vanifatovvlad/UniMob/watchers)
+# UniMob [![Github license](https://img.shields.io/github/license/vanifatovvlad/UniMob.svg)](#) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#) [![Stars](https://img.shields.io/github/stars/vanifatovvlad/UniMob.svg?style=social)](https://github.com/vanifatovvlad/UniMob/stargazers) [![Watchers](https://img.shields.io/github/watchers/vanifatovvlad/UniMob.svg?style=social)](https://github.com/vanifatovvlad/UniMob/watchers) [![NPM Publisher Support](https://img.shields.io/badge/maintained%20with-NPM%20Publisher%20Support-blue.svg)](https://github.com/vanifatovvlad/NpmPublisherSupport)
 _Простое и масштабируемое управление состоянием_
 <br>
 
@@ -114,7 +114,7 @@ Atom.AutoRun(() =>
 После обновления состояния `UniMob` позаботится об остальном эффективным способом и без сбоев. Итак, простых присвоений, подобных приведенным ниже, достаточно для автоматического обновления пользовательского интерфейса.
 
 ```csharp
-store.Value = store.Value
+store.Todos = store.Todos
     .Append(new Todo("Get Coffee"))
     .Append(new Todo("Get Coffee"))
     .ToArray();
@@ -161,7 +161,7 @@ UniMob строит граф всех зависимостей в вашем п�
 
 Предположим, у вас есть объект person с тремя атрибутами (наблюдаемые свойства в UniMob или потоки в UniRx):
 
-```
+```csharp
 public class Person
 {
     public Person(string firstName, string lastName, string nickname)
@@ -175,24 +175,24 @@ public class Person
 
 Предположим, вы хотите реактивно получить «DisplayName» для человека. Вы хотите что-то вроде этого...
 
-```
+```csharp
 public string DisplayName => Nickname ?? (FirstName + " " + LastName);
 ```
 
 В UniMob это будет выглядеть так:
 
-```
+```csharp
 DisplayName = Atom.Computed(() => Nickname ?? (FirstName + " " + LastName))
 ```
 
 или даже так, если в кешировании «DisplayName» нет необходимости:
-```
+```csharp
 public string DisplayName => Nickname ?? (FirstName + " " + LastName);
 ```
 
 В UniRx вы бы сделали что-то вроде этого:
 
-```
+```csharp
 IReactiveProperty<string> DisplayName = person.Nickname
   .CombineLatest(FirstName, LastName, (nickname, firstname, lastname) => nickname ?? (firstname + " " + lastname))
   .DistinctUntilChanged()
