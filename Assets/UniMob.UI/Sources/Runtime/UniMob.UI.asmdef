@@ -2,7 +2,6 @@
     "name": "UniMob.UI",
     "references": [
         "UniMob",
-        "UniMob.Async",
         "UniMob.Pools"
     ],
     "optionalUnityReferences": [],

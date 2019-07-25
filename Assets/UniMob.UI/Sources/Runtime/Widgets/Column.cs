@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
-using UniMob.Async;
 using UnityEngine;
 
 namespace UniMob.UI.Widgets

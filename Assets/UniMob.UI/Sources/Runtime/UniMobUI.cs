@@ -1,6 +1,5 @@
 using System;
 using JetBrains.Annotations;
-using UniMob.Async;
 using UniMob.UI.Widgets;
 
 namespace UniMob.UI
