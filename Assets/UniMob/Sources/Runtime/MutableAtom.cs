@@ -104,8 +104,6 @@ namespace UniMob
 
         protected override void Evaluate()
         {
-            State = AtomState.Actual;
-
             try
             {
                 var value = _pull();
@@ -114,7 +112,7 @@ namespace UniMob
                 {
                     if (_hasCache && _comparer.Equals(value, _cache))
                         return;
-                    
+
                     if (_merge != null && _hasCache)
                     {
                         _cache = _merge(_cache, value);
@@ -133,6 +131,10 @@ namespace UniMob
                 _hasCache = false;
                 _cache = default;
                 _cacheException = exception;
+            }
+            finally
+            {
+                State = AtomState.Actual;
             }
 
             ObsoleteListeners();

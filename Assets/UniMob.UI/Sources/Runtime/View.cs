@@ -24,6 +24,8 @@ namespace UniMob.UI
 
         private ReactionAtom _renderAtom;
 
+        private string _debugRenderName;
+
         [NotNull] protected TState State => _state;
 
         // ReSharper disable once InconsistentNaming
@@ -44,7 +46,7 @@ namespace UniMob.UI
             _renderScope.Link(this);
 
             if (_renderAtom == null)
-                _renderAtom =new ReactionAtom(RenderAction);
+                _renderAtom = new ReactionAtom(RenderAction);
 
             _hasSource = true;
             _source.Value = nextState;
@@ -115,7 +117,7 @@ namespace UniMob.UI
         {
             Unmount();
         }
-        
+
         void IViewTreeElement.AddChild(IViewTreeElement view)
         {
             _children.Add(view);
@@ -176,7 +178,10 @@ namespace UniMob.UI
 
                     try
                     {
-                        Render();
+                        using (new Perf(_debugRenderName))
+                        {
+                            Render();
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -199,6 +204,8 @@ namespace UniMob.UI
         protected override void OnEnable()
         {
             base.OnEnable();
+
+            _debugRenderName = "Render " + name;
 
             if (_hasSource)
             {

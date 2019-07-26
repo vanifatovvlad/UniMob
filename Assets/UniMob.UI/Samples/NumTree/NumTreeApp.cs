@@ -4,6 +4,7 @@ using System.Linq;
 using UniMob.Async;
 using UniMob.UI.Widgets;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace UniMob.UI.Samples.NumTree
 {
@@ -11,52 +12,32 @@ namespace UniMob.UI.Samples.NumTree
     {
         [SerializeField] private ViewPanel root = default;
 
+        private readonly NumTreeModel _model = new NumTreeModel(levels: 11);
+
         private IDisposable _render;
 
-        private void OnEnable() => _render = UniMobUI.RunApp(root, BuildApp);
-        private void OnDisable() => _render.Dispose();
-
-        private static MutableAtom<int>[] GenerateTreeRoots(int levels)
+        private void OnEnable()
         {
-            return Enumerable.Repeat(0, levels).Select(v => Atom.Value(v)).ToArray();
+            _render = UniMobUI.RunApp(root, BuildApp);
         }
 
-        private static Atom<int>[][] GenerateTree(int levels, MutableAtom<int>[] roots)
+        private void OnDisable()
         {
-            var grid = new Atom<int>[levels][];
+            _render.Dispose();
+        }
 
-            // first line - mutable values
-            grid[levels - 1] = roots;
-
-            // other - computed from previous line
-            for (int level = levels - 2; level >= 0; --level)
+        private void Update()
+        {
+            using (new Perf("Update Roots"))
             {
-                var prevLevel = level + 1;
-
-                var line = Enumerable.Range(0, level + 1).Select(index =>
-                    {
-                        return Atom.Computed(() =>
-                        {
-                            var left = grid[prevLevel][index];
-                            var right = grid[prevLevel][index + 1];
-                            return left.Value + right.Value;
-                        });
-                    })
-                    .ToArray();
-
-                grid[level] = line;
+                var rootIndex = Random.Range(0, _model.Roots.Length);
+                var rootAtom = _model.Roots[rootIndex];
+                rootAtom.Value = (rootAtom.Value + 1) % 10;
             }
-
-            return grid;
         }
 
         private Widget BuildApp(BuildContext context)
         {
-            const int levels = 11;
-
-            var roots = GenerateTreeRoots(levels);
-            var grid = GenerateTree(levels, roots);
-
             return new Container(
                 color: Color.white,
                 child: new Column(
@@ -65,8 +46,8 @@ namespace UniMob.UI.Samples.NumTree
                     mainAxisAlignment: MainAxisAlignment.Center,
                     crossAxisAlignment: CrossAxisAlignment.Center,
                     children: Enumerable.Empty<Widget>()
-                        .Concat(BuildTreeRows(grid))
-                        .Append(BuildButtonsRow(roots))
+                        .Concat(BuildTreeRows(_model.Tree))
+                        .Append(BuildButtonsRow(_model.Roots))
                         .ToList()
                 )
             );

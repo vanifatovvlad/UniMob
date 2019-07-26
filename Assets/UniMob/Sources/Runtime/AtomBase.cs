@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace UniMob
 {
-    public abstract class AtomBase
+    public abstract class AtomBase : IEquatable<AtomBase>
     {
         private readonly Action _onActive;
         private readonly Action _onInactive;
@@ -28,6 +28,11 @@ namespace UniMob
             _onActive = onActive;
             _onInactive = onInactive;
         }
+        
+        public bool Equals(AtomBase other)
+        {
+            return ReferenceEquals(this, other);
+        }
 
         public void Update(bool force = false)
         {
@@ -49,11 +54,21 @@ namespace UniMob
         {
             if (_children != null)
             {
-                _children.ForEach(child => child.RemoveListener(this));
+                for (var i = 0; i < _children.Count; i++)
+                {
+                    _children[i].RemoveListener(this);
+                }
+
                 DeleteList(ref _children);
             }
 
-            _listeners?.ForEach(listener => listener.Check());
+            if (_listeners != null)
+            {
+                for (var i = 0; i < _listeners.Count; i++)
+                {
+                    _listeners[i].Check();
+                }
+            }
 
             if (!_deactivated)
             {
@@ -75,15 +90,13 @@ namespace UniMob
             {
                 if (!force && State == AtomState.Checking)
                 {
-                    void ActualizeChild(AtomBase child)
+                    for (int i = 0; i < _children.Count; i++)
                     {
                         if (State != AtomState.Checking)
-                            return;
+                            break;
 
-                        child.Actualize();
+                        _children[i].Actualize();
                     }
-
-                    _children.ForEach(ActualizeChild);
 
                     if (State == AtomState.Checking)
                     {
@@ -98,12 +111,16 @@ namespace UniMob
                     {
                         _children = null;
 
-                        void RemoveChildListener(AtomBase child) => child.RemoveListener(this);
-                        oldChildren.ForEach(RemoveChildListener);
+                        for (var i = 0; i < oldChildren.Count; i++)
+                        {
+                            oldChildren[i].RemoveListener(this);
+                        }
+
                         DeleteList(ref oldChildren);
                     }
 
                     State = AtomState.Pulling;
+
                     Evaluate();
                 }
             }
@@ -117,14 +134,23 @@ namespace UniMob
 
         protected void ObsoleteListeners()
         {
-            _listeners?.ForEach(listener => listener.Obsolete());
+            if (_listeners == null)
+                return;
+
+            for (var i = 0; i < _listeners.Count; i++)
+            {
+                _listeners[i].Obsolete();
+            }
         }
 
         private void CheckListeners()
         {
             if (_listeners != null)
             {
-                _listeners.ForEach(listener => listener.Check());
+                for (var i = 0; i < _listeners.Count; i++)
+                {
+                    _listeners[i].Check();
+                }
             }
             else
             {
@@ -197,6 +223,8 @@ namespace UniMob
 
         internal static AtomBase Stack;
 
+        private static readonly Action DoSyncAction = DoSync;
+
         private static readonly Queue<AtomBase> Updating = new Queue<AtomBase>();
         private static readonly List<AtomBase> Reaping = new List<AtomBase>();
         private static IZone _scheduled;
@@ -218,28 +246,25 @@ namespace UniMob
             Reaping.Remove(atom);
         }
 
+        private static void DoSync()
+        {
+            if (_scheduled == null)
+                return;
+
+            _scheduled = null;
+
+            using (new Perf("UniMob.Atom.Sync"))
+            {
+                Sync();
+            }
+        }
+
         private static void Schedule()
         {
             if (_scheduled == Zone.Current)
                 return;
 
-            void DoSync()
-            {
-                if (_scheduled == null)
-                    return;
-
-                _scheduled = null;
-
-#if UNITY_EDITOR
-                UnityEngine.Profiling.Profiler.BeginSample("AtomBase.Sync()");
-#endif
-                Sync();
-#if UNITY_EDITOR
-                UnityEngine.Profiling.Profiler.EndSample();
-#endif
-            }
-
-            Zone.Current.Invoke(DoSync);
+            Zone.Current.Invoke(DoSyncAction);
 
             _scheduled = Zone.Current;
         }

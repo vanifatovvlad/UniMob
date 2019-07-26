@@ -14,17 +14,11 @@ namespace UniMob
             var mainThreadId = Thread.CurrentThread.ManagedThreadId;
             _dispatcher = new TimerDispatcher(mainThreadId, exceptionHandler);
 
-            if (Zone.Current != null)
-                throw new InvalidOperationException("Zone != null");
-
             Zone.Current = this;
         }
 
         public void Dispose()
         {
-            if (Zone.Current == null)
-                throw new InvalidOperationException("Zone == null");
-
             Zone.Current = null;
 
             _dispatcher.Dispose();
