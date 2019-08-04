@@ -8,5 +8,7 @@ namespace UniMob
         T Get();
 
         void Deactivate();
+
+        void Invalidate();
     }
 }

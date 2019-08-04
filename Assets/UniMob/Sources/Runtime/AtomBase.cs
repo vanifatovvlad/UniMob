@@ -5,13 +5,19 @@ namespace UniMob
 {
     public abstract class AtomBase : IEquatable<AtomBase>
     {
+        private readonly bool _keepAlive;
         private readonly Action _onActive;
         private readonly Action _onInactive;
         private List<AtomBase> _children;
-        private List<AtomBase> _listeners;
-        private bool _deactivated = true;
+        private List<AtomBase> _subscribers;
+        private bool _active;
+        private bool _reaping;
 
         protected AtomState State = AtomState.Obsolete;
+
+        public bool KeepAlive => _keepAlive;
+        public bool IsActive => _active;
+        public int SubscribersCount => _subscribers?.Count ?? 0;
 
         protected enum AtomState
         {
@@ -21,14 +27,13 @@ namespace UniMob
             Actual,
         }
 
-        public bool Deactivated => _deactivated;
-
-        protected AtomBase(Action onActive, Action onInactive)
+        protected AtomBase(bool keepAlive, Action onActive, Action onInactive)
         {
+            _keepAlive = keepAlive;
             _onActive = onActive;
             _onInactive = onInactive;
         }
-        
+
         public bool Equals(AtomBase other)
         {
             return ReferenceEquals(this, other);
@@ -41,12 +46,6 @@ namespace UniMob
                 throw new Exception("Cyclic atom dependency of " + this);
             }
 
-            if (_deactivated)
-            {
-                _onActive?.Invoke();
-            }
-
-            _deactivated = false;
             Actualize(force);
         }
 
@@ -56,24 +55,32 @@ namespace UniMob
             {
                 for (var i = 0; i < _children.Count; i++)
                 {
-                    _children[i].RemoveListener(this);
+                    _children[i].RemoveSubscriber(this);
                 }
 
                 DeleteList(ref _children);
             }
 
-            if (_listeners != null)
+            if (_subscribers != null)
             {
-                for (var i = 0; i < _listeners.Count; i++)
+                for (var i = 0; i < _subscribers.Count; i++)
                 {
-                    _listeners[i].Check();
+                    _subscribers[i].Check();
                 }
             }
 
-            if (!_deactivated)
+            if (_active)
             {
-                _deactivated = true;
-                _onInactive?.Invoke();
+                _active = false;
+
+                try
+                {
+                    _onInactive?.Invoke();
+                }
+                catch (Exception e)
+                {
+                    Zone.Current.HandleUncaughtException(e);
+                }
             }
 
             State = AtomState.Obsolete;
@@ -85,76 +92,97 @@ namespace UniMob
                 return;
 
             var parent = Stack;
-            Stack = this;
-            try
+
+            if (parent != null || KeepAlive)
             {
-                if (!force && State == AtomState.Checking)
+                Stack = this;
+
+                if (!_active)
                 {
-                    for (int i = 0; i < _children.Count; i++)
-                    {
-                        if (State != AtomState.Checking)
-                            break;
+                    _active = true;
 
-                        _children[i].Actualize();
+                    try
+                    {
+                        _onActive?.Invoke();
                     }
-
-                    if (State == AtomState.Checking)
+                    catch (Exception e)
                     {
-                        State = AtomState.Actual;
+                        Zone.Current.HandleUncaughtException(e);
                     }
                 }
+            }
 
-                if (force || State != AtomState.Actual)
+            if (!force && State == AtomState.Checking)
+            {
+                for (int i = 0; i < _children.Count; i++)
                 {
-                    var oldChildren = _children;
-                    if (oldChildren != null)
-                    {
-                        _children = null;
+                    if (State != AtomState.Checking)
+                        break;
 
-                        for (var i = 0; i < oldChildren.Count; i++)
-                        {
-                            oldChildren[i].RemoveListener(this);
-                        }
+                    _children[i].Actualize();
+                }
 
-                        DeleteList(ref oldChildren);
-                    }
-
-                    State = AtomState.Pulling;
-
-                    Evaluate();
+                if (State == AtomState.Checking)
+                {
+                    State = AtomState.Actual;
                 }
             }
-            finally
+
+            if (force || State != AtomState.Actual)
             {
-                Stack = parent;
+                var oldChildren = _children;
+                if (oldChildren != null)
+                {
+                    _children = null;
+
+                    for (var i = 0; i < oldChildren.Count; i++)
+                    {
+                        oldChildren[i].RemoveSubscriber(this);
+                    }
+
+                    DeleteList(ref oldChildren);
+                }
+
+                State = AtomState.Pulling;
+
+                Evaluate();
             }
+
+            Stack = parent;
         }
 
         protected abstract void Evaluate();
 
-        protected void ObsoleteListeners()
+        protected void ObsoleteSubscribers()
         {
-            if (_listeners == null)
+            if (_subscribers == null)
                 return;
 
-            for (var i = 0; i < _listeners.Count; i++)
+            for (var i = 0; i < _subscribers.Count; i++)
             {
-                _listeners[i].Obsolete();
+                _subscribers[i].Obsolete();
             }
         }
 
-        private void CheckListeners()
+        private void CheckSubscribers()
         {
-            if (_listeners != null)
+            if (_subscribers != null)
             {
-                for (var i = 0; i < _listeners.Count; i++)
+                for (var i = 0; i < _subscribers.Count; i++)
                 {
-                    _listeners[i].Check();
+                    _subscribers[i].Check();
                 }
             }
             else
             {
-                Actualize(this);
+                if (KeepAlive)
+                {
+                    Actualize(this);
+                }
+                else
+                {
+                    Reap(this);
+                }
             }
         }
 
@@ -163,7 +191,7 @@ namespace UniMob
             if (State == AtomState.Actual || State == AtomState.Pulling)
             {
                 State = AtomState.Checking;
-                CheckListeners();
+                CheckSubscribers();
             }
         }
 
@@ -173,50 +201,54 @@ namespace UniMob
                 return;
 
             State = AtomState.Obsolete;
-            CheckListeners();
+            CheckSubscribers();
         }
 
-        protected void AddListener(AtomBase listener)
+        protected void AddSubscriber(AtomBase subscriber)
         {
-            if (_listeners == null)
+            if (_subscribers == null)
             {
-                CreateList(out _listeners);
+                CreateList(out _subscribers);
                 Unreap(this);
             }
 
-            _listeners.Add(listener);
+            _subscribers.Add(subscriber);
         }
 
-        private void RemoveListener(AtomBase listener)
+        private void RemoveSubscriber(AtomBase subscriber)
         {
-            if (_listeners == null)
+            if (_subscribers == null)
                 return;
 
-            if (_listeners.Count == 1)
+            _subscribers.Remove(subscriber);
+
+            if (_subscribers.Count == 0)
             {
-                DeleteList(ref _listeners);
-                Reap(this);
-            }
-            else
-            {
-                _listeners.Remove(listener);
+                DeleteList(ref _subscribers);
+
+                if (!KeepAlive)
+                {
+                    Reap(this);
+                }
             }
         }
 
         internal void AddChildren(AtomBase child)
         {
             if (_children == null)
+            {
                 CreateList(out _children);
+            }
 
             _children.Add(child);
         }
 
-        protected void StackPush()
+        protected void SubscribeToParent()
         {
             var parent = Stack;
             if (parent != null)
             {
-                AddListener(parent);
+                AddSubscriber(parent);
                 parent.AddChildren(this);
             }
         }
@@ -226,7 +258,7 @@ namespace UniMob
         private static readonly Action DoSyncAction = DoSync;
 
         private static readonly Queue<AtomBase> Updating = new Queue<AtomBase>();
-        private static readonly List<AtomBase> Reaping = new List<AtomBase>();
+        private static readonly Queue<AtomBase> Reaping = new Queue<AtomBase>();
         private static IZone _scheduled;
 
         internal static void Actualize(AtomBase atom)
@@ -237,26 +269,14 @@ namespace UniMob
 
         private static void Reap(AtomBase atom)
         {
-            Reaping.Add(atom);
+            atom._reaping = true;
+            Reaping.Enqueue(atom);
             Schedule();
         }
 
         private static void Unreap(AtomBase atom)
         {
-            Reaping.Remove(atom);
-        }
-
-        private static void DoSync()
-        {
-            if (_scheduled == null)
-                return;
-
-            _scheduled = null;
-
-            using (new Perf("UniMob.Atom.Sync"))
-            {
-                Sync();
-            }
+            atom._reaping = false;
         }
 
         private static void Schedule()
@@ -269,6 +289,21 @@ namespace UniMob
             _scheduled = Zone.Current;
         }
 
+        private static readonly PerfWatcher SyncPerf = new PerfWatcher("UniMob.Atom.Sync");
+
+        private static void DoSync()
+        {
+            if (_scheduled == null)
+                return;
+
+            _scheduled = null;
+
+            using (SyncPerf.Watch())
+            {
+                Sync();
+            }
+        }
+
         private static void Sync()
         {
             Schedule();
@@ -277,10 +312,7 @@ namespace UniMob
             {
                 var atom = Updating.Dequeue();
 
-                if (Reaping.Contains(atom))
-                    continue;
-
-                if (atom.State != AtomState.Actual)
+                if (!atom._reaping && atom.State != AtomState.Actual)
                 {
                     atom.Actualize();
                 }
@@ -288,9 +320,8 @@ namespace UniMob
 
             while (Reaping.Count > 0)
             {
-                var atom = Reaping[0];
-                Reaping.RemoveAt(0);
-                if (atom._listeners == null)
+                var atom = Reaping.Dequeue();
+                if (atom._reaping && atom._subscribers == null)
                 {
                     atom.Deactivate();
                 }
@@ -311,14 +342,6 @@ namespace UniMob
             list.Clear();
             ListPool.Push(list);
             list = null;
-        }
-
-        internal static void Cleanup()
-        {
-            ListPool.Clear();
-            Stack = null;
-            Updating.Clear();
-            Reaping.Clear();
         }
     }
 }

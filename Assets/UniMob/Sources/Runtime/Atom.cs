@@ -7,28 +7,32 @@ namespace UniMob
     {
         public static MutableAtom<T> Value<T>(
             T value,
-            AtomMerge<T> merge = null,
             Action onActive = null,
             Action onInactive = null,
             IEqualityComparer<T> comparer = null)
         {
-            return new MutableAtom<T>(() => value, next => value = next, merge, onActive, onInactive, comparer);
+            return new ValueAtom<T>(value, onActive, onInactive, comparer);
+        }
+
+        public static Atom<T> Computed<T>(
+            AtomPull<T> pull,
+            bool keepAlive = false,
+            Action onActive = null,
+            Action onInactive = null,
+            IEqualityComparer<T> comparer = null)
+        {
+            return new ComputedAtom<T>(pull, null, keepAlive, onActive, onInactive, comparer);
         }
 
         public static MutableAtom<T> Computed<T>(
             AtomPull<T> pull,
-            AtomPush<T> push = null,
-            AtomMerge<T> merge = null,
+            AtomPush<T> push,
+            bool keepAlive = false,
             Action onActive = null,
             Action onInactive = null,
             IEqualityComparer<T> comparer = null)
         {
-            return new MutableAtom<T>(pull, push, merge, onActive, onInactive, comparer);
-        }
-
-        public static MutableAtom<T> Property<T>(AtomPull<T> pull, AtomPush<T> push)
-        {
-            return new MutableAtom<T>(pull, push);
+            return new ComputedAtom<T>(pull, push, keepAlive, onActive, onInactive, comparer);
         }
 
         public static IDisposable Reaction<T>(
@@ -71,9 +75,6 @@ namespace UniMob
             atom.Get();
             return atom;
         }
-
-        public static void Push<T>(MutableAtom<T> atom, T value) => atom.Push(value);
-        public static void PushException<T>(MutableAtom<T> atom, Exception exception) => atom.PushException(exception);
 
         public static WatchScope NoWatch => new WatchScope(null);
 

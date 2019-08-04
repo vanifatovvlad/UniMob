@@ -1,4 +1,4 @@
-namespace UniMob
+namespace UniMob.Async
 {
     public sealed class AsyncUnit
     {

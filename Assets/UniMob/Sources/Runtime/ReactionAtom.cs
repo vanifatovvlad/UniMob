@@ -6,9 +6,10 @@ namespace UniMob
     {
         private readonly Action _reaction;
         private readonly Action<Exception> _exceptionHandler;
+        private readonly string _debugName;
 
-        public ReactionAtom(Action reaction, Action<Exception> exceptionHandler = null)
-            : base(null, null)
+        internal ReactionAtom(Action reaction, Action<Exception> exceptionHandler = null, string debugName = null)
+            : base(true, null, null)
         {
             _reaction = reaction ?? throw new ArgumentNullException(nameof(reaction));
             _exceptionHandler = exceptionHandler ?? Zone.Current.HandleUncaughtException;

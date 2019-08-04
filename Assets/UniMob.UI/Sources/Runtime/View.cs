@@ -24,7 +24,7 @@ namespace UniMob.UI
 
         private ReactionAtom _renderAtom;
 
-        private string _debugRenderName;
+        private PerfWatcher RenderPerf;
 
         [NotNull] protected TState State => _state;
 
@@ -178,7 +178,7 @@ namespace UniMob.UI
 
                     try
                     {
-                        using (new Perf(_debugRenderName))
+                        using (RenderPerf.Watch())
                         {
                             Render();
                         }
@@ -205,7 +205,10 @@ namespace UniMob.UI
         {
             base.OnEnable();
 
-            _debugRenderName = "Render " + name;
+            if (RenderPerf == null || !RenderPerf.Name.EndsWith(name))
+            {
+                RenderPerf = new PerfWatcher("Render " + name);
+            }
 
             if (_hasSource)
             {

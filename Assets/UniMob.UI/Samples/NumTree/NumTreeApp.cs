@@ -28,12 +28,9 @@ namespace UniMob.UI.Samples.NumTree
 
         private void Update()
         {
-            using (new Perf("Update Roots"))
-            {
-                var rootIndex = Random.Range(0, _model.Roots.Length);
-                var rootAtom = _model.Roots[rootIndex];
-                rootAtom.Value = (rootAtom.Value + 1) % 10;
-            }
+            var rootIndex = Random.Range(0, _model.Roots.Length);
+            var rootAtom = _model.Roots[rootIndex];
+            rootAtom.Value = (rootAtom.Value + 1) % 10;
         }
 
         private Widget BuildApp(BuildContext context)

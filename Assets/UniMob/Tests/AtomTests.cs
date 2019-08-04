@@ -8,20 +8,25 @@ namespace UniMob.Tests
     public class AtomTests
     {
         [Test]
-        public void MergeValues() => TestZone.Run(tick =>
+        public void NoActivationWithoutSubscribers() => TestZone.Run(tick =>
         {
-            var value = new int[0];
+            var runs = "";
+            var activation = "";
 
-            var source = Atom.Value(1);
             var atom = Atom.Computed(
-                pull: () => value = new[] {Math.Abs(source.Value)},
-                merge: (prev, next) => next.SequenceEqual(prev) ? prev : next);
+                pull: () =>
+                {
+                    runs += "R";
+                    return 1;
+                },
+                onActive: () => activation += "A",
+                onInactive: () => activation += "D");
 
             atom.Get();
-            Assert.IsTrue(ReferenceEquals(value, atom.Value));
-
-            source.Value = -1;
-            Assert.IsTrue(ReferenceEquals(value, atom.Value));
+            atom.Get();
+            atom.Get();
+            Assert.AreEqual("RRR", runs);
+            Assert.AreEqual("", activation);
         });
 
         [Test]
@@ -31,6 +36,7 @@ namespace UniMob.Tests
 
             var atom = Atom.Computed(
                 pull: () => 1,
+                keepAlive: true,
                 onActive: () => activation += "A",
                 onInactive: () => activation += "D");
 
@@ -52,7 +58,8 @@ namespace UniMob.Tests
                 pull: () => 1,
                 onActive: () => activation += "A",
                 onInactive: () => activation += "D");
-            var listener = Atom.Computed(() => atom.Value + 1);
+
+            var listener = Atom.Computed(() => atom.Value + 1, keepAlive: true);
 
             Assert.AreEqual("", activation);
 
@@ -64,6 +71,39 @@ namespace UniMob.Tests
 
             tick(0);
             Assert.AreEqual("AD", activation);
+        });
+
+        [Test]
+        public void Deactivation() => TestZone.Run(tick =>
+        {
+            var activation = "";
+
+            var source = Atom.Value(
+                0,
+                onActive: () => activation += "S",
+                onInactive: () => activation += "s");
+
+            var middle = Atom.Computed(
+                () => source.Value + 1,
+                onActive: () => activation += "M",
+                onInactive: () => activation += "m");
+
+            var target = Atom.Computed(
+                () => middle.Value + 1,
+                onActive: () => activation += "T",
+                onInactive: () => activation += "t");
+
+            target.Get();
+            Assert.AreEqual("", activation);
+
+            var autoRun = Atom.AutoRun(() => target.Get());
+            Assert.AreEqual("TMS", activation);
+
+            autoRun.Dispose();
+            Assert.AreEqual("TMS", activation);
+
+            tick(0);
+            Assert.AreEqual("TMStms", activation);
         });
 
         [Test]
@@ -81,7 +121,7 @@ namespace UniMob.Tests
 
             Assert.AreEqual("", activation);
 
-            listener.Get();
+            var autoRun = Atom.AutoRun(() => listener.Get());
             Assert.AreEqual("A", activation);
 
             modifiedSource.Value = 2;
@@ -89,6 +129,8 @@ namespace UniMob.Tests
 
             tick(0);
             Assert.AreEqual("A", activation);
+
+            autoRun.Dispose();
         });
 
         [Test]
@@ -102,7 +144,7 @@ namespace UniMob.Tests
 
             Assert.AreEqual("", activation);
 
-            atom.Get();
+            var autoRun = Atom.AutoRun(() => atom.Get());
             Assert.AreEqual("A", activation);
 
             atom.Value = 2;
@@ -110,13 +152,15 @@ namespace UniMob.Tests
 
             tick(0);
             Assert.AreEqual("A", activation);
+
+            autoRun.Dispose();
         });
 
         [Test]
         public void Caching() => TestZone.Run(tick =>
         {
             var random = new Random();
-            var atom = Atom.Computed(() => random.Next());
+            var atom = Atom.Computed(() => random.Next(), keepAlive: true);
 
             Assert.AreEqual(atom.Value, atom.Value);
         });
@@ -159,7 +203,7 @@ namespace UniMob.Tests
             {
                 ++targetUpdates;
                 return middle.Value;
-            });
+            }, keepAlive: true);
 
             target.Get();
             Assert.AreEqual(1, target.Value);
@@ -188,13 +232,15 @@ namespace UniMob.Tests
                 return middle.Value;
             });
 
-            target.Get();
+            var autoRun = Atom.AutoRun(() => target.Get());
             Assert.AreEqual("TM", actualization);
 
             source.Value = 2;
 
             tick(0);
             Assert.AreEqual("TMTM", actualization);
+
+            autoRun.Dispose();
         });
 
         [Test]
@@ -204,7 +250,7 @@ namespace UniMob.Tests
 
             var source = Atom.Value(1);
             var middle = Atom.Computed(() => source.Value + 1);
-            var target = Atom.Computed(() => targetValue = middle.Value + 1);
+            var target = Atom.Computed(() => targetValue = middle.Value + 1, keepAlive: true);
 
             target.Get();
             Assert.AreEqual(3, targetValue);
@@ -271,7 +317,7 @@ namespace UniMob.Tests
 
             string actualization = "";
 
-            Atom.AutoRun(() =>
+            var dispose = Atom.AutoRun(() =>
             {
                 source.Get();
                 actualization += "T";
@@ -284,6 +330,8 @@ namespace UniMob.Tests
 
             tick(0);
             Assert.AreEqual("TT", actualization);
+
+            dispose.Dispose();
         });
 
         [Test]
@@ -339,11 +387,14 @@ namespace UniMob.Tests
         public void Reaction() => TestZone.Run(tick =>
         {
             var source = Atom.Value(0);
+            var middle = Atom.Computed(
+                () => source.Value < 0 ? throw new Exception() : source.Value);
+
             var result = 0;
             var errors = 0;
 
             Atom.Reaction(
-                pull: () => source.Value,
+                pull: () => middle.Value,
                 reaction: (value, disposable) =>
                 {
                     result = value;
@@ -357,7 +408,7 @@ namespace UniMob.Tests
             tick(0);
             Assert.AreEqual(1, result);
 
-            Atom.PushException(source, new Exception());
+            source.Value = -1;
             tick(0);
             Assert.AreEqual(1, errors);
 
