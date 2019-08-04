@@ -10,8 +10,7 @@ namespace UniMob.UI.Internal
         public static bool CanUpdateWidget(Widget oldWidget, Widget newWidget)
         {
             return oldWidget.Key == newWidget.Key &&
-                   //TODO: optimize GetType() call
-                   oldWidget.GetType() == newWidget.GetType();
+                   oldWidget.Type == newWidget.Type;
         }
 
         public static State[] UpdateChildren(BuildContext context, State[] oldChildren, List<Widget> newWidgets)
