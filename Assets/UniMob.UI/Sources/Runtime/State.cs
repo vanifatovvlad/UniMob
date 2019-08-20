@@ -84,6 +84,9 @@ namespace UniMob.UI
                 }
 
                 return state;
+            }, onInactive: () =>
+            {
+                StateUtilities.DeactivateChild(state);
             });
         }
 
@@ -102,6 +105,12 @@ namespace UniMob.UI
 
                 // ReSharper disable once CoVariantArrayConversion
                 return states.ToArray();
+            }, onInactive: () =>
+            {
+                foreach (var state in states)
+                {
+                    StateUtilities.DeactivateChild(state);
+                }
             });
         }
     }
