@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 
 namespace UniMob.UI.Widgets
 {
-    public abstract class SingleChildLayoutWidget : Widget
+    public abstract class SingleChildLayoutWidget : StatefulWidget
     {
         protected SingleChildLayoutWidget(
             [NotNull] Widget child,

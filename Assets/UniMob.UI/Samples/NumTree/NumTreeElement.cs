@@ -3,7 +3,7 @@ using UniMob.Async;
 
 namespace UniMob.UI.Samples.NumTree
 {
-    public class NumTreeElement : Widget
+    public class NumTreeElement : StatefulWidget
     {
         public NumTreeElement(Atom<int> valueAtom)
         {

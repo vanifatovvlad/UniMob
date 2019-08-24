@@ -2,7 +2,7 @@ using System;
 
 namespace UniMob.UI.Samples.NumTree
 {
-    public class NumTreeButton : Widget
+    public class NumTreeButton : StatefulWidget
     {
         public NumTreeButton(Action onTap)
         {

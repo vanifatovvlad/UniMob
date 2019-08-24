@@ -3,7 +3,7 @@ using UniMob.Async;
 
 namespace UniMob.UI.Samples.Counter
 {
-    public class Counter : Widget
+    public class Counter : StatefulWidget
     {
         public override State CreateState() => new CounterState();
     }

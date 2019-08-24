@@ -3,7 +3,7 @@ using UniMob.UI.Samples.TodoMvc.Views;
 
 namespace UniMob.UI.Samples.TodoMvc.Vanilla.Widgets
 {
-    public class TodoList : Widget
+    public class TodoList : StatefulWidget
     {
         public override State CreateState() => new TodoListState();
     }

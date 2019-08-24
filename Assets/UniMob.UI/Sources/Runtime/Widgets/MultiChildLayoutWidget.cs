@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 
 namespace UniMob.UI.Widgets
 {
-    public abstract class MultiChildLayoutWidget : Widget
+    public abstract class MultiChildLayoutWidget : StatefulWidget
     {
         protected MultiChildLayoutWidget(
             [NotNull] List<Widget> children,

@@ -1,22 +1,14 @@
 using System;
-using JetBrains.Annotations;
 
 namespace UniMob.UI
 {
-    public abstract class Widget
+    // ReSharper disable once InconsistentNaming
+    public interface Widget
     {
-        private Type _type;
+        Type Type { get; }
 
-        protected Widget([CanBeNull] Key key = null)
-        {
-            Key = key;
-        }
+        Key Key { get; }
 
-        internal Type Type => _type ?? (_type = GetType());
-
-        [CanBeNull] public Key Key { get; }
-
-        [NotNull]
-        public abstract State CreateState();
+        State CreateState();
     }
 }
