@@ -9,6 +9,7 @@ namespace UniMob
         private readonly IEqualityComparer<T> _comparer;
         private readonly AtomPull<T> _pull;
         private readonly AtomPush<T> _push;
+        private readonly bool _requiresReaction;
 
         private bool _hasCache;
         private T _cache;
@@ -20,6 +21,7 @@ namespace UniMob
             [NotNull] AtomPull<T> pull,
             AtomPush<T> push = null,
             bool keepAlive = false,
+            bool requiresReaction = false,
             Action onActive = null,
             Action onInactive = null,
             IEqualityComparer<T> comparer = null)
@@ -28,6 +30,7 @@ namespace UniMob
             _pull = pull ?? throw new ArgumentNullException(nameof(pull));
             _push = push;
             _comparer = comparer ?? EqualityComparer<T>.Default;
+            _requiresReaction = requiresReaction;
         }
 
         public T Value
@@ -36,6 +39,7 @@ namespace UniMob
             {
                 if (!IsActive && Stack == null && !KeepAlive)
                 {
+                    WarnAboutUnTrackedRead();
                     return _pull();
                 }
 
@@ -147,6 +151,17 @@ namespace UniMob
             }
 
             return _hasCache ? Convert.ToString(_cache) : "[undefined]";
+        }
+
+        private void WarnAboutUnTrackedRead()
+        {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (_requiresReaction)
+            {
+                throw new InvalidOperationException(
+                    $"[UniMob] Computed value is read outside a reactive context");
+            }
+#endif
         }
     }
 }

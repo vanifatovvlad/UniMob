@@ -84,10 +84,7 @@ namespace UniMob.UI
                 }
 
                 return state;
-            }, onInactive: () =>
-            {
-                StateUtilities.DeactivateChild(state);
-            });
+            }, onInactive: () => StateUtilities.DeactivateChild(state), requiresReaction: true);
         }
 
         internal static Atom<IState[]> CreateList(BuildContext context, Func<BuildContext, List<Widget>> builder)
@@ -111,7 +108,7 @@ namespace UniMob.UI
                 {
                     StateUtilities.DeactivateChild(state);
                 }
-            });
+            }, requiresReaction: true);
         }
     }
 

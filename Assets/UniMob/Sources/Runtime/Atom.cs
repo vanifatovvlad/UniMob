@@ -17,22 +17,24 @@ namespace UniMob
         public static Atom<T> Computed<T>(
             AtomPull<T> pull,
             bool keepAlive = false,
+            bool requiresReaction = false,
             Action onActive = null,
             Action onInactive = null,
             IEqualityComparer<T> comparer = null)
         {
-            return new ComputedAtom<T>(pull, null, keepAlive, onActive, onInactive, comparer);
+            return new ComputedAtom<T>(pull, null, keepAlive, requiresReaction, onActive, onInactive, comparer);
         }
 
         public static MutableAtom<T> Computed<T>(
             AtomPull<T> pull,
             AtomPush<T> push,
             bool keepAlive = false,
+            bool requiresReaction = false,
             Action onActive = null,
             Action onInactive = null,
             IEqualityComparer<T> comparer = null)
         {
-            return new ComputedAtom<T>(pull, push, keepAlive, onActive, onInactive, comparer);
+            return new ComputedAtom<T>(pull, push, keepAlive, requiresReaction, onActive, onInactive, comparer);
         }
 
         public static IDisposable Reaction<T>(
