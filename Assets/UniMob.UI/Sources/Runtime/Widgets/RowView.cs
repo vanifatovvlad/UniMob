@@ -3,8 +3,18 @@ using UnityEngine;
 namespace UniMob.UI.Widgets
 {
     [AddComponentMenu("UniMob/Views/Row")]
-    public sealed class RowView : LayoutView<IRowState>
+    public sealed class RowView : View<IRowState>
     {
+        private ViewMapperBase _mapper;
+
+        protected override void Activate()
+        {
+            base.Activate();
+
+            if (_mapper == null)
+                _mapper = new PooledViewMapper(transform);
+        }
+
         protected override void Render()
         {
             var children = State.Children;
@@ -24,7 +34,7 @@ namespace UniMob.UI.Widgets
                 : mainAxis == MainAxisAlignment.End ? 1f
                 : 0.5f;
 
-            using (var render = Mapper.CreateRender())
+            using (var render = _mapper.CreateRender())
             {
                 float x = -columnSize.Width * offsetMultiplierX;
 
@@ -43,11 +53,11 @@ namespace UniMob.UI.Widgets
                     var localAlignY = childSize.IsHeightStretched ? Alignment.Center.Y : alignY;
 
                     var anchor = new Alignment(alignX, localAlignY);
-                    SetSize(childView.rectTransform, childSize, anchor.ToAnchor());
+                    ViewLayoutUtility.SetSize(childView.rectTransform, childSize, anchor.ToAnchor());
 
                     var position = new Vector2(x, 0);
                     var corner = new Alignment(Alignment.CenterLeft.X, localAlignY);
-                    SetPosition(childView.rectTransform, childSize, position, corner);
+                    ViewLayoutUtility.SetPosition(childView.rectTransform, childSize, position, corner);
 
                     x += childSize.Width;
                 }

@@ -4,9 +4,19 @@ using UnityEngine.UI;
 namespace UniMob.UI.Widgets
 {
     [AddComponentMenu("UniMob/Views/Container")]
-    public sealed class ContainerView : LayoutView<IContainerState>
+    public sealed class ContainerView : View<IContainerState>
     {
         [SerializeField] private Image backgroundImage = default;
+
+        private ViewMapperBase _mapper;
+
+        protected override void Activate()
+        {
+            base.Activate();
+
+            if (_mapper == null)
+                _mapper = new PooledViewMapper(transform);
+        }
 
         protected override void Render()
         {
@@ -16,15 +26,15 @@ namespace UniMob.UI.Widgets
             backgroundImage.enabled = !transparent;
             backgroundImage.color = color;
 
-            using (var render = Mapper.CreateRender())
+            using (var render = _mapper.CreateRender())
             {
                 var child = State.Child;
                 var childView = render.RenderItem(child);
                 var childSize = child.Size;
 
                 var alignment = State.Alignment;
-                SetSize(childView.rectTransform, childSize, alignment.ToAnchor());
-                SetPosition(childView.rectTransform, childSize, Vector2.zero, alignment);
+                ViewLayoutUtility.SetSize(childView.rectTransform, childSize, alignment.ToAnchor());
+                ViewLayoutUtility.SetPosition(childView.rectTransform, childSize, Vector2.zero, alignment);
             }
         }
     }

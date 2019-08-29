@@ -12,7 +12,7 @@ namespace UniMob.UI
         private readonly Atom<WidgetSize> _size;
 
         public BuildContext Context { get; internal set; }
-        
+
         public string ViewPath { get; }
 
         internal Widget Widget { get; private set; }
@@ -130,7 +130,7 @@ namespace UniMob.UI
             base.Update(widget);
 
             var oldWidget = Widget;
-            
+
             if (widget is TWidget typedWidget)
             {
                 _widget.Value = typedWidget;
@@ -152,5 +152,8 @@ namespace UniMob.UI
         }
 
         protected Atom<IState> CreateChild(WidgetBuilder builder) => Create(this, builder);
+
+        protected Atom<IState[]> CreateChildren(Func<BuildContext, List<Widget>> builder)
+            => CreateList(this, builder);
     }
 }
