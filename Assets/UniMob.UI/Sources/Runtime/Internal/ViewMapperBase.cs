@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 
-namespace UniMob.UI
+namespace UniMob.UI.Internal
 {
-    internal abstract class ViewMapperBase : IViewTreeElement
+    public abstract class ViewMapperBase : IViewTreeElement
     {
         private List<Item> _items = new List<Item>();
         private List<Item> _next = new List<Item>();

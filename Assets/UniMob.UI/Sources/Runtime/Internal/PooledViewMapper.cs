@@ -2,9 +2,9 @@ using System;
 using UniMob.Pools;
 using UnityEngine;
 
-namespace UniMob.UI
+namespace UniMob.UI.Internal
 {
-    internal sealed class PooledViewMapper : ViewMapperBase
+    public sealed class PooledViewMapper : ViewMapperBase
     {
         private readonly Func<Transform> _parentSelector;
         private readonly bool _worldPositionStays;
