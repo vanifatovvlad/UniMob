@@ -23,7 +23,7 @@ namespace UniMob.UI.Widgets
 
         protected SingleChildLayoutState([NotNull] string view) : base(view)
         {
-            _child = Create(this, context => Widget.Child);
+            _child = CreateChild(context => Widget.Child);
         }
 
         public IState Child => _child.Value;

@@ -25,7 +25,7 @@ namespace UniMob.UI.Widgets
 
         protected MultiChildLayoutState(string view) : base(view)
         {
-            _children = CreateList(this, context => Widget.Children);
+            _children = CreateChildren(context => Widget.Children);
         }
 
         public IState[] Children => _children.Value;

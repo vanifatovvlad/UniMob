@@ -12,7 +12,7 @@ namespace UniMob.UI
             if (builder == null) throw new ArgumentNullException(nameof(builder));
 
             IView view = root;
-            var context = new AppContext();
+            var context = new BuildContext(null, null);
             var state = State.Create(context, builder);
             var render = Atom.AutoRun(() => view.SetSource(state.Value));
 
@@ -26,13 +26,6 @@ namespace UniMob.UI
                     view.ResetSource();
                 }
             });
-        }
-
-        private class AppContext : BuildContext
-        {
-            public BuildContext Parent => null;
-            public TState AncestorStateOfType<TState>() where TState : IState => default;
-            public TState RootAncestorStateOfType<TState>() where TState : IState => default;
         }
 
         private class ActionDisposable : IDisposable

@@ -10,8 +10,9 @@ namespace UniMob.UI
     public abstract partial class State : IState, IDisposable
     {
         private readonly Atom<WidgetSize> _size;
+        private readonly MutableBuildContext _context;
 
-        public BuildContext Context { get; internal set; }
+        public BuildContext Context => _context;
 
         public string ViewPath { get; }
 
@@ -23,6 +24,7 @@ namespace UniMob.UI
         {
             Assert.IsNull(Atom.CurrentScope);
             ViewPath = view ?? throw new ArgumentNullException(nameof(view));
+            _context = new MutableBuildContext(this, null);
             _size = Atom.Computed(CalculateSize);
         }
 
@@ -35,10 +37,10 @@ namespace UniMob.UI
         {
             Assert.IsNull(Atom.CurrentScope);
 
-            if (Context != null)
+            if (Context.Parent != null)
                 throw new InvalidOperationException();
 
-            Context = context;
+            _context.SetParent(context);
         }
 
         public virtual void InitState()
@@ -112,7 +114,7 @@ namespace UniMob.UI
         }
     }
 
-    public abstract class State<TWidget> : State, BuildContext
+    public abstract class State<TWidget> : State
         where TWidget : Widget
     {
         private readonly MutableAtom<TWidget> _widget = Atom.Value(default(TWidget));
@@ -120,8 +122,6 @@ namespace UniMob.UI
         protected State([NotNull] string view) : base(view)
         {
         }
-
-        BuildContext BuildContext.Parent => Context;
 
         protected new TWidget Widget => _widget.Value;
 
@@ -151,9 +151,10 @@ namespace UniMob.UI
             Assert.IsNull(Atom.CurrentScope);
         }
 
-        protected Atom<IState> CreateChild(WidgetBuilder builder) => Create(this, builder);
+        protected Atom<IState> CreateChild(WidgetBuilder builder)
+            => Create(new BuildContext(null, Context), builder);
 
         protected Atom<IState[]> CreateChildren(Func<BuildContext, List<Widget>> builder)
-            => CreateList(this, builder);
+            => CreateList(new BuildContext(null, Context), builder);
     }
 }
