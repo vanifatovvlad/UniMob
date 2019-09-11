@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace UniMob.UI.Widgets
 {
-    internal static class ViewLayoutUtility
+    public static class ViewLayoutUtility
     {
         public static void SetPosition(RectTransform rt, WidgetSize size, Vector2 position, Alignment corner)
         {

@@ -13,7 +13,7 @@ namespace UniMob.UI.Widgets
             Y = y;
         }
 
-        internal Vector2 ToAnchor() => new Vector2(X * 0.5f + 0.5f, -Y * 0.5f + 0.5f);
+        public Vector2 ToAnchor() => new Vector2(X * 0.5f + 0.5f, -Y * 0.5f + 0.5f);
 
         /// <summary>
         /// The center point along the bottom edge.
