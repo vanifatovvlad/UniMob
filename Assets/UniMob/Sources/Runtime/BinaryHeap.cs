@@ -1,7 +1,5 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 namespace UniMob
 {
@@ -133,7 +131,6 @@ namespace UniMob
             return toRemove.Value;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void EnsureNotEmpty()
         {
             if (_count < 1)

@@ -1,11 +1,9 @@
 using System;
-using System.Runtime.CompilerServices;
 
 namespace UniMob.Async
 {
     internal static class Result
     {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Result<T> Value<T>(T value)
         {
             return new Result<T>
@@ -16,7 +14,6 @@ namespace UniMob.Async
             };
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Result<T> Exception<T>(Exception exception)
         {
             return new Result<T>

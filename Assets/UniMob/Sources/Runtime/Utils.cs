@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace UniMob
 {
     internal static class Utils
@@ -11,14 +9,6 @@ namespace UniMob
 
             field = value;
             return true;
-        }
-        
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Swap<T>(ref T a, ref T b)
-        {
-            T tmp = a;
-            a = b;
-            b = tmp;
         }
     }
 }

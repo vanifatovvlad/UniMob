@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace UniMob
 {
-    internal class UnityZone : MonoBehaviour, IZone
+    public class UnityZone : MonoBehaviour, IZone
     {
         private static TimerDispatcher _dispatcher;
 
@@ -14,8 +14,9 @@ namespace UniMob
             if (_dispatcher != null) return;
 
             var go = new GameObject(nameof(UnityZone));
+            var zone = go.AddComponent<UnityZone>();
             DontDestroyOnLoad(go);
-            go.AddComponent<UnityZone>();
+            DontDestroyOnLoad(zone);
         }
 
         private void Awake()

@@ -15,11 +15,11 @@ namespace UniMob
         private readonly BinaryHeap<float, Action> _delayed = new BinaryHeap<float, Action>(new TimeComparer());
 
         private float _time;
-        private bool _threadedDirty;
+        private int _threadedDirty;
         private List<Action> _queue = new List<Action>();
         private List<Action> _toPass = new List<Action>();
 
-        internal bool ThreadedDirty => _threadedDirty;
+        internal bool ThreadedDirty => _threadedDirty == 1;
 
         public TimerDispatcher(int mainThreadId, Action<Exception> exceptionHandler)
         {
@@ -34,7 +34,7 @@ namespace UniMob
                 _threadedQueue.Clear();
                 _threadedDelayed.Clear();
             }
-            
+
             _delayed.Clear();
             _queue.Clear();
             _toPass.Clear();
@@ -42,12 +42,12 @@ namespace UniMob
 
         internal void Tick(float time)
         {
-            if (_threadedDirty)
+            _time = time;
+
+            if (Interlocked.CompareExchange(ref _threadedDirty, 0, 1) == 1)
             {
                 lock (_lock)
                 {
-                    _threadedDirty = false;
-
                     if (_threadedQueue.Count > 0)
                     {
                         _queue.AddRange(_threadedQueue);
@@ -58,17 +58,18 @@ namespace UniMob
                     {
                         foreach (var call in _threadedDelayed)
                         {
-                            _delayed.Add(call.Delay, call.Action);
+                            _delayed.Add(time + call.Delay, call.Action);
                         }
                     }
                 }
             }
 
-            _time = time;
-            Utils.Swap(ref _queue, ref _toPass);
-            _queue.Clear();
+            _toPass.Clear();
+            var emptyList = _toPass;
+            _toPass = _queue;
+            _queue = emptyList;
 
-            while (_delayed.Count > 0 && _delayed.PeekKey() <= _time)
+            while (_delayed.Count > 0 && _delayed.PeekKey() <= time)
             {
                 _toPass.Add(_delayed.Remove());
             }
@@ -99,7 +100,7 @@ namespace UniMob
                 lock (_lock)
                 {
                     _threadedQueue.Add(action);
-                    _threadedDirty = true;
+                    Interlocked.Exchange(ref _threadedDirty, 1);
                 }
             }
         }
@@ -117,7 +118,7 @@ namespace UniMob
                 lock (_lock)
                 {
                     _threadedDelayed.Add(new DelayedCall {Delay = delay, Action = action});
-                    _threadedDirty = true;
+                    Interlocked.Exchange(ref _threadedDirty, 1);
                 }
             }
         }
