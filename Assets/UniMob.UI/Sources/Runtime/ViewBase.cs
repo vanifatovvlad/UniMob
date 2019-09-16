@@ -24,7 +24,8 @@ namespace UniMob.UI
         private ReactionAtom _renderAtom;
         private PerfWatcher _renderPerf;
 
-        [NotNull] protected TState State => _state;
+        protected bool HasState => _hasState;
+        protected TState State => _state;
 
         // ReSharper disable once InconsistentNaming
         public RectTransform rectTransform => (RectTransform) transform;
