@@ -14,22 +14,12 @@ namespace UniMob.UI
 
         public BuildContext Context => _context;
 
-        public virtual WidgetViewReference View { get; }
+        public abstract WidgetViewReference View { get; }
 
         internal Widget Widget { get; private set; }
 
         public WidgetSize Size => _size.Value;
-
-        protected State([NotNull] string view) : this()
-        {
-            if (view == null)
-            {
-                throw new ArgumentNullException(nameof(view));
-            }
-            
-            View = WidgetViewReference.Resource(view);
-        }
-
+        
         protected State()
         {
             Assert.IsNull(Atom.CurrentScope);
@@ -128,15 +118,6 @@ namespace UniMob.UI
         where TWidget : Widget
     {
         private readonly MutableAtom<TWidget> _widget = Atom.Value(default(TWidget));
-
-        protected State([NotNull] string view) : base(view)
-        {
-        }
-
-        protected State()
-        {
-            
-        }
 
         protected new TWidget Widget => _widget.Value;
 

@@ -20,9 +20,8 @@ namespace UniMob.UI.Widgets
 
     internal class FadeTransitionState : SingleChildLayoutState<FadeTransition>, IFadeTransitionState
     {
-        public FadeTransitionState([NotNull] string view = "UniMob.FadeTransition") : base(view)
-        {
-        }
+        public override WidgetViewReference View { get; }
+            = WidgetViewReference.Resource("UniMob.FadeTransition");
 
         public ITween<float> Opacity => Widget.Opacity;
     }

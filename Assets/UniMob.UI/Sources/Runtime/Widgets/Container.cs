@@ -27,9 +27,8 @@ namespace UniMob.UI.Widgets
 
     internal sealed class ContainerState : SingleChildLayoutState<Container>, IContainerState
     {
-        public ContainerState() : base("UniMob.Container")
-        {
-        }
+        public override WidgetViewReference View { get; }
+            = WidgetViewReference.Resource("UniMob.Container");
 
         public Color Color => Widget.Color;
 

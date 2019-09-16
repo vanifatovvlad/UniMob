@@ -25,7 +25,10 @@ namespace UniMob.UI.Samples.TodoMvc.Vanilla
         private readonly MutableAtom<VisibilityFilter> _activeFilter = Atom.Value(VisibilityFilter.All);
         private readonly Atom<IState> _todos;
 
-        public HomeScreenState() : base("TodoHomeScreen")
+        public override WidgetViewReference View { get; }
+            = WidgetViewReference.Resource("TodoHomeScreen");
+
+        public HomeScreenState()
         {
             _todos = CreateChild(BuildTodos);
         }

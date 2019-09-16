@@ -17,7 +17,10 @@ namespace UniMob.UI.Samples.LayoutViewPanelSample
         private const int ChildrenCount = 100;
         private readonly Atom<IState[]> _children;
 
-        public LayoutViewPanelSampleState() : base("LayoutViewPanelSample")
+        public override WidgetViewReference View { get; }
+            = WidgetViewReference.Resource("LayoutViewPanelSample");
+
+        public LayoutViewPanelSampleState()
         {
             _children = CreateChildren(BuildChildren);
         }

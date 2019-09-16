@@ -12,9 +12,8 @@ namespace UniMob.UI.Samples.TodoMvc.Vanilla.Widgets
     {
         private readonly MutableAtom<bool> _full = Atom.Value(false);
 
-        public TodoListState() : base("TodoList")
-        {
-        }
+        public override WidgetViewReference View { get; }
+            = WidgetViewReference.Resource("TodoList");
 
         public override WidgetSize CalculateSize()
         {

@@ -21,7 +21,7 @@ namespace UniMob.UI.Widgets
     {
         private readonly Atom<IState> _child;
 
-        protected SingleChildLayoutState([NotNull] string view) : base(view)
+        protected SingleChildLayoutState()
         {
             _child = CreateChild(context => Widget.Child);
         }

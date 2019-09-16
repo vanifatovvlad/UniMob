@@ -23,7 +23,7 @@ namespace UniMob.UI.Widgets
     {
         private readonly Atom<IState[]> _children;
 
-        protected MultiChildLayoutState(string view) : base(view)
+        protected MultiChildLayoutState()
         {
             _children = CreateChildren(context => Widget.Children);
         }

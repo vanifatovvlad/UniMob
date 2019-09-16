@@ -37,7 +37,10 @@ namespace UniMob.UI.Widgets
     {
         private readonly Atom<WidgetSize> _innerSize;
 
-        public RowState() : base("UniMob.Row")
+        public override WidgetViewReference View { get; }
+            = WidgetViewReference.Resource("UniMob.Row");
+
+        public RowState()
         {
             _innerSize = Atom.Computed(CalculateInnerSize);
         }
