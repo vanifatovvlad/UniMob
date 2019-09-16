@@ -6,6 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/UniMob/Samples/TimerSample.unity
-    guid: 986888941dbc63449bb4abb55488b353
-  m_configObjects: {}
+    path: Assets/UniMob.UI/Samples/NumTree/NumTree.unity
+    guid: c52861433ab27264683f58b62da1c3cc
+  m_configObjects:
+    com.unity.addressableassets: {fileID: 11400000, guid: 0807b636516138b44819f7624adb6d2f,
+      type: 2}

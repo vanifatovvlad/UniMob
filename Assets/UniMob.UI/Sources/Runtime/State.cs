@@ -14,16 +14,25 @@ namespace UniMob.UI
 
         public BuildContext Context => _context;
 
-        public string ViewPath { get; }
+        public virtual WidgetViewReference View { get; }
 
         internal Widget Widget { get; private set; }
 
         public WidgetSize Size => _size.Value;
 
-        protected State([NotNull] string view)
+        protected State([NotNull] string view) : this()
+        {
+            if (view == null)
+            {
+                throw new ArgumentNullException(nameof(view));
+            }
+            
+            View = WidgetViewReference.Resource(view);
+        }
+
+        protected State()
         {
             Assert.IsNull(Atom.CurrentScope);
-            ViewPath = view ?? throw new ArgumentNullException(nameof(view));
             _context = new MutableBuildContext(this, null);
             _size = Atom.Computed(CalculateSize);
         }
@@ -65,7 +74,8 @@ namespace UniMob.UI
 
         public virtual WidgetSize CalculateSize()
         {
-            var prefab = ViewContext.Loader.LoadViewPrefab(this);
+            var (prefab, viewRef) = ViewContext.Loader.LoadViewPrefab(this);
+            viewRef.LinkAtomToScope();
             var size = prefab.rectTransform.sizeDelta;
             return new WidgetSize(
                 size.x > 0 ? size.x : default(float?),
@@ -121,6 +131,11 @@ namespace UniMob.UI
 
         protected State([NotNull] string view) : base(view)
         {
+        }
+
+        protected State()
+        {
+            
         }
 
         protected new TWidget Widget => _widget.Value;

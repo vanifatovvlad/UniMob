@@ -63,10 +63,13 @@ namespace UniMob.UI.Internal
 
         private Item RenderItemInternal(IState state)
         {
+            var nextViewReference = state.View;
+
             var item = _items.Find(o => ReferenceEquals(o.State, state));
             if (item == null)
             {
                 var view = ResolveView(state);
+                
                 view.SetSource(state);
                 item = new Item {State = state, View = view};
                 using (Atom.NoWatch)
@@ -77,18 +80,30 @@ namespace UniMob.UI.Internal
             else
             {
                 _items.Remove(item);
+
+                if (!item.View.ViewReference.Equals(nextViewReference))
+                {
+                    item.View.ResetSource();
+                    RecycleView(item.View);
+
+                    item.View = ResolveView(state);
+                }
+
                 item.View.SetSource(state);
                 item.State = state;
             }
+
+            item.View.ViewReference.LinkAtomToScope();
 
             _next.Add(item);
 
             return item;
         }
-        
+
         public struct ViewMapperRenderScope : IDisposable
         {
             private readonly ViewMapperBase _mapper;
+
             public ViewMapperRenderScope(ViewMapperBase mapper)
             {
                 _mapper = mapper;
@@ -103,12 +118,12 @@ namespace UniMob.UI.Internal
             public void RenderItems(IState[] states, int startIndex, int count, Action<IView, IState> postRender = null)
                 => _mapper.RenderItems(states, startIndex, count, postRender);
 
-            public IView RenderItem(IState state) 
+            public IView RenderItem(IState state)
                 => _mapper.RenderItem(state);
         }
 
         public ViewMapperRenderScope CreateRender() => new ViewMapperRenderScope(this);
-        
+
         private void BeginRender()
         {
             if (_activeRender != null)

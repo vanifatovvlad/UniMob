@@ -4,7 +4,7 @@ namespace UniMob.UI
     {
         WidgetSize Size { get; }
 
-        string ViewPath { get; }
+        WidgetViewReference View { get; }
 
         void DidViewMount();
         void DidViewUnmount();

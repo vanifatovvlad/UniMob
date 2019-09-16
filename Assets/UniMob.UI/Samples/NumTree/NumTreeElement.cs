@@ -17,9 +17,8 @@ namespace UniMob.UI.Samples.NumTree
 
     public class NumTreeElementState : State<NumTreeElement>, INumTreeElementViewState
     {
-        public NumTreeElementState() : base("NumTreeElement")
-        {
-        }
+        public override WidgetViewReference View { get; }
+            = WidgetViewReference.Addressable("UniMob.UI/Samples/NumTree/NumTreeElement.prefab");
 
         public int Value => Widget.ValueAtom.Value;
     }

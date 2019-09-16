@@ -22,11 +22,12 @@ namespace UniMob.UI.Internal
 
         protected override IView ResolveView(IState state)
         {
-            var prefab = ViewContext.Loader.LoadViewPrefab(state);
+            var (prefab, viewRef) = ViewContext.Loader.LoadViewPrefab(state);
             var view = GameObjectPool
                 .Instantiate(prefab.gameObject, _parentSelector.Invoke(), _worldPositionStays)
                 .GetComponent<IView>();
             view.rectTransform.anchoredPosition = Vector2.zero;
+            view.ViewReference = viewRef;
             return view;
         }
 

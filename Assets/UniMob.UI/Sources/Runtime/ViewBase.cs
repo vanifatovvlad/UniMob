@@ -30,6 +30,8 @@ namespace UniMob.UI
         // ReSharper disable once InconsistentNaming
         public RectTransform rectTransform => (RectTransform) transform;
 
+        public WidgetViewReference ViewReference { get; set; }
+
         void IView.SetSource(object newSource)
         {
             if (!(newSource is TState nextState))

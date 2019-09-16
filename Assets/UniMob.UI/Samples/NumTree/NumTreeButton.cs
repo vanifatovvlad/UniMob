@@ -16,9 +16,8 @@ namespace UniMob.UI.Samples.NumTree
 
     public class NumTreeButtonState : State<NumTreeButton>, INumTreeButtonState
     {
-        public NumTreeButtonState() : base("NumTreeButton")
-        {
-        }
+        public override WidgetViewReference View { get; }
+            = WidgetViewReference.Addressable("UniMob.UI/Samples/NumTree/NumTreeButton.prefab");
 
         public void Tap() => Widget.OnTap?.Invoke();
     }

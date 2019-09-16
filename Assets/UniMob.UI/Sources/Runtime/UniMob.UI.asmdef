@@ -2,7 +2,9 @@
     "name": "UniMob.UI",
     "references": [
         "UniMob",
-        "UniMob.Pools"
+        "UniMob.Pools",
+        "Unity.Addressables",
+        "Unity.ResourceManager"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],

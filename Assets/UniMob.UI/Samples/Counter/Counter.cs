@@ -23,9 +23,8 @@ namespace UniMob.UI.Samples.Counter
     {
         private readonly MutableAtom<int> _counter = Atom.Value(0);
 
-        public CounterState() : base("Counter")
-        {
-        }
+        public override WidgetViewReference View { get; }
+            = WidgetViewReference.Addressable("UniMob.UI/Samples/Counter/Counter.prefab");
 
         public string Counter => $"Counter: {_counter.Value}";
 

@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Default Local Group
+  m_EditorClassIdentifier: 
+  m_GroupName: Default Local Group
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 11ab48fd69b9f414195537970ca9eac9
+  m_SerializeEntries:
+  - m_GUID: 32b078b5fc82a344393cf610a4ee32d5
+    m_Address: UniMob.UI/Samples/NumTree/NumTreeElement.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 38a6c553af90c5b4f8d8aabfe14f9582
+    m_Address: UniMob.UI/Samples/NumTree/NumTreeButton.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 989f85e761fe3984f9b4f378174c4c5c
+    m_Address: UniMob.UI/Samples/Counter/Counter.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 0a98c680bd035ed41b818791b95a5233, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 5e2e33bb8cdd62f4f8628130acd067b3, type: 2}
+    - {fileID: 11400000, guid: 7301ae9df842b0745b9e3d65d621dc3e, type: 2}
