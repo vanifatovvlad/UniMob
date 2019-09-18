@@ -71,9 +71,11 @@ namespace UniMob.Tests
             var dispatcher = MakeDispatcher();
 
             int valueA = 0, valueB = 0;
+            
+            dispatcher.Tick(10f);
 
-            var threadA = new Thread(() => dispatcher.InvokeDelayed(5, () => ++valueA));
-            var threadB = new Thread(() => dispatcher.InvokeDelayed(4, () => ++valueB));
+            var threadA = new Thread(() => dispatcher.InvokeDelayed(5, () => ++valueA)); // 15f
+            var threadB = new Thread(() => dispatcher.InvokeDelayed(4, () => ++valueB)); // 14f
             threadA.Start();
             threadB.Start();
             threadA.Join();
@@ -83,13 +85,13 @@ namespace UniMob.Tests
             Assert.AreEqual(0, valueB);
             Assert.AreEqual(true, dispatcher.ThreadedDirty);
 
-            dispatcher.Tick(4.9f);
+            dispatcher.Tick(14.9f);
             Assert.AreEqual(false, dispatcher.ThreadedDirty);
 
             Assert.AreEqual(0, valueA);
             Assert.AreEqual(1, valueB);
 
-            dispatcher.Tick(5f);
+            dispatcher.Tick(15.1f);
             Assert.AreEqual(1, valueA);
             Assert.AreEqual(1, valueB);
         }

@@ -42,8 +42,6 @@ namespace UniMob
 
         internal void Tick(float time)
         {
-            _time = time;
-
             if (Interlocked.CompareExchange(ref _threadedDirty, 0, 1) == 1)
             {
                 lock (_lock)
@@ -58,11 +56,13 @@ namespace UniMob
                     {
                         foreach (var call in _threadedDelayed)
                         {
-                            _delayed.Add(time + call.Delay, call.Action);
+                            _delayed.Add(_time + call.Delay, call.Action);
                         }
                     }
                 }
             }
+            
+            _time = time;
 
             _toPass.Clear();
             var emptyList = _toPass;
