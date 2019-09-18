@@ -2,12 +2,12 @@
   "name": "com.unimob.async",
   "displayName": "UniMob.Async",
   "description": "Async computation library for Unity",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "unity": "2019.1",
   "license": "MIT",
   "author": "Vanifatov Vlad (https://github.com/vanifatovvlad)",
   "homepage": "https://github.com/vanifatovvlad/UniMob/tree/master/Assets/UniMob.Async/Sources#readme",
   "dependencies": {
-    "com.unimob": "0.1.5"
+    "com.unimob": "0.1.6"
   }
 }
