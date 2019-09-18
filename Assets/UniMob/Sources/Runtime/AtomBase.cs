@@ -312,7 +312,7 @@ namespace UniMob
             {
                 var atom = Updating.Dequeue();
 
-                if (!atom._reaping && atom.State != AtomState.Actual)
+                if (atom.IsActive && !atom._reaping && atom.State != AtomState.Actual)
                 {
                     atom.Actualize();
                 }

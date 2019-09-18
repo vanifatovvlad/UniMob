@@ -17,8 +17,6 @@ namespace UniMob.UI.Internal
             public IState State;
         }
 
-        public int Count => _items.Count;
-
         protected abstract IView ResolveView(IState state);
         protected abstract void RecycleView(IView view);
 
@@ -69,13 +67,9 @@ namespace UniMob.UI.Internal
             if (item == null)
             {
                 var view = ResolveView(state);
-                
+
                 view.SetSource(state);
                 item = new Item {State = state, View = view};
-                using (Atom.NoWatch)
-                {
-                    state.DidViewMount();
-                }
             }
             else
             {
@@ -85,7 +79,6 @@ namespace UniMob.UI.Internal
                 {
                     item.View.ResetSource();
                     RecycleView(item.View);
-
                     item.View = ResolveView(state);
                 }
 
@@ -165,25 +158,13 @@ namespace UniMob.UI.Internal
             if (list.Count == 0)
                 return;
 
-            using (Atom.NoWatch)
+            foreach (var removed in list)
             {
-                foreach (var removed in list)
-                {
-                    removed.View.ResetSource();
-                    RecycleView(removed.View);
-                    removed.State.DidViewUnmount();
-                }
-
-                list.Clear();
+                removed.View.ResetSource();
+                RecycleView(removed.View);
             }
-        }
 
-        public IView GetViewAt(int index)
-        {
-            if (index < 0 || index > _items.Count)
-                throw new ArgumentNullException(nameof(index));
-
-            return _items[index].View;
+            list.Clear();
         }
     }
 }
