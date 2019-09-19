@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "com.codewriter.npm-publisher-support": "0.5.3",
-    "com.unity.addressables": "1.2.3",
+    "com.unity.addressables": "1.2.4",
     "com.unity.package-manager-ui": "2.1.2",
     "com.unity.textmeshpro": "2.0.1",
     "com.unity.timeline": "1.0.0",
