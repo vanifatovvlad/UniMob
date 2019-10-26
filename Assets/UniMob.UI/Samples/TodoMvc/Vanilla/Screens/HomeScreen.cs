@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UniMob.Async;
 using UniMob.UI.Samples.TodoMvc.Vanilla.Widgets;
 using UniMob.UI.Samples.TodoMvc.Views;
 using UniMob.UI.Widgets;

@@ -1,5 +1,4 @@
 using System;
-using UniMob.Async;
 using UnityEngine;
 
 namespace UniMob.UI.Samples.Counter

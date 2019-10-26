@@ -1,4 +1,3 @@
-using UniMob.Async;
 using UniMob.UI.Samples.TodoMvc.Views;
 
 namespace UniMob.UI.Samples.TodoMvc.Vanilla.Widgets

@@ -1,5 +1,4 @@
 using System.Linq;
-using UniMob.Async;
 
 namespace UniMob.UI.Samples.TodoMvc.Vanilla
 {
