@@ -6,7 +6,7 @@ using UnityEngine;
 using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
 
-namespace UniMob.Pools
+namespace UniMob.UI.Internal.Pooling
 {
     public static class GameObjectPool
     {

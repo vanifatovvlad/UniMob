@@ -1,5 +1,5 @@
 using System;
-using UniMob.Pools;
+using UniMob.UI.Internal.Pooling;
 using UnityEngine;
 
 namespace UniMob.UI.Internal

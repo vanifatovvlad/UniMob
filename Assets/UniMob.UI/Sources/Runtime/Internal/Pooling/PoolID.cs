@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace UniMob.Pools
+namespace UniMob.UI.Internal.Pooling
 {
     public sealed class PoolID : MonoBehaviour
     {
