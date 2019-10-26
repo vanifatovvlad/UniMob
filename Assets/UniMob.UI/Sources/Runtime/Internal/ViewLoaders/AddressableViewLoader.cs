@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace UniMob.UI.Internal.ViewLoaders
 {
@@ -13,7 +12,6 @@ namespace UniMob.UI.Internal.ViewLoaders
 
         private class Data
         {
-            public AsyncOperationHandle<GameObject> Handle;
             public MutableAtom<WidgetViewReference> ViewRef;
         }
 
@@ -29,30 +27,33 @@ namespace UniMob.UI.Internal.ViewLoaders
             }
 
             var path = viewReference.Path;
+            
+            var identifier = path ?? viewReference.Reference.RuntimeKey.ToString();
 
-            if (_viewPrefabCache.TryGetValue(path, out var cachedView))
+            if (_viewPrefabCache.TryGetValue(identifier, out var cachedView))
             {
                 return (cachedView, viewReference);
             }
 
-            if (!_loaders.TryGetValue(path, out var data))
+            if (!_loaders.TryGetValue(identifier, out var data))
             {
-                var op = Addressables.LoadAssetAsync<GameObject>(path);
+                var op = path != null
+                    ? Addressables.LoadAssetAsync<GameObject>(path)
+                    : viewReference.Reference.LoadAssetAsync<GameObject>();
                 var tempReference = Atom.Value(WidgetViewReference.Resource("ADDR__loading__"));
 
                 data = new Data
                 {
-                    Handle = op,
                     ViewRef = tempReference,
                 };
 
-                _loaders.Add(path, data);
+                _loaders.Add(identifier, data);
 
                 op.Completed += handle =>
                 {
                     if (handle.Result == null)
                     {
-                        Debug.LogError($"Failed to load addressable '{path}' for '{state.GetType().Name}'. " +
+                        Debug.LogError($"Failed to load addressable '{identifier}' for '{state.GetType().Name}'. " +
                                        "Invalid path?");
                         return;
                     }
@@ -61,12 +62,12 @@ namespace UniMob.UI.Internal.ViewLoaders
                     var view = prefab.GetComponent<IView>();
                     if (view == null)
                     {
-                        Debug.LogError($"Failed to get IView from addressable '{path}' for '{state.GetType().Name}'. " +
+                        Debug.LogError($"Failed to get IView from addressable '{identifier}' for '{state.GetType().Name}'. " +
                                        "Missing view component?");
                         return;
                     }
 
-                    _viewPrefabCache.Add(path, view);
+                    _viewPrefabCache.Add(identifier, view);
                     tempReference.Value = WidgetViewReference.Resource("ADDR__loaded__");
                 };
             }

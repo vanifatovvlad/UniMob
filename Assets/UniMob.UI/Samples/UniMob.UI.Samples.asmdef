@@ -3,6 +3,7 @@
     "references": [
         "UniMob",
         "UniMob.UI",
+        "Unity.Addressables",
         "Unity.TextMeshPro"
     ],
     "optionalUnityReferences": [],

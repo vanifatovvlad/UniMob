@@ -1,14 +1,18 @@
 using System;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 namespace UniMob.UI.Samples.Counter
 {
     [CreateAssetMenu(menuName = "UniMob UI Samples/Counter", fileName = "Counter Widget")]
     public class Counter : ScriptableStatefulWidget
     {
+        [SerializeField] private AssetReferenceGameObject view;
         [SerializeField] private int minValue = 0;
         [SerializeField] private int maxValue = 10;
 
+        public WidgetViewReference ViewReference => view;
+        
         public int MinValue => minValue;
 
         public int MaxValue => maxValue;
@@ -22,8 +26,7 @@ namespace UniMob.UI.Samples.Counter
     {
         private readonly MutableAtom<int> _counter = Atom.Value(0);
 
-        public override WidgetViewReference View { get; }
-            = WidgetViewReference.Addressable("UniMob.UI/Samples/Counter/Counter.prefab");
+        public override WidgetViewReference View => Widget.ViewReference;
 
         public string Counter => $"Counter: {_counter.Value}";
 

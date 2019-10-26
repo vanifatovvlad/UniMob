@@ -1,4 +1,6 @@
 using System;
+using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 namespace UniMob.UI
 {
@@ -7,11 +9,13 @@ namespace UniMob.UI
         private Atom<WidgetViewReference> _source;
         private WidgetViewReferenceType _type;
         private string _path;
+        private AssetReferenceGameObject _reference;
 
-        private WidgetViewReference(WidgetViewReferenceType type, string path)
+        private WidgetViewReference(WidgetViewReferenceType type, string path, AssetReferenceGameObject reference)
         {
             _type = type;
             _path = path;
+            _reference = reference;
             _source = null;
         }
 
@@ -19,6 +23,7 @@ namespace UniMob.UI
         {
             _type = WidgetViewReferenceType.Resource;
             _path = null;
+            _reference = null;
             _source = source;
         }
 
@@ -29,6 +34,7 @@ namespace UniMob.UI
 
         public WidgetViewReferenceType Type => _source?.Value.Type ?? _type;
         public string Path => _source?.Value.Path ?? _path;
+        public AssetReferenceGameObject Reference => _source?.Value.Reference ?? _reference;
 
         public bool Equals(WidgetViewReference other)
         {
@@ -52,12 +58,22 @@ namespace UniMob.UI
 
         public static WidgetViewReference Addressable(string path)
         {
-            return new WidgetViewReference(WidgetViewReferenceType.Addressable, path);
+            return new WidgetViewReference(WidgetViewReferenceType.Addressable, path, null);
+        }
+        
+        public static WidgetViewReference Addressable(AssetReferenceGameObject reference)
+        {
+            return new WidgetViewReference(WidgetViewReferenceType.Addressable, null, reference);
         }
 
         public static WidgetViewReference Resource(string path)
         {
-            return new WidgetViewReference(WidgetViewReferenceType.Resource, path);
+            return new WidgetViewReference(WidgetViewReferenceType.Resource, path, null);
+        }
+
+        public static implicit operator WidgetViewReference(AssetReferenceGameObject reference)
+        {
+            return Addressable(reference);
         }
     }
 
