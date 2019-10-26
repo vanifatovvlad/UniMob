@@ -634,7 +634,10 @@ PlayerSettings:
   webGLLinkerTarget: 1
   webGLThreadsSupport: 0
   webGLWasmStreaming: 0
-  scriptingDefineSymbols: {}
+  scriptingDefineSymbols:
+    1: UNIMOB_CODEGEN_ENABLED
+    4: UNIMOB_CODEGEN_ENABLED
+    7: UNIMOB_CODEGEN_ENABLED
   platformArchitecture: {}
   scriptingBackend:
     Android: 1

@@ -1,0 +1,15 @@
+{
+    "name": "UniMob.Samples",
+    "references": [
+        "GUID:f9eac7706c05cfb459859ad2917d5d4e"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": []
+}

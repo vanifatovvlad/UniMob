@@ -12,7 +12,7 @@ namespace UniMob.UI.Samples.Counter
         [SerializeField] private int maxValue = 10;
 
         public WidgetViewReference ViewReference => view;
-        
+
         public int MinValue => minValue;
 
         public int MaxValue => maxValue;
@@ -24,13 +24,13 @@ namespace UniMob.UI.Samples.Counter
 
     public class CounterState : State<Counter>, ICounterState
     {
-        private readonly MutableAtom<int> _counter = Atom.Value(0);
+        [Atom] private int Counter { get; set; } = 0;
 
         public override WidgetViewReference View => Widget.ViewReference;
 
-        public string Counter => $"Counter: {_counter.Value}";
+        public string CounterText => $"Counter: {Counter}";
 
-        public void Increment() => _counter.Value = Math.Min(_counter.Value + 1, Widget.MaxValue);
-        public void Decrement() => _counter.Value = Math.Max(_counter.Value - 1, Widget.MinValue);
+        public void Increment() => Counter = Math.Min(Counter + 1, Widget.MaxValue);
+        public void Decrement() => Counter = Math.Max(Counter - 1, Widget.MinValue);
     }
 }

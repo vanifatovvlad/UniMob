@@ -1,4 +1,4 @@
-# UniMob [![Github license](https://img.shields.io/github/license/vanifatovvlad/UniMob.svg)](#) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#) [![Stars](https://img.shields.io/github/stars/vanifatovvlad/UniMob.svg?style=social)](https://github.com/vanifatovvlad/UniMob/stargazers) [![Watchers](https://img.shields.io/github/watchers/vanifatovvlad/UniMob.svg?style=social)](https://github.com/vanifatovvlad/UniMob/watchers) [![NPM Publisher Support](https://img.shields.io/badge/maintained%20with-NPM%20Publisher%20Support-blue.svg)](https://github.com/vanifatovvlad/NpmPublisherSupport)
+# UniMob [![Github license](https://img.shields.io/github/license/vanifatovvlad/UniMob.svg)](#) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#) [![NPM Publisher Support](https://img.shields.io/badge/maintained%20with-NPM%20Publisher%20Support-blue.svg)](https://github.com/vanifatovvlad/NpmPublisherSupport)
 _Простое и масштабируемое управление состоянием_
 <br>
 
@@ -27,6 +27,20 @@ using UniMob;
 
 public class Todo
 {
+    [Atom] public string Title { get; set; } = "";
+    [Atom] public bool Finished { get; set; } = false;
+}
+```
+
+Использование `Atom` похоже на превращение свойства объекта в ячейку электронной таблицы.
+
+Для использования атрибута `Atom` необходимо добавить директиву `UNIMOB_CODEGEN_ENABLED`. Если вы не хотите использовать кодогенерацию, не беспокойтесь, её использование не обязательно. Следующий код полностью аналогичен:
+
+```csharp
+using UniMob;
+
+public class Todo
+{
     MutableAtom<string> _title = Atom.Value("");
     MutableAtom<bool> _finished = Atom.Value(false);
 
@@ -44,11 +58,22 @@ public class Todo
 }
 ```
 
-Использование `Atom` похоже на превращение свойства объекта в ячейку электронной таблицы.
-
 ### Вычисляемые значения
 
 С UniMob вы можете создать значения, которые будут вычислены автоматически когда соответствующие данные изменяются.
+
+```csharp
+using UniMob;
+using System.Linq;
+
+public class TodoList
+{
+    [Atom] public Todo[] Todos { get; set; } = new Todo[0];
+    [Atom] public int UnfinishedTodoCount => Todos.Count(t => !t.Finished);
+}
+```
+
+<details><summary>Конечно, здесь тоже можно создавать атомы вручную вместо использования кодогенерации.<br><i>Click to see more...</i></summary><p>
 
 ```csharp
 using UniMob;
@@ -73,6 +98,7 @@ public class TodoList
     public int UnfinishedTodoCount => _unfinishedTodoCount.Value;
 }
 ```
+</p></details>
 
 UniMob обеспечит автоматическое обновление «UnfinishedTodoCount» при добавлении задачи или при изменении одного из свойств «Finished».
 Подобные вычисления похожи на формулы в программах для работы с электронными таблицами, таких как MS Excel. Они обновляются автоматически и только при необходимости.
@@ -116,14 +142,14 @@ Atom.AutoRun(() =>
 ```csharp
 store.Todos = store.Todos
     .Append(new Todo("Get Coffee"))
-    .Append(new Todo("Get Coffee"))
+    .Append(new Todo("Write simpler code"))
     .ToArray();
 store.Todos[0].Finished = true;
 ```
 
 Техническая необходимость в вызове событий или чего-то другого отсутствует. Интерфейс, в конечном счёте, представляет собой не более чем причудливое представление вашего состояния, т. е. является реакцией, которой будет управлять UniMob.
 
-## UniMob: Простой и масштарируемый
+## UniMob: Простой и масштабируемый
 
 UniMob - это простая, масштабируемая и ненавязчивая библиотека управления состоянием.
 

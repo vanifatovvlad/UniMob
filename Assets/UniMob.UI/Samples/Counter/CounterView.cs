@@ -24,13 +24,13 @@ namespace UniMob.UI.Samples.Counter
 
         protected override void Render()
         {
-            counterText.text = State.Counter;
+            counterText.text = State.CounterText;
         }
     }
 
     public interface ICounterState : IState
     {
-        string Counter { get; }
+        string CounterText { get; }
 
         void Increment();
         void Decrement();
