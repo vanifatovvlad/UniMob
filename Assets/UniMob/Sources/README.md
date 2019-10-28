@@ -86,7 +86,7 @@ public class TodoList
 
     public TodoList()
     {
-        _unfinishedTodoCount = Atom.Computed(() => Todos.Count(t => t.Finished));
+        _unfinishedTodoCount = Atom.Computed(() => Todos.Count(t => !t.Finished));
     }
 
     public Todo[] Todos
@@ -208,12 +208,11 @@ public string DisplayName => Nickname ?? (FirstName + " " + LastName);
 В UniMob это будет выглядеть так:
 
 ```csharp
-DisplayName = Atom.Computed(() => Nickname ?? (FirstName + " " + LastName))
-```
+// with UNIMOB_CODEGEN_ENABLED
+[Atom] public string DisplayName => Nickname ?? (FirstName + " " + LastName);
 
-или даже так, если в кешировании «DisplayName» нет необходимости:
-```csharp
-public string DisplayName => Nickname ?? (FirstName + " " + LastName);
+// without UNIMOB_CODEGEN_ENABLED
+public Atom<string> DisplayName { get; } = Atom.Computed(() => Nickname ?? (FirstName + " " + LastName));
 ```
 
 В UniRx вы бы сделали что-то вроде этого:
