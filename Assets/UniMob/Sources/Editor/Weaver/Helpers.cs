@@ -14,8 +14,9 @@ namespace UniMob.Editor.Weaver
 
             var attributes = instance.CustomAttributes;
 
-            foreach (var attribute in attributes)
+            for (var i = 0; i < attributes.Count; i++)
             {
+                var attribute = attributes[i];
                 if (attribute.AttributeType.FullName.Equals(typeof(T).FullName, StringComparison.Ordinal))
                 {
                     return attribute;
@@ -24,7 +25,7 @@ namespace UniMob.Editor.Weaver
 
             return null;
         }
-        
+
         public static string GetEngineCoreModuleDirectoryName()
         {
             return Path.GetDirectoryName(UnityEditorInternal.InternalEditorUtility.GetEngineCoreModuleAssemblyPath());

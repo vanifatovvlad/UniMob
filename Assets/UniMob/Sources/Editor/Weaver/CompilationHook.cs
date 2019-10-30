@@ -18,6 +18,8 @@ namespace UniMob.Editor.Weaver
         private const string UniMobRuntimeAssemblyName = "UniMob";
         private const string UniMobEditorAssemblyName = "UniMob.Editor";
 
+        private static readonly Predicate<CompilerMessage> IsErrorMessage = m => m.type == CompilerMessageType.Error;
+
         [InitializeOnLoadMethod]
         private static void OnInitializeOnLoad()
         {
@@ -45,11 +47,11 @@ namespace UniMob.Editor.Weaver
 
         private static UnityAssembly FindUniMobRuntime(UnityAssembly[] assemblies)
         {
-            foreach (var assembly in assemblies)
+            for (var index = 0; index < assemblies.Length; index++)
             {
-                if (assembly.name == UniMobRuntimeAssemblyName)
+                if (assemblies[index].name == UniMobRuntimeAssemblyName)
                 {
-                    return assembly;
+                    return assemblies[index];
                 }
             }
 
@@ -58,26 +60,28 @@ namespace UniMob.Editor.Weaver
 
         private static void OnCompilationFinished(string assemblyPath, CompilerMessage[] messages)
         {
-            if (Array.FindIndex(messages, m => m.type == CompilerMessageType.Error) != -1)
+            var sw = Stopwatch.StartNew();
+
+            if (Array.FindIndex(messages, IsErrorMessage) != -1)
             {
                 return;
             }
 
             var assemblyName = Path.GetFileNameWithoutExtension(assemblyPath);
-            if (assemblyName == UniMobRuntimeAssemblyName)
+            if (assemblyName == null || assemblyName == UniMobRuntimeAssemblyName)
             {
                 return;
             }
- 
-            if (assemblyName == UniMobEditorAssemblyName)
-            {
-                // should we reload scripts when Weaver changed?
-                // it allow package update but assemblies will reload twice
-                // on project startup
-                //SessionState.SetBool(UniMobWeavedFlagName, false);
-                return;
-            }
- 
+
+            //if (assemblyName == UniMobEditorAssemblyName)
+            //{
+            //    // should we reload scripts when Weaver changed?
+            //    // it allow package update but assemblies will reload twice
+            //    // on project startup
+            //    SessionState.SetBool(UniMobWeavedFlagName, false);
+            //    return;
+            //}
+
             if (assemblyPath.Contains("-Editor") || assemblyPath.Contains(".Editor"))
             {
                 return;
@@ -104,17 +108,20 @@ namespace UniMob.Editor.Weaver
 
             var shouldWeave = false;
 
-            foreach (var assembly in assemblies)
+            for (var asmIndex = 0; asmIndex < assemblies.Length; asmIndex++)
             {
+                var assembly = assemblies[asmIndex];
                 if (assembly.outputPath != assemblyPath) continue;
 
-                foreach (var referencePath in assembly.compiledAssemblyReferences)
+                for (var i = 0; i < assembly.compiledAssemblyReferences.Length; i++)
                 {
+                    var referencePath = assembly.compiledAssemblyReferences[i];
                     dependencyPaths.Add(Path.GetDirectoryName(referencePath));
                 }
 
-                foreach (var reference in assembly.assemblyReferences)
+                for (var i = 0; i < assembly.assemblyReferences.Length; i++)
                 {
+                    var reference = assembly.assemblyReferences[i];
                     if (reference.outputPath == uniMobRuntime.outputPath)
                     {
                         shouldWeave = true;
@@ -129,11 +136,11 @@ namespace UniMob.Editor.Weaver
                 return;
             }
 
-            var sw = Stopwatch.StartNew();
             Weave(assemblyPath, dependencyPaths);
-            sw.Stop();
 
+#if UNIMOB_WEAVER_LOGGING_ENABLED
             Debug.Log($"Weaved {assemblyPath} in {sw.ElapsedMilliseconds}ms");
+#endif
         }
 
         public static void Weave(string assemblyPath, HashSet<string> dependencies)

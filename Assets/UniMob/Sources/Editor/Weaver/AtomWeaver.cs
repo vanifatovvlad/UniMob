@@ -7,9 +7,9 @@ namespace UniMob.Editor.Weaver
 {
     public class AtomWeaver
     {
-        private const string MemFieldNameFormat = "__Atom{0}";
-        private const string PullMethodNameFormat = "__Get{0}";
-        private const string PushMethodNameFormat = "__Set{0}";
+        private const string MemFieldNameFormat = "__atom__{0}";
+        private const string PullMethodNameFormat = "__atom__get_{0}";
+        private const string PushMethodNameFormat = "__atom__set_{0}";
 
         private const string ValueName = "Value";
         private const string ConstructorName = ".ctor";
@@ -52,10 +52,14 @@ namespace UniMob.Editor.Weaver
 
             bool dirty = false;
 
-            foreach (var type in _module.Types)
+            var types = _module.Types;
+            for (var typeIndex = 0; typeIndex < types.Count; typeIndex++)
             {
-                foreach (var property in type.Properties)
+                var type = types[typeIndex];
+                var properties = type.Properties;
+                for (var propIndex = 0; propIndex < properties.Count; propIndex++)
                 {
+                    var property = properties[propIndex];
                     dirty |= Weave(property);
                 }
             }
@@ -69,7 +73,7 @@ namespace UniMob.Editor.Weaver
             if (customAttr == null)
                 return false;
 
-            propDef.CustomAttributes.Remove(customAttr);
+            //propDef.CustomAttributes.Remove(customAttr);
 
             var pull = (propDef.GetMethod != null) ? CreatePullMethod(propDef) : null;
             var push = (propDef.SetMethod != null) ? CreatePushMethod(propDef) : null;
@@ -94,7 +98,7 @@ namespace UniMob.Editor.Weaver
                 ops[1].Operand is FieldDefinition backingField &&
                 backingField.Name.Equals($"<{propDef.Name}>k__BackingField"))
             {
-                backingField.Name = $"__Atom{propDef.Name}__BackingField";
+                backingField.Name = $"__atom__{propDef.Name}__BackingField";
             }
 
             var name = string.Format(PullMethodNameFormat, propDef.Name);
