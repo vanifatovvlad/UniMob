@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.ExceptionServices;
 using JetBrains.Annotations;
 
 namespace UniMob
@@ -13,8 +14,7 @@ namespace UniMob
 
         private bool _hasCache;
         private T _cache;
-        private Exception _exception;
-
+        private ExceptionDispatchInfo _exception;
         private bool _isRunningSetter;
 
         internal ComputedAtom(
@@ -48,7 +48,7 @@ namespace UniMob
 
                 if (_exception != null)
                 {
-                    throw _exception;
+                    _exception.Throw();
                 }
 
                 return _cache;
@@ -118,7 +118,7 @@ namespace UniMob
             {
                 _hasCache = false;
                 _cache = default;
-                _exception = exception;
+                _exception = ExceptionDispatchInfo.Capture(exception);
             }
             finally
             {
@@ -147,7 +147,7 @@ namespace UniMob
         {
             if (_exception != null)
             {
-                return _exception.ToString();
+                return _exception.SourceException.ToString();
             }
 
             return _hasCache ? Convert.ToString(_cache) : "[undefined]";
