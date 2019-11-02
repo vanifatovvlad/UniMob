@@ -362,9 +362,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 614459447}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0489ec586b48487e985df539b7f054ae, type: 3}
+  m_Script: {fileID: 11500000, guid: 24db54aad9c240f5a6c42c4b2bd1e8f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  widget: {fileID: 11400000, guid: 2c8c76831acfd27468f64de786ca016b, type: 2}
   root: {fileID: 603425699}
 --- !u!1 &1131162703
 GameObject:

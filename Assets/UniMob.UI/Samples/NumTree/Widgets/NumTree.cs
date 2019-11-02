@@ -5,22 +5,39 @@ using UnityEngine;
 
 namespace UniMob.UI.Samples.NumTree.Widgets
 {
-    public class NumTree : StatefulContainerWidget
+    [CreateAssetMenu(menuName = "UniMob UI Samples/Num Tree", fileName = "NumTree Widget")]
+    public class NumTree : ScriptableStatefulContainerWidget
     {
-        public NumTree(NumTreeModel model)
-        {
-            Model = model;
-        }
-
-        public NumTreeModel Model { get; }
+        public override Key Key { get; } = GlobalKey.Of<NumTree>();
 
         public override State CreateState() => new NumTreeState();
     }
 
     public class NumTreeState : StatefulContainerState<NumTree>
     {
-        private NumTreeModel Model => Widget.Model;
-        
+        private readonly NumTreeModel _model = new NumTreeModel(levels: 11);
+
+        private Timer _updateTimer;
+
+        public override void InitState()
+        {
+            base.InitState();
+
+            _updateTimer = Timer.RunPeriodic(0.1f, () =>
+            {
+                var rootIndex = Random.Range(0, _model.Roots.Length);
+                var rootAtom = _model.Roots[rootIndex];
+                rootAtom.Value = (rootAtom.Value + 1) % 10;
+            });
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            _updateTimer.Dispose();
+        }
+
         protected override Widget Build(BuildContext context)
         {
             return new Container(
@@ -31,13 +48,13 @@ namespace UniMob.UI.Samples.NumTree.Widgets
                     mainAxisAlignment: MainAxisAlignment.Center,
                     crossAxisAlignment: CrossAxisAlignment.Center,
                     children: Enumerable.Empty<Widget>()
-                        .Concat(BuildTreeRows(Model.Tree))
-                        .Append(BuildButtonsRow(Model.Roots))
+                        .Concat(BuildTreeRows(_model.Tree))
+                        .Append(BuildButtonsRow(_model.Roots))
                         .ToList()
                 )
             );
         }
-        
+
         private IEnumerable<Widget> BuildTreeRows(Atom<int>[][] grid)
         {
             return grid.Select(line =>

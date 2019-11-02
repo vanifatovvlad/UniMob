@@ -2,12 +2,17 @@ using UnityEngine;
 
 namespace UniMob.UI.Widgets
 {
-    public abstract class StatefulContainerWidget : StatefulWidget
+    public abstract class StatefulContainerWidget : StatefulWidget, IStatefulContainerWidget
     {
     }
 
+    public interface IStatefulContainerWidget : Widget
+    {
+        
+    }
+
     public abstract class StatefulContainerState<TContainerWidget> : State<TContainerWidget>, IContainerState
-        where TContainerWidget : StatefulContainerWidget
+        where TContainerWidget : IStatefulContainerWidget
     {
         private readonly Atom<IState> _child;
 
