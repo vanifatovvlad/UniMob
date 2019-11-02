@@ -17,15 +17,17 @@ namespace UniMob.UI.Widgets
 
             if (_mapper == null)
                 _mapper = new PooledViewMapper(transform);
+
+            name = State.DebugName;
         }
 
         protected override void Render()
         {
-            var color = State.Color;
-            var transparent = color == Color.clear;
+            var backgroundColor = State.BackgroundColor;
+            var transparent = backgroundColor == Color.clear;
 
             backgroundImage.enabled = !transparent;
-            backgroundImage.color = color;
+            backgroundImage.color = backgroundColor;
 
             using (var render = _mapper.CreateRender())
             {
@@ -42,7 +44,9 @@ namespace UniMob.UI.Widgets
 
     public interface IContainerState : IState
     {
-        Color Color { get; }
+        string DebugName { get; }
+
+        Color BackgroundColor { get; }
 
         Alignment Alignment { get; }
 

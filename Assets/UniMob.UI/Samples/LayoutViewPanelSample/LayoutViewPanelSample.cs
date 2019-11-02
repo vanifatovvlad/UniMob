@@ -37,7 +37,7 @@ namespace UniMob.UI.Samples.LayoutViewPanelSample
         private Widget CreateChild(int num)
         {
             return new Container(
-                color: Color.Lerp(Color.red, Color.blue, num * 1f / ChildrenCount),
+                backgroundColor: Color.Lerp(Color.red, Color.blue, num * 1f / ChildrenCount),
                 size: new WidgetSize(200, 200),
                 child: new Row(new List<Widget>())
             );

@@ -62,7 +62,7 @@ namespace UniMob.UI.Samples.TodoMvc.Vanilla
                     crossAxisSize: AxisSize.Max,
                     mainAxisSize: AxisSize.Max
                 ),
-                color: Color.cyan
+                backgroundColor: Color.cyan
             );
 
         private Widget BuildSubContainer() =>
@@ -82,7 +82,7 @@ namespace UniMob.UI.Samples.TodoMvc.Vanilla
                     ),
                     mainAxisSize: AxisSize.Max
                 ),
-                color: Color.grey
+                backgroundColor: Color.grey
             );
     }
 }
