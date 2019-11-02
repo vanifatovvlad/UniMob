@@ -17,7 +17,7 @@ namespace UniMob.UI.Samples.Counter
 
         public int MaxValue => maxValue;
 
-        public override Key Key { get; } = GlobalKey.Of<Counter>();
+        public override Key Key { get; } = GlobalKey.Of<CounterState>();
 
         public override State CreateState() => new CounterState();
     }

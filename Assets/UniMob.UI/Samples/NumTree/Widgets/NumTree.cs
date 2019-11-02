@@ -8,7 +8,7 @@ namespace UniMob.UI.Samples.NumTree.Widgets
     [CreateAssetMenu(menuName = "UniMob UI Samples/Num Tree", fileName = "NumTree Widget")]
     public class NumTree : ScriptableStatefulContainerWidget
     {
-        public override Key Key { get; } = GlobalKey.Of<NumTree>();
+        public override Key Key { get; } = GlobalKey.Of<NumTreeState>();
 
         public override State CreateState() => new NumTreeState();
     }

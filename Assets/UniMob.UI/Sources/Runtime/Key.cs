@@ -41,6 +41,7 @@ namespace UniMob.UI
     }
     
     internal sealed class GlobalKey<T> : Key, IEquatable<GlobalKey<T>>
+        where T : IState
     {
         public static readonly GlobalKey<T> Instance = new GlobalKey<T>();
 
@@ -57,6 +58,6 @@ namespace UniMob.UI
 
     public static class GlobalKey
     {
-        public static Key Of<T>() where T : Widget => GlobalKey<T>.Instance;
+        public static Key Of<T>() where T : IState => GlobalKey<T>.Instance;
     }
 }

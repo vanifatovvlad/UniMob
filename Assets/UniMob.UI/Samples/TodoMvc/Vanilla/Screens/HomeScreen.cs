@@ -9,7 +9,7 @@ namespace UniMob.UI.Samples.TodoMvc.Vanilla
     public class HomeScreen : StatefulWidget
     {
         public HomeScreen(TodoStore store)
-            : base(GlobalKey.Of<HomeScreen>())
+            : base(GlobalKey.Of<HomeScreenState>())
         {
             Store = store;
         }

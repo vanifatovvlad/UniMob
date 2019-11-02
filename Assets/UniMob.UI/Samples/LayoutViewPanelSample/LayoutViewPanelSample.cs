@@ -8,7 +8,7 @@ namespace UniMob.UI.Samples.LayoutViewPanelSample
     [CreateAssetMenu(menuName = "UniMob UI Samples/LayoutViewPanelSample", fileName = "LayoutViewPanelSample Widget")]
     public class LayoutViewPanelSampleWidget : ScriptableStatefulWidget
     {
-        public override Key Key => GlobalKey.Of<LayoutViewPanelSampleWidget>();
+        public override Key Key => GlobalKey.Of<LayoutViewPanelSampleState>();
         public override State CreateState() => new LayoutViewPanelSampleState();
     }
 
