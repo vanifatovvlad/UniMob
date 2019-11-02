@@ -15,7 +15,7 @@ namespace UniMob.UI.Samples.NumTree
 
         private void OnEnable()
         {
-            _render = UniMobUI.RunApp(root, context => new NumTree(_model));
+            _render = UniMobUI.RunApp(root, context => new Widgets.NumTree(_model));
         }
 
         private void OnDisable()

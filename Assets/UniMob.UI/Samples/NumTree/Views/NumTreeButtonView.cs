@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UniMob.UI.Samples.NumTree
+namespace UniMob.UI.Samples.NumTree.Views
 {
     public class NumTreeButtonView : View<INumTreeButtonState>
     {

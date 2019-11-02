@@ -3,7 +3,7 @@ using System.Linq;
 using UniMob.UI.Widgets;
 using UnityEngine;
 
-namespace UniMob.UI.Samples.NumTree
+namespace UniMob.UI.Samples.NumTree.Widgets
 {
     public class NumTree : StatefulContainerWidget
     {

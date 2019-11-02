@@ -1,6 +1,7 @@
 using System;
+using UniMob.UI.Samples.NumTree.Views;
 
-namespace UniMob.UI.Samples.NumTree
+namespace UniMob.UI.Samples.NumTree.Widgets
 {
     public class NumTreeButton : StatefulWidget
     {

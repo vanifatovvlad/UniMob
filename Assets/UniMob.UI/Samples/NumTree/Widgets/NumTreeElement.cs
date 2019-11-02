@@ -1,6 +1,6 @@
-using JetBrains.Annotations;
+using UniMob.UI.Samples.NumTree.Views;
 
-namespace UniMob.UI.Samples.NumTree
+namespace UniMob.UI.Samples.NumTree.Widgets
 {
     public class NumTreeElement : StatefulWidget
     {
