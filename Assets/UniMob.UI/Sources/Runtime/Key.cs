@@ -39,9 +39,9 @@ namespace UniMob.UI
             return Value.Equals(other.Value);
         }
     }
-    
-    internal sealed class GlobalKey<T> : Key, IEquatable<GlobalKey<T>>
-        where T : IState
+
+    internal sealed class GlobalKey<T> : GlobalKey, IEquatable<GlobalKey<T>>
+        where T : class, IState
     {
         public static readonly GlobalKey<T> Instance = new GlobalKey<T>();
 
@@ -54,10 +54,18 @@ namespace UniMob.UI
         public override string ToString() => $"[GlobalKey: {typeof(T)}]";
 
         public bool Equals(GlobalKey<T> other) => ReferenceEquals(other, this);
+
+        public T CurrentState => UntypedCurrentState is T state ? state : default;
     }
 
-    public static class GlobalKey
+    public abstract class GlobalKey : Key
     {
-        public static Key Of<T>() where T : IState => GlobalKey<T>.Instance;
+        public static Key Of<T>() where T : class, IState => GlobalKey<T>.Instance;
+
+        internal State UntypedCurrentState { get; set; }
+
+        public Widget CurrentWidget => UntypedCurrentState?.Widget;
+
+        public BuildContext CurrentContext => UntypedCurrentState?.Context;
     }
 }

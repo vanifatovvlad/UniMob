@@ -146,6 +146,11 @@ namespace UniMob.UI.Internal
             if (child == null) throw new ArgumentNullException(nameof(child));
             Assert.IsNull(Atom.CurrentScope);
 
+            if (child.Widget.Key is GlobalKey globalKey)
+            {
+                globalKey.UntypedCurrentState = null;
+            }
+
             child.Dispose();
         }
 
@@ -180,6 +185,12 @@ namespace UniMob.UI.Internal
             var newChild = newWidget.CreateState();
             newChild.Mount(context);
             newChild.Update(newWidget);
+
+            if (newWidget.Key is GlobalKey globalKey)
+            {
+                globalKey.UntypedCurrentState = newChild;
+            }
+            
             newChild.InitState();
             return newChild;
         }
