@@ -33,7 +33,7 @@ namespace UniMob.UI.Internal
 
         protected override void RecycleView(IView view)
         {
-            GameObjectPool.Recycle(view.gameObject, false);
+            GameObjectPool.Recycle(view.gameObject, true);
         }
     }
 }

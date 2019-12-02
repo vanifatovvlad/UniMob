@@ -12,7 +12,9 @@ namespace UniMob.UI
 
         WidgetViewReference ViewReference { get; set; }
 
-        void SetSource(object source);
+        BuildContext Context { get; }
+
+        void SetSource(IState source);
         void ResetSource();
     }
 }

@@ -52,12 +52,12 @@ namespace UniMob.UI
             Assert.IsNull(Atom.CurrentScope);
         }
 
-        public virtual void DidViewMount()
+        public virtual void DidViewMount(IView view)
         {
             Assert.IsNull(Atom.CurrentScope);
         }
 
-        public virtual void DidViewUnmount()
+        public virtual void DidViewUnmount(IView view)
         {
             Assert.IsNull(Atom.CurrentScope);
         }

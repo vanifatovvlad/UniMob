@@ -14,7 +14,7 @@ namespace UniMob.UI
             {
                 using (Atom.NoWatch)
                 {
-                    state.DidViewMount();
+                    state.DidViewMount(this);
                 }
             }
             catch (Exception ex)
@@ -29,7 +29,7 @@ namespace UniMob.UI
             {
                 using (Atom.NoWatch)
                 {
-                    state.DidViewUnmount();
+                    state.DidViewUnmount(this);
                 }
             }
             catch (Exception ex)

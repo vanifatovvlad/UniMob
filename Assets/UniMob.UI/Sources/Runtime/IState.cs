@@ -4,9 +4,11 @@ namespace UniMob.UI
     {
         WidgetSize Size { get; }
 
+        BuildContext Context { get; }
+
         WidgetViewReference View { get; }
 
-        void DidViewMount();
-        void DidViewUnmount();
+        void DidViewMount(IView view);
+        void DidViewUnmount(IView view);
     }
 }

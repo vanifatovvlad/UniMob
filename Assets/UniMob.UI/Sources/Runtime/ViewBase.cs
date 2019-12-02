@@ -9,6 +9,7 @@ namespace UniMob.UI
 {
     [RequireComponent(typeof(RectTransform))]
     public abstract class ViewBase<TState> : UIBehaviour, IView, IViewTreeElement
+        where TState : IState
     {
         [NotNull] private readonly ViewRenderScope _renderScope = new ViewRenderScope();
         [NotNull] private readonly List<IViewTreeElement> _children = new List<IViewTreeElement>();
@@ -32,7 +33,9 @@ namespace UniMob.UI
 
         public WidgetViewReference ViewReference { get; set; }
 
-        void IView.SetSource(object newSource)
+        public BuildContext Context => State?.Context;
+
+        void IView.SetSource(IState newSource)
         {
             if (!(newSource is TState nextState))
             {

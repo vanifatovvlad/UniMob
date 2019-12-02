@@ -40,7 +40,7 @@ namespace UniMob.UI
         }
     }
 
-    internal sealed class GlobalKey<T> : GlobalKey, IEquatable<GlobalKey<T>>
+    public sealed class GlobalKey<T> : GlobalKey, IEquatable<GlobalKey<T>>
         where T : class, IState
     {
         public static readonly GlobalKey<T> Instance = new GlobalKey<T>();
@@ -60,7 +60,7 @@ namespace UniMob.UI
 
     public abstract class GlobalKey : Key
     {
-        public static Key Of<T>() where T : class, IState => GlobalKey<T>.Instance;
+        public static GlobalKey<T> Of<T>() where T : class, IState => GlobalKey<T>.Instance;
 
         internal State UntypedCurrentState { get; set; }
 
