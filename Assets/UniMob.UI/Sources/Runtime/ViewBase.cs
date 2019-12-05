@@ -82,6 +82,7 @@ namespace UniMob.UI
                 using (Atom.NoWatch)
                 {
                     Deactivate();
+                    OnAfterDeactivate();
                 }
             }
             catch (Exception ex)
@@ -139,6 +140,7 @@ namespace UniMob.UI
                         try
                         {
                             Deactivate();
+                            OnAfterDeactivate();
                         }
                         catch (Exception ex)
                         {
@@ -152,6 +154,7 @@ namespace UniMob.UI
                     try
                     {
                         Activate();
+                        OnAfterActivate();
                     }
                     catch (Exception ex)
                     {
@@ -172,6 +175,7 @@ namespace UniMob.UI
                         using (_renderPerf.Watch())
                         {
                             Render();
+                            OnAfterRender();
                         }
                     }
                     catch (Exception ex)
@@ -217,6 +221,18 @@ namespace UniMob.UI
         }
 
         protected virtual void Deactivate()
+        {
+        }
+
+        protected virtual void OnAfterRender()
+        {
+        }
+        
+        protected virtual void OnAfterActivate()
+        {
+        }
+        
+        protected virtual void OnAfterDeactivate()
         {
         }
 
