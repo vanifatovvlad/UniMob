@@ -9,7 +9,7 @@ namespace UniMob.UI.Widgets
             [NotNull] Widget child,
             [CanBeNull] Key key = null,
             [CanBeNull] Color? backgroundColor = null,
-            [CanBeNull]  WidgetSize? size = null,
+            [CanBeNull] WidgetSize? size = null,
             [CanBeNull] Alignment? alignment = null)
             : base(child, key)
         {
@@ -30,8 +30,6 @@ namespace UniMob.UI.Widgets
         public override WidgetViewReference View { get; }
             = WidgetViewReference.Resource("$$_Container");
 
-        public string DebugName => "Container";
-        
         public Color BackgroundColor => Widget.BackgroundColor;
 
         public Alignment Alignment => Widget.Alignment;

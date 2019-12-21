@@ -24,8 +24,6 @@ namespace UniMob.UI.Widgets
 
             if (_mapper == null)
                 _mapper = new PooledViewMapper(transform);
-
-            name = State.DebugName;
         }
 
         protected override void Render()
@@ -51,8 +49,6 @@ namespace UniMob.UI.Widgets
 
     public interface IContainerState : IViewState
     {
-        string DebugName { get; }
-
         Color BackgroundColor { get; }
 
         Alignment Alignment { get; }
