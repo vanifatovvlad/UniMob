@@ -9,6 +9,7 @@ namespace UniMob.UI
         internal static IViewTreeElement CurrentElement;
 
         internal static IViewLoader Loader = new MultiViewLoader(
+            new InternalViewLoader(),
             new BuiltinResourcesViewLoader(),
             new AddressableViewLoader());
 

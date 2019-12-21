@@ -1,7 +1,5 @@
 namespace UniMob.UI.Widgets
 {
-    using JetBrains.Annotations;
-
     public class FadeTransition : SingleChildLayoutWidget
     {
         public FadeTransition(
@@ -21,7 +19,7 @@ namespace UniMob.UI.Widgets
     internal class FadeTransitionState : SingleChildLayoutState<FadeTransition>, IFadeTransitionState
     {
         public override WidgetViewReference View { get; }
-            = WidgetViewReference.Resource("UniMob.FadeTransition");
+            = WidgetViewReference.Resource("$$_FadeTransition");
 
         public ITween<float> Opacity => Widget.Opacity;
     }

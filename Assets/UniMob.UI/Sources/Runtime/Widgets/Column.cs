@@ -38,7 +38,7 @@ namespace UniMob.UI.Widgets
         private readonly Atom<WidgetSize> _innerSize;
 
         public override WidgetViewReference View { get; }
-            = WidgetViewReference.Resource("UniMob.Column");
+            = WidgetViewReference.Resource("$$_Column");
 
         public ColumnState()
         {

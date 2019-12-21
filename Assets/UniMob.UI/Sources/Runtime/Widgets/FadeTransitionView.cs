@@ -5,10 +5,17 @@ namespace UniMob.UI.Widgets
 
     public class FadeTransitionView : View<IFadeTransitionState>
     {
-        [SerializeField] private CanvasGroup canvasGroup = default;
+        private CanvasGroup _canvasGroup;
 
         private ViewMapperBase _mapper;
         private bool _animating;
+
+        protected override void Awake()
+        {
+            base.Awake();
+
+            _canvasGroup = GetComponent<CanvasGroup>();
+        }
 
         protected override void Render()
         {
@@ -61,8 +68,8 @@ namespace UniMob.UI.Widgets
 
         private void UpdateOpacity(float value, bool completed)
         {
-            canvasGroup.alpha = value;
-            canvasGroup.interactable = completed;
+            _canvasGroup.alpha = value;
+            _canvasGroup.interactable = completed;
         }
     }
 

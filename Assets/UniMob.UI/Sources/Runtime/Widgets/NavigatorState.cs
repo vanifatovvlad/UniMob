@@ -19,7 +19,7 @@ namespace UniMob.UI.Widgets
         private Task _task = Task.CompletedTask;
 
         public override WidgetViewReference View { get; }
-            = WidgetViewReference.Resource("UniMob.Navigator");
+            = WidgetViewReference.Resource("$$_Navigator");
 
         public NavigatorState()
         {

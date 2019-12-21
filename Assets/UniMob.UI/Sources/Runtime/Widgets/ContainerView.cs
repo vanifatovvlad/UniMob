@@ -7,9 +7,16 @@ namespace UniMob.UI.Widgets
     [AddComponentMenu("UniMob/Views/Container")]
     public sealed class ContainerView : View<IContainerState>
     {
-        [SerializeField] private Image backgroundImage = default;
+        private Image _backgroundImage;
 
         private ViewMapperBase _mapper;
+
+        protected override void Awake()
+        {
+            base.Awake();
+
+            _backgroundImage = GetComponent<Image>();
+        }
 
         protected override void Activate()
         {
@@ -26,8 +33,8 @@ namespace UniMob.UI.Widgets
             var backgroundColor = State.BackgroundColor;
             var transparent = backgroundColor == Color.clear;
 
-            backgroundImage.enabled = !transparent;
-            backgroundImage.color = backgroundColor;
+            _backgroundImage.enabled = !transparent;
+            _backgroundImage.color = backgroundColor;
 
             using (var render = _mapper.CreateRender())
             {
