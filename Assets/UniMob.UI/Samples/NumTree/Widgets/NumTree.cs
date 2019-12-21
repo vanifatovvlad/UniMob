@@ -14,27 +14,6 @@ namespace UniMob.UI.Samples.NumTree.Widgets
     {
         private readonly NumTreeModel _model = new NumTreeModel(levels: 11);
 
-        private Timer _updateTimer;
-
-        public override void InitState()
-        {
-            base.InitState();
-
-            _updateTimer = Timer.RunPeriodic(0.1f, () =>
-            {
-                var rootIndex = Random.Range(0, _model.Roots.Length);
-                var rootAtom = _model.Roots[rootIndex];
-                rootAtom.Value = (rootAtom.Value + 1) % 10;
-            });
-        }
-
-        public override void Dispose()
-        {
-            base.Dispose();
-
-            _updateTimer.Dispose();
-        }
-
         public override Widget Build(BuildContext context)
         {
             return new Container(
@@ -44,39 +23,52 @@ namespace UniMob.UI.Samples.NumTree.Widgets
                     crossAxisSize: AxisSize.Max,
                     mainAxisAlignment: MainAxisAlignment.Center,
                     crossAxisAlignment: CrossAxisAlignment.Center,
-                    children: Enumerable.Empty<Widget>()
-                        .Concat(BuildTreeRows(_model.Tree))
-                        .Append(BuildButtonsRow(_model.Roots))
-                        .ToList()
+                    children: BuildTree()
                 )
             );
         }
 
-        private IEnumerable<Widget> BuildTreeRows(Atom<int>[][] grid)
+        private List<Widget> BuildTree()
         {
-            return grid.Select(line =>
-            {
-                return (Widget) new Row(
-                    mainAxisSize: AxisSize.Max,
-                    mainAxisAlignment: MainAxisAlignment.Center,
-                    children: line.Select(item => (Widget) new NumTreeElement(item)).ToList()
-                );
-            });
+            return BuildRows(_model.Tree)
+                .Append(BuildButtons(_model.Roots))
+                .ToList();
         }
 
-        private Widget BuildButtonsRow(MutableAtom<int>[] roots)
+        private List<Widget> BuildRows(Atom<int>[][] grid)
         {
-            var buttonIndexes = Enumerable.Range(0, roots.Length);
+            return grid
+                .Select(BuildRow)
+                .ToList();
+        }
 
+        private Widget BuildRow(Atom<int>[] line)
+        {
             return new Row(
                 mainAxisSize: AxisSize.Max,
                 mainAxisAlignment: MainAxisAlignment.Center,
-                children: buttonIndexes.Select(index =>
-                    {
-                        return (Widget) new NumTreeButton(
-                            onTap: () => ++roots[index].Value);
-                    })
-                    .ToList()
+                children: line.Select(BuildElement).ToList()
+            );
+        }
+
+        private Widget BuildElement(Atom<int> element)
+        {
+            return new NumTreeElement(element);
+        }
+
+        private Widget BuildButtons(MutableAtom<int>[] roots)
+        {
+            return new Row(
+                mainAxisSize: AxisSize.Max,
+                mainAxisAlignment: MainAxisAlignment.Center,
+                children: roots.Select(BuildButton).ToList()
+            );
+        }
+
+        private Widget BuildButton(MutableAtom<int> root)
+        {
+            return new NumTreeButton(
+                onTap: () => ++root.Value
             );
         }
     }
