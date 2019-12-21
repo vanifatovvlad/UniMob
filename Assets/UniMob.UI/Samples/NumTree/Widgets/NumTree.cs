@@ -5,12 +5,12 @@ using UnityEngine;
 
 namespace UniMob.UI.Samples.NumTree.Widgets
 {
-    public class NumTree : StatefulContainerWidget
+    public class NumTree : StatefulWidget
     {
         public override State CreateState() => new NumTreeState();
     }
 
-    public class NumTreeState : StatefulContainerState<NumTree>
+    public class NumTreeState : HocState<NumTree>
     {
         private readonly NumTreeModel _model = new NumTreeModel(levels: 11);
 
@@ -35,7 +35,7 @@ namespace UniMob.UI.Samples.NumTree.Widgets
             _updateTimer.Dispose();
         }
 
-        protected override Widget Build(BuildContext context)
+        public override Widget Build(BuildContext context)
         {
             return new Container(
                 backgroundColor: Color.white,
