@@ -4,33 +4,35 @@ using UnityEngine.AddressableAssets;
 
 namespace UniMob.UI.Samples.Counter
 {
-    [CreateAssetMenu(menuName = "UniMob UI Samples/Counter", fileName = "Counter Widget")]
-    public class Counter : ScriptableStatefulWidget
+    public class Counter : StatefulWidget
     {
-        [SerializeField] private AssetReferenceGameObject view;
-        [SerializeField] private int minValue = 0;
-        [SerializeField] private int maxValue = 10;
+        public Counter(int min, int max)
+        {
+            Min = min;
+            Max = max;
+        }
 
-        public WidgetViewReference ViewReference => view;
+        public int Min { get; }
 
-        public int MinValue => minValue;
+        public int Max { get; }
 
-        public int MaxValue => maxValue;
-
-        public override Key Key { get; } = GlobalKey.Of<CounterState>();
-
-        public override State CreateState() => new CounterState();
+        public override State CreateState() => StateProvider.Of(this);
     }
 
     public class CounterState : State<Counter>, ICounterState
     {
         [Atom] private int Counter { get; set; } = 0;
 
-        public override WidgetViewReference View => Widget.ViewReference;
+        public override WidgetViewReference View { get; }
+
+        public CounterState(WidgetViewReference view)
+        {
+            View = view;
+        }
 
         public string CounterText => $"Counter: {Counter}";
 
-        public void Increment() => Counter = Math.Min(Counter + 1, Widget.MaxValue);
-        public void Decrement() => Counter = Math.Max(Counter - 1, Widget.MinValue);
+        public void Increment() => Counter = Math.Min(Counter + 1, Widget.Max);
+        public void Decrement() => Counter = Math.Max(Counter - 1, Widget.Min);
     }
 }

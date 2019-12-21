@@ -243,7 +243,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -351,7 +351,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &614459449
 MonoBehaviour:
@@ -362,10 +362,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 614459447}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 24db54aad9c240f5a6c42c4b2bd1e8f8, type: 3}
+  m_Script: {fileID: 11500000, guid: 589df6f2149c4ae3b2835a5910099da4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  widget: {fileID: 11400000, guid: 2c8c76831acfd27468f64de786ca016b, type: 2}
   root: {fileID: 603425699}
 --- !u!1 &1131162703
 GameObject:

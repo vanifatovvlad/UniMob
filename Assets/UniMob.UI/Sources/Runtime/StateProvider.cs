@@ -7,10 +7,10 @@ namespace UniMob.UI
     {
         private static readonly Dictionary<Type, Func<State>> StateFactories = new Dictionary<Type, Func<State>>();
 
-        public static void Register<T>(Func<State> factory)
-            where T : Widget
+        public static void Register<TWidget>(Func<State> factory)
+            where TWidget : Widget
         {
-            var type = typeof(T);
+            var type = typeof(TWidget);
 
             if (StateFactories.ContainsKey(type))
             {
