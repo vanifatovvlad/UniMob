@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using UniMob.UI.Internal;
 using UnityEngine.Assertions;
 
@@ -13,7 +12,7 @@ namespace UniMob.UI
 
         public BuildContext Context => _context;
 
-        internal Widget Widget { get; private set; }
+        internal Widget RawWidget { get; private set; }
 
         public abstract IViewState InnerViewState { get; }
 
@@ -27,7 +26,7 @@ namespace UniMob.UI
 
         internal virtual void Update(Widget widget)
         {
-            Widget = widget;
+            RawWidget = widget;
         }
 
         internal void Mount(BuildContext context)

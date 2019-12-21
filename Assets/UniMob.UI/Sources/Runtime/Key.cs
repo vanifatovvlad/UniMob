@@ -64,7 +64,7 @@ namespace UniMob.UI
 
         internal State UntypedCurrentState { get; set; }
 
-        public Widget CurrentWidget => UntypedCurrentState?.Widget;
+        public Widget CurrentRawWidget => UntypedCurrentState?.RawWidget;
 
         public BuildContext CurrentContext => UntypedCurrentState?.Context;
     }

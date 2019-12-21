@@ -28,7 +28,7 @@ namespace UniMob.UI.Internal
                 var oldChild = oldChildren[oldChildrenTop];
                 var newWidget = newWidgets[newChildrenTop];
 
-                if (!CanUpdateWidget(oldChild.Widget, newWidget))
+                if (!CanUpdateWidget(oldChild.RawWidget, newWidget))
                     break;
 
                 var newChild = UpdateChild(context, oldChild, newWidget);
@@ -44,7 +44,7 @@ namespace UniMob.UI.Internal
                 var oldChild = oldChildren[oldChildrenBottom];
                 var newWidget = newWidgets[newChildrenBottom];
 
-                if (!CanUpdateWidget(oldChild.Widget, newWidget))
+                if (!CanUpdateWidget(oldChild.RawWidget, newWidget))
                     break;
 
                 oldChildrenBottom -= 1;
@@ -60,9 +60,9 @@ namespace UniMob.UI.Internal
                 while (oldChildrenTop <= oldChildrenBottom)
                 {
                     var oldChild = oldChildren[oldChildrenTop];
-                    if (oldChild.Widget.Key != null)
+                    if (oldChild.RawWidget.Key != null)
                     {
-                        oldKeyedChildren[oldChild.Widget.Key] = oldChild;
+                        oldKeyedChildren[oldChild.RawWidget.Key] = oldChild;
                     }
                     else
                     {
@@ -85,7 +85,7 @@ namespace UniMob.UI.Internal
                     {
                         if (oldKeyedChildren.TryGetValue(key, out oldChild))
                         {
-                            if (CanUpdateWidget(oldChild.Widget, newWidget))
+                            if (CanUpdateWidget(oldChild.RawWidget, newWidget))
                             {
                                 // we found a match!
                                 // remove it from oldKeyedChildren so we don't unsync it later
@@ -146,7 +146,7 @@ namespace UniMob.UI.Internal
             if (child == null) throw new ArgumentNullException(nameof(child));
             Assert.IsNull(Atom.CurrentScope);
 
-            if (child.Widget.Key is GlobalKey globalKey)
+            if (child.RawWidget.Key is GlobalKey globalKey)
             {
                 globalKey.UntypedCurrentState = null;
             }
@@ -160,12 +160,12 @@ namespace UniMob.UI.Internal
 
             if (child != null)
             {
-                if (child.Widget == newWidget)
+                if (child.RawWidget == newWidget)
                 {
                     return child;
                 }
 
-                if (CanUpdateWidget(child.Widget, newWidget))
+                if (CanUpdateWidget(child.RawWidget, newWidget))
                 {
                     child.Update(newWidget);
                     return child;

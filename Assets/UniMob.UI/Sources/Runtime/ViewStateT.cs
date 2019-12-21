@@ -11,7 +11,7 @@ namespace UniMob.UI
     {
         private readonly MutableAtom<TWidget> _widget = Atom.Value(default(TWidget));
 
-        protected new TWidget Widget => _widget.Value;
+        protected TWidget Widget => _widget.Value;
 
         internal sealed override void Update(Widget widget)
         {

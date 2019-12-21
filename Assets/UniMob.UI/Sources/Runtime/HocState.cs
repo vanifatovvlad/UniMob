@@ -10,7 +10,7 @@ namespace UniMob.UI
         private readonly MutableAtom<TWidget> _widget = Atom.Value(default(TWidget));
         private readonly Atom<IState> _child;
 
-        protected new TWidget Widget => _widget.Value;
+        protected TWidget Widget => _widget.Value;
 
         public sealed override WidgetSize Size => InnerViewState.Size;
 
