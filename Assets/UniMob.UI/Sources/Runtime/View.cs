@@ -3,7 +3,7 @@ using System;
 namespace UniMob.UI
 {
     public abstract class View<TState> : ViewBase<TState>
-        where TState : IState
+        where TState : IViewState
     {
         protected sealed override void DidStateAttached(TState state)
         {

@@ -7,7 +7,7 @@ namespace UniMob.UI.Samples.TodoMvc.Vanilla.Widgets
         public override State CreateState() => new TodoListState();
     }
 
-    public class TodoListState : State<TodoList>, ITodoListState
+    public class TodoListState : ViewState<TodoList>, ITodoListState
     {
         private readonly MutableAtom<bool> _full = Atom.Value(false);
 

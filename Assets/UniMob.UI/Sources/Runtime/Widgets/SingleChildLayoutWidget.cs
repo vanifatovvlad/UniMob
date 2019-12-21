@@ -16,7 +16,7 @@ namespace UniMob.UI.Widgets
         [NotNull] public Widget Child { get; }
     }
 
-    internal abstract class SingleChildLayoutState<TWidget> : State<TWidget>
+    internal abstract class SingleChildLayoutState<TWidget> : ViewState<TWidget>
         where TWidget : SingleChildLayoutWidget
     {
         private readonly Atom<IState> _child;

@@ -35,7 +35,7 @@ namespace UniMob.UI
 
         public BuildContext Context => State?.Context;
 
-        void IView.SetSource(IState newSource)
+        void IView.SetSource(IViewState newSource)
         {
             if (!(newSource is TState nextState))
             {

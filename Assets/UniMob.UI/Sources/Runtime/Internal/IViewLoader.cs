@@ -2,6 +2,6 @@ namespace UniMob.UI.Internal
 {
     public interface IViewLoader
     {
-        (IView, WidgetViewReference) LoadViewPrefab(IState state);
+        (IView, WidgetViewReference) LoadViewPrefab(IViewState state);
     }
 }

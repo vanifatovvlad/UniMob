@@ -36,7 +36,7 @@ namespace UniMob.UI.Samples.TodoMvc.Views
         }
     }
 
-    public interface IHomeState : IState
+    public interface IHomeState : IViewState
     {
         VisibilityFilter ActiveFilter { get; set; }
         IState Todos { get; }

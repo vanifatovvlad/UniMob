@@ -8,7 +8,7 @@ namespace UniMob.UI.Widgets
     using JetBrains.Annotations;
     using UnityEngine;
 
-    public class NavigatorState : State<Navigator>, INavigatorState
+    public class NavigatorState : ViewState<Navigator>, INavigatorState
     {
         private readonly Atom<IState[]> _states;
         private readonly NavigatorStack _stack;

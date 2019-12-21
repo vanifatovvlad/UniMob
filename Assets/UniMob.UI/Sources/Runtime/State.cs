@@ -7,24 +7,22 @@ using UnityEngine.Assertions;
 
 namespace UniMob.UI
 {
-    public abstract partial class State : IState, IDisposable
+    public abstract class State : IState, IDisposable
     {
-        private readonly Atom<WidgetSize> _size;
         private readonly MutableBuildContext _context;
 
         public BuildContext Context => _context;
 
-        public abstract WidgetViewReference View { get; }
-
         internal Widget Widget { get; private set; }
 
-        public WidgetSize Size => _size.Value;
-        
+        public abstract IViewState InnerViewState { get; }
+
+        public abstract WidgetSize Size { get; }
+
         protected State()
         {
             Assert.IsNull(Atom.CurrentScope);
             _context = new MutableBuildContext(this, null);
-            _size = Atom.Computed(CalculateSize);
         }
 
         internal virtual void Update(Widget widget)
@@ -50,26 +48,6 @@ namespace UniMob.UI
         public virtual void Dispose()
         {
             Assert.IsNull(Atom.CurrentScope);
-        }
-
-        public virtual void DidViewMount(IView view)
-        {
-            Assert.IsNull(Atom.CurrentScope);
-        }
-
-        public virtual void DidViewUnmount(IView view)
-        {
-            Assert.IsNull(Atom.CurrentScope);
-        }
-
-        public virtual WidgetSize CalculateSize()
-        {
-            var (prefab, viewRef) = ViewContext.Loader.LoadViewPrefab(this);
-            viewRef.LinkAtomToScope();
-            var size = prefab.rectTransform.sizeDelta;
-            return new WidgetSize(
-                size.x > 0 ? size.x : default(float?),
-                size.y > 0 ? size.y : default(float?));
         }
 
         internal static Atom<IState> Create(BuildContext context, WidgetBuilder builder)
@@ -112,45 +90,5 @@ namespace UniMob.UI
                 }
             }, requiresReaction: true);
         }
-    }
-
-    public abstract class State<TWidget> : State
-        where TWidget : Widget
-    {
-        private readonly MutableAtom<TWidget> _widget = Atom.Value(default(TWidget));
-
-        protected new TWidget Widget => _widget.Value;
-
-        internal sealed override void Update(Widget widget)
-        {
-            base.Update(widget);
-
-            var oldWidget = Widget;
-
-            if (widget is TWidget typedWidget)
-            {
-                _widget.Value = typedWidget;
-            }
-            else
-            {
-                throw new Exception($"Trying to pass {widget.GetType()}, but expected {typeof(TWidget)}");
-            }
-
-            if (oldWidget != null)
-            {
-                DidUpdateWidget(oldWidget);
-            }
-        }
-
-        public virtual void DidUpdateWidget([NotNull] TWidget oldWidget)
-        {
-            Assert.IsNull(Atom.CurrentScope);
-        }
-
-        protected Atom<IState> CreateChild(WidgetBuilder builder)
-            => Create(new BuildContext(null, Context), builder);
-
-        protected Atom<IState[]> CreateChildren(Func<BuildContext, List<Widget>> builder)
-            => CreateList(new BuildContext(null, Context), builder);
     }
 }

@@ -14,7 +14,7 @@ namespace UniMob.UI
             IView view = root;
             var context = new BuildContext(null, null);
             var state = State.Create(context, builder);
-            var render = Atom.AutoRun(() => view.SetSource(state.Value));
+            var render = Atom.AutoRun(() => root.Render(state.Value));
 
             // ReSharper disable once ImplicitlyCapturedClosure
             return new ActionDisposable(() =>

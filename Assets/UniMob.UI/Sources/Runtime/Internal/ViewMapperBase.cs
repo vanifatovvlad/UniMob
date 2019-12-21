@@ -17,7 +17,7 @@ namespace UniMob.UI.Internal
             public IState State;
         }
 
-        protected abstract IView ResolveView(IState state);
+        protected abstract IView ResolveView(IViewState state);
         protected abstract void RecycleView(IView view);
 
         void IViewTreeElement.AddChild(IViewTreeElement view)
@@ -61,15 +61,17 @@ namespace UniMob.UI.Internal
 
         private Item RenderItemInternal(IState state)
         {
-            var nextViewReference = state.View;
+            var viewState = state.InnerViewState;
+            
+            var nextViewReference = viewState.View;
 
-            var item = _items.Find(o => ReferenceEquals(o.State, state));
+            var item = _items.Find(o => ReferenceEquals(o.State, viewState));
             if (item == null)
             {
-                var view = ResolveView(state);
+                var view = ResolveView(viewState);
 
-                view.SetSource(state);
-                item = new Item {State = state, View = view};
+                view.SetSource(viewState);
+                item = new Item {State = viewState, View = view};
             }
             else
             {
@@ -79,11 +81,11 @@ namespace UniMob.UI.Internal
                 {
                     item.View.ResetSource();
                     RecycleView(item.View);
-                    item.View = ResolveView(state);
+                    item.View = ResolveView(viewState);
                 }
 
-                item.View.SetSource(state);
-                item.State = state;
+                item.View.SetSource(viewState);
+                item.State = viewState;
             }
 
             item.View.ViewReference.LinkAtomToScope();

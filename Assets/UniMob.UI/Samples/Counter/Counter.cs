@@ -19,15 +19,30 @@ namespace UniMob.UI.Samples.Counter
         public override State CreateState() => StateProvider.Of(this);
     }
 
-    public class CounterState : State<Counter>, ICounterState
+    public class CounterState : ViewState<Counter>, ICounterState
     {
-        [Atom] private int Counter { get; set; } = 0;
+        [Atom] private int Counter { get; set; }
 
         public override WidgetViewReference View { get; }
 
         public CounterState(WidgetViewReference view)
         {
             View = view;
+        }
+
+        public override void InitState()
+        {
+            base.InitState();
+
+            Counter = Widget.Min;
+        }
+
+        public override void DidUpdateWidget(Counter oldWidget)
+        {
+            base.DidUpdateWidget(oldWidget);
+
+            Counter = Math.Max(Counter, Widget.Min);
+            Counter = Math.Min(Counter, Widget.Max);
         }
 
         public string CounterText => $"Counter: {Counter}";

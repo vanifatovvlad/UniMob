@@ -19,7 +19,7 @@ namespace UniMob.UI.Samples.TodoMvc.Vanilla
         public override State CreateState() => new HomeScreenState();
     }
 
-    public class HomeScreenState : State<HomeScreen>, IHomeState
+    public class HomeScreenState : ViewState<HomeScreen>, IHomeState
     {
         private readonly MutableAtom<VisibilityFilter> _activeFilter = Atom.Value(VisibilityFilter.All);
         private readonly Atom<IState> _todos;

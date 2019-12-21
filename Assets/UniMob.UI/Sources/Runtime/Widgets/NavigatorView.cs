@@ -31,7 +31,7 @@ namespace UniMob.UI.Widgets
         }
     }
 
-    public interface INavigatorState : IState
+    public interface INavigatorState : IViewState
     {
         IState[] Screens { get; }
     }

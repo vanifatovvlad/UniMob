@@ -20,7 +20,7 @@ namespace UniMob.UI.Samples.TodoMvc.Views
         }
     }
 
-    public interface ITodoListState : IState
+    public interface ITodoListState : IViewState
     {
         void OnTap();
     }

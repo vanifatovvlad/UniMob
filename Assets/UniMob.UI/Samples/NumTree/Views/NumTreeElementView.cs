@@ -13,7 +13,7 @@ namespace UniMob.UI.Samples.NumTree.Views
         }
     }
 
-    public interface INumTreeElementViewState : IState
+    public interface INumTreeElementViewState : IViewState
     {
         int Value { get; }
     }

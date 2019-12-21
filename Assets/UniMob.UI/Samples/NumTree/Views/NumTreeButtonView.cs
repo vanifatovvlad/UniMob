@@ -19,7 +19,7 @@ namespace UniMob.UI.Samples.NumTree.Views
         }
     }
 
-    public interface INumTreeButtonState : IState
+    public interface INumTreeButtonState : IViewState
     {
         void Tap();
     }

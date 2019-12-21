@@ -2,13 +2,10 @@ namespace UniMob.UI
 {
     public interface IState
     {
-        WidgetSize Size { get; }
-
         BuildContext Context { get; }
 
-        WidgetViewReference View { get; }
+        IViewState InnerViewState { get; }
 
-        void DidViewMount(IView view);
-        void DidViewUnmount(IView view);
+        WidgetSize Size { get; }
     }
 }

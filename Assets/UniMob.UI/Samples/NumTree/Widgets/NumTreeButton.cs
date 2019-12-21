@@ -15,7 +15,7 @@ namespace UniMob.UI.Samples.NumTree.Widgets
         public override State CreateState() => new NumTreeButtonState();
     }
 
-    public class NumTreeButtonState : State<NumTreeButton>, INumTreeButtonState
+    public class NumTreeButtonState : ViewState<NumTreeButton>, INumTreeButtonState
     {
         public override WidgetViewReference View { get; }
             = WidgetViewReference.Addressable("UniMob.UI/Samples/NumTree/NumTreeButton.prefab");

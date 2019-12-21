@@ -10,7 +10,7 @@ namespace UniMob.UI
 
         public BuildContext Context { get; private set; }
 
-        public void SetSource(IState source)
+        public void SetSource(IViewState source)
         {
             Context = source.Context;
         }

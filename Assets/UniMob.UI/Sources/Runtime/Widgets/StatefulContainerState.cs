@@ -11,7 +11,7 @@ namespace UniMob.UI.Widgets
         
     }
 
-    public abstract class StatefulContainerState<TContainerWidget> : State<TContainerWidget>, IContainerState
+    public abstract class StatefulContainerState<TContainerWidget> : ViewState<TContainerWidget>, IContainerState
         where TContainerWidget : IStatefulContainerWidget
     {
         private readonly Atom<IState> _child;

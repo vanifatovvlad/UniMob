@@ -10,11 +10,11 @@ namespace UniMob.UI.Internal.ViewLoaders
             _loaders = loaders;
         }
 
-        public (IView, WidgetViewReference) LoadViewPrefab(IState state)
+        public (IView, WidgetViewReference) LoadViewPrefab(IViewState viewState)
         {
             foreach (var loader in _loaders)
             {
-                var (view, reference) = loader.LoadViewPrefab(state);
+                var (view, reference) = loader.LoadViewPrefab(viewState);
                 if (view != null)
                 {
                     return (view, reference);

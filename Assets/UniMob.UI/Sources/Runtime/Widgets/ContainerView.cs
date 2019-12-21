@@ -42,7 +42,7 @@ namespace UniMob.UI.Widgets
         }
     }
 
-    public interface IContainerState : IState
+    public interface IContainerState : IViewState
     {
         string DebugName { get; }
 

@@ -28,7 +28,7 @@ namespace UniMob.UI.Samples.Counter
         }
     }
 
-    public interface ICounterState : IState
+    public interface ICounterState : IViewState
     {
         string CounterText { get; }
 

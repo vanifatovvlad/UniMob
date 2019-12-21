@@ -66,7 +66,7 @@ namespace UniMob.UI.Widgets
         }
     }
 
-    public interface IRowState : IState
+    public interface IRowState : IViewState
     {
         WidgetSize InnerSize { get; }
         IState[] Children { get; }

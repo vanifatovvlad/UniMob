@@ -66,7 +66,7 @@ namespace UniMob.UI.Widgets
         }
     }
 
-    public interface IFadeTransitionState : IState
+    public interface IFadeTransitionState : IViewState
     {
         IState Child { get; }
 

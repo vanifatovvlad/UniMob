@@ -14,7 +14,7 @@ namespace UniMob.UI
 
         BuildContext Context { get; }
 
-        void SetSource(IState source);
+        void SetSource(IViewState source);
         void ResetSource();
     }
 }
