@@ -60,40 +60,47 @@ namespace UniMob.UI.Internal.ViewLoaders
 
         private static GameObject NavigatorBuilder()
         {
-            return new GameObject("Navigator",
+            return ResetRectSize(new GameObject("Navigator",
                 typeof(RectTransform),
-                typeof(NavigatorView));
+                typeof(NavigatorView)));
         }
 
         private static GameObject FadeTransitionBuilder()
         {
-            return new GameObject("FadeTransition",
+            return ResetRectSize(new GameObject("FadeTransition",
                 typeof(RectTransform),
                 typeof(CanvasGroup),
-                typeof(FadeTransitionView));
+                typeof(FadeTransitionView)));
         }
 
         private static GameObject ColumnViewBuilder()
         {
-            return new GameObject("Column",
+            return ResetRectSize(new GameObject("Column",
                 typeof(RectTransform),
-                typeof(ColumnView));
+                typeof(ColumnView)));
         }
 
         private static GameObject RowViewBuilder()
         {
-            return new GameObject("Row",
+            return ResetRectSize(new GameObject("Row",
                 typeof(RectTransform),
-                typeof(RowView));
+                typeof(RowView)));
         }
 
         private static GameObject ContainerBuilder()
         {
-            return new GameObject("Container",
+            return ResetRectSize(new GameObject("Container",
                 typeof(RectTransform),
                 typeof(CanvasRenderer),
                 typeof(Image),
-                typeof(ContainerView));
+                typeof(ContainerView)));
+        }
+
+        private static GameObject ResetRectSize(GameObject go)
+        {
+            var rect = go.GetComponent<RectTransform>();
+            rect.sizeDelta = Vector2.zero;
+            return go;
         }
     }
 }
