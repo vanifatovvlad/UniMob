@@ -1,5 +1,3 @@
-using System;
-
 namespace UniMob
 {
     public delegate T AtomPull<out T>();
@@ -10,7 +8,5 @@ namespace UniMob
     public interface MutableAtom<T> : Atom<T>
     {
         new T Value { get; set; }
-
-        void Set(T value);
     }
 }

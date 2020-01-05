@@ -5,8 +5,6 @@ namespace UniMob
     {
         T Value { get; }
 
-        T Get();
-
         void Deactivate();
 
         void Invalidate();

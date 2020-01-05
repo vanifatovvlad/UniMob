@@ -128,10 +128,6 @@ namespace UniMob
             ObsoleteSubscribers();
         }
 
-        public T Get() => Value;
-
-        public void Set(T value) => Value = value;
-
         public void Invalidate()
         {
             State = AtomState.Obsolete;

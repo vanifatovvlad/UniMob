@@ -71,6 +71,16 @@ namespace UniMob
             return atom;
         }
 
+        public static IDisposable Reaction<T>(
+            AtomPull<T> pull,
+            Action<T> reaction,
+            IEqualityComparer<T> comparer = null,
+            bool fireImmediately = false,
+            Action<Exception> exceptionHandler = null)
+        {
+            return Reaction(pull, (value, _) => reaction(value), comparer, fireImmediately, exceptionHandler);
+        }
+
         public static IDisposable AutoRun(Action reaction, Action<Exception> exceptionHandler = null)
         {
             var atom = new ReactionAtom(reaction, exceptionHandler);
@@ -97,21 +107,6 @@ namespace UniMob
                 AtomBase.Stack = _parent;
             }
         }
-
-#if UNIMOB_ASYNC_ENABLED
-        /// <summary>
-        /// Creates Future which completes when condition becomes True.
-        /// If condition throw exception, Future completes with exception.
-        /// </summary>
-        /// <param name="cond">Watched condition</param>
-        /// <returns></returns>
-        public static Future<AsyncUnit> When(Func<bool> cond)
-        {
-            var future = new Future<AsyncUnit>();
-            When(cond, () => future.Complete(AsyncUnit.Unit), future.CompleteException);
-            return future;
-        }
-#endif
 
         /// <summary>
         /// Invokes callback when condition becomes True.

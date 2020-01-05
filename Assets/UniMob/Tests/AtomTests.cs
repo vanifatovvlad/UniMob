@@ -426,7 +426,7 @@ namespace UniMob.Tests
         {
             var source = Atom.Value(0);
 
-            var computed = Atom.Computed(() => source.Value + 1, keepAlive: false);
+            var computed = Atom.Computed(() => source.Value + 1);
             var computedBase = (AtomBase) computed;
 
             var reaction = Atom.AutoRun(() => computed.Get());
