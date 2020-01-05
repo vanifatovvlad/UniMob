@@ -421,6 +421,33 @@ namespace UniMob.Tests
             Assert.AreEqual(2, result);
         });
 
+        [Test]
+        public void UnwatchedPullOfObsoleteActiveAtom() => TestZone.Run(tick =>
+        {
+            var source = Atom.Value(0);
+
+            var computed = Atom.Computed(() => source.Value + 1, keepAlive: false);
+            var computedBase = (AtomBase) computed;
+
+            var reaction = Atom.AutoRun(() => computed.Get());
+
+            Assert.IsTrue(computedBase.IsActive);
+            Assert.AreEqual(1, computedBase.Children?.Count ?? 0);
+
+            using (Atom.NoWatch)
+            {
+                // make source obsolete
+                source.Value = 1;
+                // pull new value in unwatched scope
+                // dependencies must persist
+                Assert.AreEqual(2, computed.Value);
+            }
+
+            Assert.AreEqual(1, computedBase.Children?.Count ?? 0);
+
+            reaction.Dispose();
+        });
+
         class TestComparer<T> : IEqualityComparer<T>
         {
             private readonly Func<T, T, bool> _comparison;

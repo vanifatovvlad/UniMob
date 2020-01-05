@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace UniMob
 {
@@ -13,13 +14,16 @@ namespace UniMob
         private bool _active;
         private bool _reaping;
 
-        protected AtomState State = AtomState.Obsolete;
+        public AtomState State = AtomState.Obsolete;
+
+        [CanBeNull] public IReadOnlyList<AtomBase> Children => _children;
+        [CanBeNull] public IReadOnlyList<AtomBase> Subscribers => _subscribers;
 
         public bool KeepAlive => _keepAlive;
         public bool IsActive => _active;
         public int SubscribersCount => _subscribers?.Count ?? 0;
 
-        protected enum AtomState
+        public enum AtomState
         {
             Obsolete,
             Checking,
@@ -93,22 +97,19 @@ namespace UniMob
 
             var parent = Stack;
 
-            if (parent != null || KeepAlive)
+            Stack = this;
+
+            if (!_active)
             {
-                Stack = this;
+                _active = true;
 
-                if (!_active)
+                try
                 {
-                    _active = true;
-
-                    try
-                    {
-                        _onActive?.Invoke();
-                    }
-                    catch (Exception e)
-                    {
-                        Zone.Current.HandleUncaughtException(e);
-                    }
+                    _onActive?.Invoke();
+                }
+                catch (Exception e)
+                {
+                    Zone.Current.HandleUncaughtException(e);
                 }
             }
 
