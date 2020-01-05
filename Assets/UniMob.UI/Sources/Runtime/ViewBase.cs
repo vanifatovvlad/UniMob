@@ -46,13 +46,17 @@ namespace UniMob.UI
             }
 
             _renderScope.Link(this);
-            
-            _hasSource = true;
-            _source.Value = nextState;
 
             if (_renderAtom == null)
             {
                 _renderAtom = new ReactionAtom(DoRender, OnRenderFailed);
+            }
+
+            _hasSource = true;
+            _source.Value = nextState;
+
+            if (!_renderAtom.IsActive)
+            {
                 _renderAtom.Get();
             }
         }
@@ -233,11 +237,11 @@ namespace UniMob.UI
         protected virtual void OnAfterRender()
         {
         }
-        
+
         protected virtual void OnAfterActivate()
         {
         }
-        
+
         protected virtual void OnAfterDeactivate()
         {
         }
