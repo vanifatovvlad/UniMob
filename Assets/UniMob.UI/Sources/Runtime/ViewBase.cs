@@ -46,14 +46,15 @@ namespace UniMob.UI
             }
 
             _renderScope.Link(this);
-
-            if (_renderAtom == null)
-                _renderAtom = new ReactionAtom(DoRender);
-
+            
             _hasSource = true;
             _source.Value = nextState;
 
-            _renderAtom.Update();
+            if (_renderAtom == null)
+            {
+                _renderAtom = new ReactionAtom(DoRender, OnRenderFailed);
+                _renderAtom.Get();
+            }
         }
 
         protected void Unmount()
@@ -198,6 +199,11 @@ namespace UniMob.UI
 
         protected virtual void DidStateDetached(TState state)
         {
+        }
+
+        protected virtual void OnRenderFailed(Exception ex)
+        {
+            Debug.LogException(ex);
         }
 
         protected override void OnEnable()
