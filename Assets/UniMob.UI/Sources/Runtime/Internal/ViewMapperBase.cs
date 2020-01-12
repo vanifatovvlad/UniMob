@@ -39,24 +39,18 @@ namespace UniMob.UI.Internal
 
             for (int i = 0; i < count; i++)
             {
-                var model = states[startIndex + i];
-
-                var oldChildIndex = ViewContext.ChildIndex;
-                ViewContext.ChildIndex = startIndex + i;
-
-                var item = RenderItemInternal(model);
+                var state = states[startIndex + i];
+                var item = RenderItemInternal(state);
                 postRender?.Invoke(item.View, item.State);
-
-                ViewContext.ChildIndex = oldChildIndex;
             }
         }
 
-        private IView RenderItem(IState states)
+        private IView RenderItem(IState state)
         {
             if (_activeRender == null)
                 throw new InvalidOperationException("Must call BeginRender() before RenderItem()");
 
-            return RenderItemInternal(states).View;
+            return RenderItemInternal(state).View;
         }
 
         private Item RenderItemInternal(IState state)
@@ -65,7 +59,16 @@ namespace UniMob.UI.Internal
 
             var nextViewReference = viewState.View;
 
-            var item = _items.Find(o => ReferenceEquals(o.State, viewState));
+            Item item = null;
+            for (var index = 0; index < _items.Count; index++)
+            {
+                if (ReferenceEquals(_items[index].State, viewState))
+                {
+                    item = _items[index];
+                    break;
+                }
+            }
+
             if (item == null)
             {
                 var view = ResolveView(viewState);
@@ -175,8 +178,9 @@ namespace UniMob.UI.Internal
             if (list.Count == 0)
                 return;
 
-            foreach (var removed in list)
+            for (var index = 0; index < list.Count; index++)
             {
+                var removed = list[index];
                 removed.View.ResetSource();
                 RecycleView(removed.View);
             }
