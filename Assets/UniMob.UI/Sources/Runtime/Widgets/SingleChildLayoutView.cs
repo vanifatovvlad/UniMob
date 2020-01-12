@@ -18,6 +18,8 @@ namespace UniMob.UI.Widgets
 
         protected override void Render()
         {
+            var alignment = State.Alignment;
+            
             using (var render = _mapper.CreateRender())
             {
                 var child = State.Child;
@@ -26,8 +28,8 @@ namespace UniMob.UI.Widgets
 
                 LayoutData layout;
                 layout.Size = childSize;
-                layout.Alignment = Alignment.Center;
-                layout.Corner = Alignment.Center;
+                layout.Alignment = alignment;
+                layout.Corner = alignment;
                 layout.CornerPosition = Vector2.zero;
                 ViewLayoutUtility.SetLayout(childView.rectTransform, layout);
             }
@@ -36,6 +38,7 @@ namespace UniMob.UI.Widgets
 
     public interface ISingleChildLayoutState : IViewState
     {
+        Alignment Alignment { get; }
         IState Child { get; }
     }
 }

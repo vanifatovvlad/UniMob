@@ -19,6 +19,7 @@ namespace UniMob.UI.Internal.ViewLoaders
             {
                 ["$$_Column"] = ColumnViewBuilder,
                 ["$$_Row"] = RowViewBuilder,
+                ["$$_ZStack"] = ZStackViewBuilder,
                 ["$$_Container"] = ContainerBuilder,
                 ["$$_Navigator"] = NavigatorBuilder,
                 ["$$_FadeTransition"] = FadeTransitionBuilder,
@@ -85,6 +86,13 @@ namespace UniMob.UI.Internal.ViewLoaders
             return ResetRectSize(new GameObject("Row",
                 typeof(RectTransform),
                 typeof(RowView)));
+        }
+        
+        private static GameObject ZStackViewBuilder()
+        {
+            return ResetRectSize(new GameObject("ZStack",
+                typeof(RectTransform),
+                typeof(ZStackView)));
         }
 
         private static GameObject ContainerBuilder()

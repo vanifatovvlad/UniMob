@@ -29,7 +29,5 @@ namespace UniMob.UI.Widgets
     public interface IContainerState : ISingleChildLayoutState
     {
         Color BackgroundColor { get; }
-
-        Alignment Alignment { get; }
     }
 }

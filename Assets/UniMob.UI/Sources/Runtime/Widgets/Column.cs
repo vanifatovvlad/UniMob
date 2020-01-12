@@ -59,7 +59,7 @@ namespace UniMob.UI.Widgets
                 return WidgetSize.Stretched;
             }
 
-            var size = CalculateInnerSize();
+            var size = _innerSize.Value;
 
             float? width = null;
             float? height = null;

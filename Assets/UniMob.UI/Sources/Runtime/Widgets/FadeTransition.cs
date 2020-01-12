@@ -22,5 +22,6 @@ namespace UniMob.UI.Widgets
             = WidgetViewReference.Resource("$$_FadeTransition");
 
         public ITween<float> Opacity => Widget.Opacity;
+        public Alignment Alignment => Alignment.Center;
     }
 }

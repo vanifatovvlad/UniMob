@@ -45,25 +45,34 @@ namespace UniMob.UI.Samples.TodoMvc.Vanilla
         }
 
         private Widget BuildTodos(BuildContext context) =>
-            new Container(
-                child: new Row(
-                    children: new List<Widget>
-                    {
-                        new TodoList(),
-                        BuildSubContainer(),
-                        new TodoList(),
-                    },
-                    crossAxisAlignment: CrossAxisAlignment.Center,
-                    mainAxisAlignment: (
-                        ActiveFilter == VisibilityFilter.All ? MainAxisAlignment.Start :
-                        ActiveFilter == VisibilityFilter.Active ? MainAxisAlignment.Center :
-                        MainAxisAlignment.End
+            new ZStack(
+                children: new List<Widget>
+                {
+                    new Container(
+                        child: new Row(
+                            children: new List<Widget>
+                            {
+                                new TodoList(),
+                                BuildSubContainer(),
+                                new TodoList(),
+                            },
+                            crossAxisAlignment: CrossAxisAlignment.Center,
+                            mainAxisAlignment: (
+                                ActiveFilter == VisibilityFilter.All ? MainAxisAlignment.Start :
+                                ActiveFilter == VisibilityFilter.Active ? MainAxisAlignment.Center :
+                                MainAxisAlignment.End
+                            ),
+                            crossAxisSize: AxisSize.Max,
+                            mainAxisSize: AxisSize.Max
+                        ),
+                        backgroundColor: Color.cyan
                     ),
-                    crossAxisSize: AxisSize.Max,
-                    mainAxisSize: AxisSize.Max
-                ),
-                backgroundColor: Color.cyan
-            );
+                    new Container(
+                        child: new Row(new List<Widget>()),
+                        size: WidgetSize.Fixed(100, 100),
+                        backgroundColor: Color.green
+                    )
+                });
 
         private Widget BuildSubContainer() =>
             new Container(
