@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace UniMob.UI.Widgets
+namespace UniMob.UI
 {
     public struct Alignment
     {
@@ -12,6 +12,14 @@ namespace UniMob.UI.Widgets
             X = x;
             Y = y;
         }
+
+        public Alignment WithTop() => new Alignment(X, TopCenter.Y);
+
+        public Alignment WithCenterY() => new Alignment(X, Center.Y);
+        
+        public Alignment WithLeft() => new Alignment(CenterLeft.X, Y);
+        
+        public Alignment WithCenterX() => new Alignment(Center.X, Y);
 
         public Vector2 ToAnchor() => new Vector2(X * 0.5f + 0.5f, -Y * 0.5f + 0.5f);
 

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace UniMob.UI.Widgets
+namespace UniMob.UI
 {
     [Serializable]
     public struct RectPadding

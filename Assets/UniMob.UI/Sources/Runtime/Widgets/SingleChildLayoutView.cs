@@ -3,27 +3,24 @@ using UnityEngine;
 
 namespace UniMob.UI.Widgets
 {
-    [AddComponentMenu("UniMob/Views/ViewPanel")]
-    public sealed class ViewPanel : ViewBase<IState>
+    public class SingleChildLayoutView<TState> : View<TState>
+        where TState : ISingleChildLayoutState
     {
         private ViewMapperBase _mapper;
 
-        public void Render(IState state) => ((IView) this).SetSource(state.InnerViewState);
-
         protected override void Activate()
         {
-            base.Activate();
-
             if (_mapper == null)
                 _mapper = new PooledViewMapper(transform);
+
+            base.Activate();
         }
 
         protected override void Render()
         {
             using (var render = _mapper.CreateRender())
             {
-                var child = State;
-
+                var child = State.Child;
                 var childView = render.RenderItem(child);
                 var childSize = child.Size;
 
@@ -35,5 +32,10 @@ namespace UniMob.UI.Widgets
                 ViewLayoutUtility.SetLayout(childView.rectTransform, layout);
             }
         }
+    }
+
+    public interface ISingleChildLayoutState : IViewState
+    {
+        IState Child { get; }
     }
 }

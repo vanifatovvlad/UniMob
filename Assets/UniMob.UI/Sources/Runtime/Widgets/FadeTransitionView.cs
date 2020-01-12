@@ -1,13 +1,10 @@
 namespace UniMob.UI.Widgets
 {
-    using Internal;
     using UnityEngine;
 
-    public class FadeTransitionView : View<IFadeTransitionState>
+    public class FadeTransitionView : SingleChildLayoutView<IFadeTransitionState>
     {
         private CanvasGroup _canvasGroup;
-
-        private ViewMapperBase _mapper;
         private bool _animating;
 
         protected override void Awake()
@@ -17,26 +14,9 @@ namespace UniMob.UI.Widgets
             _canvasGroup = GetComponent<CanvasGroup>();
         }
 
-        protected override void Render()
-        {
-            using (var render = _mapper.CreateRender())
-            {
-                var child = State.Child;
-                var childView = render.RenderItem(child);
-                var childSize = child.Size;
-
-                var alignment = Alignment.Center;
-                ViewLayoutUtility.SetSize(childView.rectTransform, childSize, alignment.ToAnchor());
-                ViewLayoutUtility.SetPosition(childView.rectTransform, childSize, Vector2.zero, alignment);
-            }
-        }
-
         protected override void Activate()
         {
             base.Activate();
-
-            if (_mapper == null)
-                _mapper = new PooledViewMapper(transform);
 
             _animating = true;
             UpdateOpacity(State.Opacity.Value, false);
@@ -73,10 +53,8 @@ namespace UniMob.UI.Widgets
         }
     }
 
-    public interface IFadeTransitionState : IViewState
+    public interface IFadeTransitionState : ISingleChildLayoutState
     {
-        IState Child { get; }
-
         ITween<float> Opacity { get; }
     }
 }

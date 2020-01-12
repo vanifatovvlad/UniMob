@@ -3,8 +3,7 @@ using UnityEngine;
 
 namespace UniMob.UI.Widgets
 {
-    [AddComponentMenu("UniMob/Views/Column")]
-    public sealed class ColumnView : View<IColumnState>
+    internal sealed class ColumnView : View<IColumnState>
     {
         private ViewMapperBase _mapper;
 
@@ -35,32 +34,33 @@ namespace UniMob.UI.Widgets
                 : mainAxis == MainAxisAlignment.End ? 1f
                 : 0.5f;
 
+            var childAlignment = new Alignment(alignX, alignY);
+            var corner = childAlignment.WithTop();
+            var cornerPosition = new Vector2(0, -columnSize.Height * offsetMultiplierY);
+
             using (var render = _mapper.CreateRender())
             {
-                float y = -columnSize.Height * offsetMultiplierY;
-
                 foreach (var child in children)
                 {
                     var childSize = child.Size;
 
                     if (childSize.IsHeightStretched)
                     {
-                        Debug.LogError("Cannot render vertically stretched widgets inside Column.");
+                        Debug.LogError("Cannot render vertically stretched widgets inside Column.\n" +
+                                       $"Try to wrap '{child.GetType().Name}' into another widget with fixed height");
                         continue;
                     }
 
                     var childView = render.RenderItem(child);
 
-                    var localAlignX = childSize.IsWidthStretched ? Alignment.Center.X : alignX;
+                    LayoutData layout;
+                    layout.Size = childSize;
+                    layout.Alignment = childAlignment;
+                    layout.Corner = corner;
+                    layout.CornerPosition = cornerPosition;
+                    ViewLayoutUtility.SetLayout(childView.rectTransform, layout);
 
-                    var anchor = new Alignment(localAlignX, alignY);
-                    ViewLayoutUtility.SetSize(childView.rectTransform, childSize, anchor.ToAnchor());
-
-                    var position = new Vector2(0, y);
-                    var corner = new Alignment(localAlignX, Alignment.TopCenter.Y);
-                    ViewLayoutUtility.SetPosition(childView.rectTransform, childSize, position, corner);
-
-                    y += childSize.Height;
+                    cornerPosition += new Vector2(0, childSize.Height);
                 }
             }
         }

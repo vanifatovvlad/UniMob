@@ -1,4 +1,4 @@
-namespace UniMob.UI.Widgets
+namespace UniMob.UI.Internal
 {
     using System;
     using System.Collections.Generic;

@@ -1,4 +1,4 @@
-namespace UniMob.UI.Widgets
+namespace UniMob.UI
 {
     public enum MainAxisAlignment
     {

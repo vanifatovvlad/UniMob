@@ -62,7 +62,7 @@ namespace UniMob.UI.Internal
         private Item RenderItemInternal(IState state)
         {
             var viewState = state.InnerViewState;
-            
+
             var nextViewReference = viewState.View;
 
             var item = _items.Find(o => ReferenceEquals(o.State, viewState));
@@ -95,29 +95,44 @@ namespace UniMob.UI.Internal
             return item;
         }
 
-        public struct ViewMapperRenderScope : IDisposable
+        public class ViewMapperRenderScope : IDisposable
         {
-            private readonly ViewMapperBase _mapper;
+            internal ViewMapperBase Mapper { get; set; }
 
-            public ViewMapperRenderScope(ViewMapperBase mapper)
+            public bool AutoRecycle { get; set; } = true;
+
+            public void Initialize()
             {
-                _mapper = mapper;
-                _mapper.BeginRender();
+                Mapper.BeginRender();
             }
 
-            void IDisposable.Dispose() => _mapper.EndRender();
+            void IDisposable.Dispose()
+            {
+                Mapper.EndRender();
+
+                if (AutoRecycle)
+                {
+                    Pools.ViewMapperRenderScope.Recycle(this);
+                }
+            }
 
             public void RenderItems(IState[] states, Action<IView, IState> postRender = null)
-                => _mapper.RenderItems(states, 0, states.Length, postRender);
+                => Mapper.RenderItems(states, 0, states.Length, postRender);
 
             public void RenderItems(IState[] states, int startIndex, int count, Action<IView, IState> postRender = null)
-                => _mapper.RenderItems(states, startIndex, count, postRender);
+                => Mapper.RenderItems(states, startIndex, count, postRender);
 
             public IView RenderItem(IState state)
-                => _mapper.RenderItem(state);
+                => Mapper.RenderItem(state);
         }
 
-        public ViewMapperRenderScope CreateRender() => new ViewMapperRenderScope(this);
+        public ViewMapperRenderScope CreateRender()
+        {
+            var scope = Pools.ViewMapperRenderScope.Get();
+            scope.Mapper = this;
+            scope.Initialize();
+            return scope;
+        }
 
         private void BeginRender()
         {

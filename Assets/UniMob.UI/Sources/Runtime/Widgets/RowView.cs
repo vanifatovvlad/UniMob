@@ -35,10 +35,12 @@ namespace UniMob.UI.Widgets
                 : mainAxis == MainAxisAlignment.End ? 1f
                 : 0.5f;
 
+            var childAlignment = new Alignment(alignX, alignY);
+            var corner = childAlignment.WithLeft();
+            var cornerPosition = new Vector2(-columnSize.Width * offsetMultiplierX, 0);
+
             using (var render = _mapper.CreateRender())
             {
-                float x = -columnSize.Width * offsetMultiplierX;
-
                 foreach (var child in children)
                 {
                     var childSize = child.Size;
@@ -51,16 +53,14 @@ namespace UniMob.UI.Widgets
 
                     var childView = render.RenderItem(child);
 
-                    var localAlignY = childSize.IsHeightStretched ? Alignment.Center.Y : alignY;
+                    LayoutData layout;
+                    layout.Size = childSize;
+                    layout.Alignment = childAlignment;
+                    layout.Corner = corner;
+                    layout.CornerPosition = cornerPosition;
+                    ViewLayoutUtility.SetLayout(childView.rectTransform, layout);
 
-                    var anchor = new Alignment(alignX, localAlignY);
-                    ViewLayoutUtility.SetSize(childView.rectTransform, childSize, anchor.ToAnchor());
-
-                    var position = new Vector2(x, 0);
-                    var corner = new Alignment(Alignment.CenterLeft.X, localAlignY);
-                    ViewLayoutUtility.SetPosition(childView.rectTransform, childSize, position, corner);
-
-                    x += childSize.Width;
+                    cornerPosition += new Vector2(childSize.Width, 0);
                 }
             }
         }
