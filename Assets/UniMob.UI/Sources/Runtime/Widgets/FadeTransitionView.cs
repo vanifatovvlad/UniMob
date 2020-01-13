@@ -24,7 +24,7 @@ namespace UniMob.UI.Widgets
             base.Activate();
 
             _animating = true;
-            UpdateOpacity(State.Opacity.Value, false);
+            UpdateOpacity(State.Opacity.Value);
         }
 
         protected override void Deactivate()
@@ -45,16 +45,15 @@ namespace UniMob.UI.Widgets
 
             if (_animating)
             {
-                UpdateOpacity(opacity.Value, opacity.IsCompleted);
+                UpdateOpacity(opacity.Value);
             }
 
             _animating = opacity.IsAnimating;
         }
 
-        private void UpdateOpacity(float value, bool completed)
+        private void UpdateOpacity(float value)
         {
             _canvasGroup.alpha = value;
-            _canvasGroup.interactable = completed;
         }
     }
 
