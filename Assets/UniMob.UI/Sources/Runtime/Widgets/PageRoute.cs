@@ -42,11 +42,11 @@ namespace UniMob.UI.Widgets
         }
     }
 
-    public delegate Widget AnimatedWidgetBuilder(BuildContext context, ITween<float> animation);
+    public delegate Widget AnimatedWidgetBuilder(BuildContext context, IAnimation<float> animation);
 
     public class AnimatedPageRoute : Route
     {
-        private readonly TweenController _tweenController;
+        private readonly AnimationController _tweenController;
         private readonly AnimatedWidgetBuilder _builder;
 
         internal BuildContext Context { get; set; }
@@ -60,7 +60,7 @@ namespace UniMob.UI.Widgets
         ) : base(new ScreenSettings(name, modalType))
         {
             _builder = builder;
-            _tweenController = new TweenController(duration, reverseDuration);
+            _tweenController = new AnimationController(duration, reverseDuration);
         }
 
         public override Widget Build(BuildContext context)

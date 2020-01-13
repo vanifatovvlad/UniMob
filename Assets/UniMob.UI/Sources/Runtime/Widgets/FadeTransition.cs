@@ -4,14 +4,14 @@ namespace UniMob.UI.Widgets
     {
         public FadeTransition(
             Widget child,
-            ITween<float> opacity,
+            IAnimation<float> opacity,
             Key key = null
         ) : base(child, key)
         {
             Opacity = opacity;
         }
 
-        public ITween<float> Opacity { get; }
+        public IAnimation<float> Opacity { get; }
 
         public override State CreateState() => new FadeTransitionState();
     }
@@ -21,7 +21,7 @@ namespace UniMob.UI.Widgets
         public override WidgetViewReference View { get; }
             = WidgetViewReference.Resource("$$_FadeTransition");
 
-        public ITween<float> Opacity => Widget.Opacity;
+        public IAnimation<float> Opacity => Widget.Opacity;
         public Alignment Alignment => Alignment.Center;
     }
 }

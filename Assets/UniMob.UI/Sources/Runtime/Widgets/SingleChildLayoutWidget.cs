@@ -27,5 +27,7 @@ namespace UniMob.UI.Widgets
         }
 
         public IState Child => _child.Value;
+
+        public override WidgetSize CalculateSize() => Child.Size;
     }
 }

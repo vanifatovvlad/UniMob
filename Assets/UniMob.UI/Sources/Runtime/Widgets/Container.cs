@@ -34,6 +34,6 @@ namespace UniMob.UI.Widgets
 
         public Alignment Alignment => Widget.Alignment;
 
-        public override WidgetSize CalculateSize() => Widget.Size ?? Child.Size;
+        public override WidgetSize CalculateSize() => Widget.Size ?? base.CalculateSize();
     }
 }

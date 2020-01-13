@@ -24,6 +24,8 @@ namespace UniMob.UI.Samples.TodoMvc.Vanilla
         private readonly MutableAtom<VisibilityFilter> _activeFilter = Atom.Value(VisibilityFilter.All);
         private readonly Atom<IState> _todos;
 
+        private readonly MutableAtom<CrossFadeState> _crossFade = Atom.Value(CrossFadeState.ShowFirst);
+
         public override WidgetViewReference View { get; }
             = WidgetViewReference.Resource("TodoHomeScreen");
 
@@ -42,6 +44,9 @@ namespace UniMob.UI.Samples.TodoMvc.Vanilla
 
         public void AddTodo()
         {
+            _crossFade.Value = _crossFade.Value == CrossFadeState.ShowFirst
+                ? CrossFadeState.ShowSecond
+                : CrossFadeState.ShowFirst;
         }
 
         private Widget BuildTodos(BuildContext context) =>
@@ -67,10 +72,30 @@ namespace UniMob.UI.Samples.TodoMvc.Vanilla
                         ),
                         backgroundColor: Color.cyan
                     ),
-                    new Container(
-                        size: WidgetSize.Fixed(100, 100),
-                        backgroundColor: Color.green
-                    )
+                    new Row(
+                        children: new List<Widget>
+                        {
+                            new Container(
+                                size: WidgetSize.Fixed(100, 100),
+                                backgroundColor: Color.black
+                            ),
+                            new AnimatedCrossFade(
+                                firstChild: new Container(
+                                    size: WidgetSize.Fixed(100, 100),
+                                    backgroundColor: Color.green
+                                ),
+                                secondChild: new Container(
+                                    size: WidgetSize.FixedWidth(200),
+                                    backgroundColor: Color.red
+                                ),
+                                crossFadeState: _crossFade.Value,
+                                duration: 0.5f
+                            ),
+                            new Container(
+                                size: WidgetSize.Fixed(100, 100),
+                                backgroundColor: Color.black
+                            ),
+                        })
                 });
 
         private Widget BuildSubContainer() =>

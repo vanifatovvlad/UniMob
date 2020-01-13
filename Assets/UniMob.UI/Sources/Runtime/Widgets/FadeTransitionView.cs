@@ -60,6 +60,6 @@ namespace UniMob.UI.Widgets
 
     public interface IFadeTransitionState : ISingleChildLayoutState
     {
-        ITween<float> Opacity { get; }
+        IAnimation<float> Opacity { get; }
     }
 }
