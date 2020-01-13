@@ -17,6 +17,7 @@ namespace UniMob.UI.Internal.ViewLoaders
             _cache = new Dictionary<string, IView>();
             _builders = new Dictionary<string, Func<GameObject>>
             {
+                ["$$_Empty"] = EmptyBuilder,
                 ["$$_Column"] = ColumnViewBuilder,
                 ["$$_Row"] = RowViewBuilder,
                 ["$$_ZStack"] = ZStackViewBuilder,
@@ -59,6 +60,13 @@ namespace UniMob.UI.Internal.ViewLoaders
             return (view, viewReference);
         }
 
+        private static GameObject EmptyBuilder()
+        {
+            return ResetRectSize(new GameObject("Empty",
+                typeof(RectTransform),
+                typeof(EmptyView)));
+        }
+
         private static GameObject NavigatorBuilder()
         {
             return ResetRectSize(new GameObject("Navigator",
@@ -87,7 +95,7 @@ namespace UniMob.UI.Internal.ViewLoaders
                 typeof(RectTransform),
                 typeof(RowView)));
         }
-        
+
         private static GameObject ZStackViewBuilder()
         {
             return ResetRectSize(new GameObject("ZStack",

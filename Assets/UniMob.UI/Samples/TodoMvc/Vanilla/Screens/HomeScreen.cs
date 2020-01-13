@@ -68,7 +68,7 @@ namespace UniMob.UI.Samples.TodoMvc.Vanilla
                         backgroundColor: Color.cyan
                     ),
                     new Container(
-                        child: new Row(new List<Widget>()),
+                        child: new Empty(),
                         size: WidgetSize.Fixed(100, 100),
                         backgroundColor: Color.green
                     )
