@@ -1,9 +1,12 @@
 using UniMob.UI.Internal;
+using UniMob.UI.Widgets;
 using UnityEngine;
+
+[assembly: RegisterComponentViewFactory("$$_Row",
+    typeof(RectTransform), typeof(RowView))]
 
 namespace UniMob.UI.Widgets
 {
-    [AddComponentMenu("UniMob/Views/Row")]
     public sealed class RowView : View<IRowState>
     {
         private ViewMapperBase _mapper;

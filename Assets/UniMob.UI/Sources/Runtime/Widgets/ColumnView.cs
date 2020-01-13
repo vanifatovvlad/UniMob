@@ -1,5 +1,9 @@
 using UniMob.UI.Internal;
+using UniMob.UI.Widgets;
 using UnityEngine;
+
+[assembly: RegisterComponentViewFactory("$$_Column",
+    typeof(RectTransform), typeof(ColumnView))]
 
 namespace UniMob.UI.Widgets
 {

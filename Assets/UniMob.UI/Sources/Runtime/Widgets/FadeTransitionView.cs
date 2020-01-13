@@ -1,7 +1,12 @@
+using UniMob.UI.Internal;
+using UniMob.UI.Widgets;
+using UnityEngine;
+
+[assembly: RegisterComponentViewFactory("$$_FadeTransition",
+    typeof(RectTransform), typeof(CanvasGroup), typeof(FadeTransitionView))]
+
 namespace UniMob.UI.Widgets
 {
-    using UnityEngine;
-
     public class FadeTransitionView : SingleChildLayoutView<IFadeTransitionState>
     {
         private CanvasGroup _canvasGroup;

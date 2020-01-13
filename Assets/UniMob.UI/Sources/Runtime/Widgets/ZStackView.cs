@@ -1,5 +1,9 @@
 using UniMob.UI.Internal;
+using UniMob.UI.Widgets;
 using UnityEngine;
+
+[assembly: RegisterComponentViewFactory("$$_ZStack",
+    typeof(RectTransform), typeof(ZStackView))]
 
 namespace UniMob.UI.Widgets
 {

@@ -1,5 +1,10 @@
+using UniMob.UI.Internal;
+using UniMob.UI.Widgets;
 using UnityEngine;
 using UnityEngine.UI;
+
+[assembly: RegisterComponentViewFactory("$$_Container",
+    typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(ContainerView))]
 
 namespace UniMob.UI.Widgets
 {

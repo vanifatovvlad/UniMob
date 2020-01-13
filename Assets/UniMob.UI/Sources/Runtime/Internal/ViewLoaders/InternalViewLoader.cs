@@ -1,30 +1,38 @@
 using System;
 using System.Collections.Generic;
-using UniMob.UI.Widgets;
 using UnityEngine;
-using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
 namespace UniMob.UI.Internal.ViewLoaders
 {
     public class InternalViewLoader : IViewLoader
     {
-        private readonly Dictionary<string, Func<GameObject>> _builders;
-        private readonly Dictionary<string, IView> _cache;
+        private readonly Dictionary<string, Func<GameObject>> _builders = new Dictionary<string, Func<GameObject>>();
+        private readonly Dictionary<string, IView> _cache = new Dictionary<string, IView>();
 
         public InternalViewLoader()
         {
-            _cache = new Dictionary<string, IView>();
-            _builders = new Dictionary<string, Func<GameObject>>
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
-                ["$$_Empty"] = EmptyBuilder,
-                ["$$_Column"] = ColumnViewBuilder,
-                ["$$_Row"] = RowViewBuilder,
-                ["$$_ZStack"] = ZStackViewBuilder,
-                ["$$_Container"] = ContainerBuilder,
-                ["$$_Navigator"] = NavigatorBuilder,
-                ["$$_FadeTransition"] = FadeTransitionBuilder,
-            };
+                var attributes = assembly.GetCustomAttributes(typeof(RegisterViewFactoryAttribute), false);
+                foreach (RegisterViewFactoryAttribute attribute in attributes)
+                {
+                    var factory = attribute.CreateFactory();
+                    if (factory == null)
+                    {
+                        continue;
+                    }
+
+                    var name = factory.Name;
+                    if (_builders.ContainsKey(name))
+                    {
+                        Debug.LogError($"Multiple view factory for {name}");
+                        continue;
+                    }
+
+                    _builders.Add(name, factory.Create);
+                }
+            }
         }
 
         public (IView, WidgetViewReference) LoadViewPrefab(IViewState state)
@@ -58,65 +66,6 @@ namespace UniMob.UI.Internal.ViewLoaders
             _cache.Add(name, view);
 
             return (view, viewReference);
-        }
-
-        private static GameObject EmptyBuilder()
-        {
-            return ResetRectSize(new GameObject("Empty",
-                typeof(RectTransform),
-                typeof(EmptyView)));
-        }
-
-        private static GameObject NavigatorBuilder()
-        {
-            return ResetRectSize(new GameObject("Navigator",
-                typeof(RectTransform),
-                typeof(NavigatorView)));
-        }
-
-        private static GameObject FadeTransitionBuilder()
-        {
-            return ResetRectSize(new GameObject("FadeTransition",
-                typeof(RectTransform),
-                typeof(CanvasGroup),
-                typeof(FadeTransitionView)));
-        }
-
-        private static GameObject ColumnViewBuilder()
-        {
-            return ResetRectSize(new GameObject("Column",
-                typeof(RectTransform),
-                typeof(ColumnView)));
-        }
-
-        private static GameObject RowViewBuilder()
-        {
-            return ResetRectSize(new GameObject("Row",
-                typeof(RectTransform),
-                typeof(RowView)));
-        }
-
-        private static GameObject ZStackViewBuilder()
-        {
-            return ResetRectSize(new GameObject("ZStack",
-                typeof(RectTransform),
-                typeof(ZStackView)));
-        }
-
-        private static GameObject ContainerBuilder()
-        {
-            return ResetRectSize(new GameObject("Container",
-                typeof(RectTransform),
-                typeof(CanvasRenderer),
-                typeof(Image),
-                typeof(ContainerView)));
-        }
-
-        private static GameObject ResetRectSize(GameObject go)
-        {
-            var rect = go.GetComponent<RectTransform>();
-            rect.sizeDelta = Vector2.zero;
-            return go;
         }
     }
 }

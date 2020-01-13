@@ -1,8 +1,12 @@
+using UniMob.UI.Internal;
+using UniMob.UI.Widgets;
+using UnityEngine;
+
+[assembly: RegisterComponentViewFactory("$$_Navigator",
+    typeof(RectTransform), typeof(NavigatorView))]
+
 namespace UniMob.UI.Widgets
 {
-    using Internal;
-    using UnityEngine;
-
     public class NavigatorView : View<INavigatorState>
     {
         private ViewMapperBase _mapper;
@@ -17,12 +21,14 @@ namespace UniMob.UI.Widgets
 
         protected override void Render()
         {
-            using (var render = _mapper.CreateRender()) {
+            using (var render = _mapper.CreateRender())
+            {
                 var children = State.Screens;
-                foreach (var child in children) {
+                foreach (var child in children)
+                {
                     var childView = render.RenderItem(child);
                     var childSize = child.Size;
-                    
+
                     LayoutData layout;
                     layout.Size = childSize;
                     layout.Alignment = Alignment.Center;
