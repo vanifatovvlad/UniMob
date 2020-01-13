@@ -6,12 +6,12 @@ namespace UniMob.UI.Widgets
     public sealed class Container : SingleChildLayoutWidget
     {
         public Container(
-            [NotNull] Widget child,
+            [CanBeNull] Widget child = null,
             [CanBeNull] Key key = null,
             [CanBeNull] Color? backgroundColor = null,
             [CanBeNull] WidgetSize? size = null,
             [CanBeNull] Alignment? alignment = null)
-            : base(child, key)
+            : base(child ?? new Empty(), key)
         {
             BackgroundColor = backgroundColor ?? Color.clear;
             Alignment = alignment ?? Alignment.Center;
