@@ -49,7 +49,7 @@ namespace UniMob.UI.Widgets
 
             using (var render = _mapper.CreateRender())
             {
-                var newLine = false;
+                var newLine = true;
                 var lineLastChildIndex = 0;
                 var lineHeight = 0f;
                 var lineMaxWidth = State.MaxCrossAxisExtent;
