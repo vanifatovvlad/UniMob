@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace UniMob.UI.Widgets
 {
-    public class ScrollListView : View<IScrollListState>
+    internal class ScrollListView : View<IScrollListState>
     {
         private RectTransform _contentRoot;
         private ViewMapperBase _mapper;
@@ -86,7 +86,7 @@ namespace UniMob.UI.Widgets
         }
     }
 
-    public interface IScrollListState : IViewState
+    internal interface IScrollListState : IViewState
     {
         WidgetSize InnerSize { get; }
         IState[] Children { get; }

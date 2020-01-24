@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace UniMob.UI.Widgets
 {
-    public class SingleChildLayoutView<TState> : View<TState>
+    internal class SingleChildLayoutView<TState> : View<TState>
         where TState : ISingleChildLayoutState
     {
         private ViewMapperBase _mapper;
@@ -36,7 +36,7 @@ namespace UniMob.UI.Widgets
         }
     }
 
-    public interface ISingleChildLayoutState : IViewState
+    internal interface ISingleChildLayoutState : IViewState
     {
         Alignment Alignment { get; }
         IState Child { get; }

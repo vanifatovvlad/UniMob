@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace UniMob.UI.Widgets
 {
-    public class AnimatedCrossFadeView : View<IAnimatedCrossFadeState>
+    internal class AnimatedCrossFadeView : View<IAnimatedCrossFadeState>
     {
         private ViewMapperBase _mapper;
 
@@ -44,7 +44,7 @@ namespace UniMob.UI.Widgets
         }
     }
 
-    public interface IAnimatedCrossFadeState : IViewState
+    internal interface IAnimatedCrossFadeState : IViewState
     {
         IState FirstChild { get; }
         IState SecondChild { get; }

@@ -70,7 +70,7 @@ namespace UniMob.UI.Widgets
         }
     }
 
-    public interface IColumnState : IViewState
+    internal interface IColumnState : IViewState
     {
         WidgetSize InnerSize { get; }
         IState[] Children { get; }

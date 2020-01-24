@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace UniMob.UI.Widgets
 {
-    public class ZStackView : View<IZStackState>
+    internal class ZStackView : View<IZStackState>
     {
         private ViewMapperBase _mapper;
 
@@ -42,7 +42,7 @@ namespace UniMob.UI.Widgets
         }
     }
 
-    public interface IZStackState : IViewState
+    internal interface IZStackState : IViewState
     {
         Alignment Alignment { get; }
         IState[] Children { get; }

@@ -31,7 +31,7 @@ namespace UniMob.UI.Widgets
         }
     }
 
-    public interface IContainerState : ISingleChildLayoutState
+    internal interface IContainerState : ISingleChildLayoutState
     {
         Color BackgroundColor { get; }
     }

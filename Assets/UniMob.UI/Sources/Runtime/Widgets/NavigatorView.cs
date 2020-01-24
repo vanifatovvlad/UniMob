@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace UniMob.UI.Widgets
 {
-    public class NavigatorView : View<INavigatorState>
+    internal class NavigatorView : View<INavigatorState>
     {
         private ViewMapperBase _mapper;
 

@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace UniMob.UI.Widgets
 {
-    public class FadeTransitionView : SingleChildLayoutView<IFadeTransitionState>
+    internal class FadeTransitionView : SingleChildLayoutView<IFadeTransitionState>
     {
         private CanvasGroup _canvasGroup;
         private bool _animating;
@@ -57,7 +57,7 @@ namespace UniMob.UI.Widgets
         }
     }
 
-    public interface IFadeTransitionState : ISingleChildLayoutState
+    internal interface IFadeTransitionState : ISingleChildLayoutState
     {
         IAnimation<float> Opacity { get; }
     }

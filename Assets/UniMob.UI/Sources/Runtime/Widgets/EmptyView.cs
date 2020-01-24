@@ -7,14 +7,14 @@ using UnityEngine;
 
 namespace UniMob.UI.Widgets
 {
-    public class EmptyView : View<IEmptyState>
+    internal class EmptyView : View<IEmptyState>
     {
         protected override void Render()
         {
         }
     }
 
-    public interface IEmptyState : IViewState
+    internal interface IEmptyState : IViewState
     {
     }
 }

@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace UniMob.UI.Widgets
 {
-    public sealed class RowView : View<IRowState>
+    internal sealed class RowView : View<IRowState>
     {
         private ViewMapperBase _mapper;
 
@@ -69,7 +69,7 @@ namespace UniMob.UI.Widgets
         }
     }
 
-    public interface IRowState : IViewState
+    internal interface IRowState : IViewState
     {
         WidgetSize InnerSize { get; }
         IState[] Children { get; }
