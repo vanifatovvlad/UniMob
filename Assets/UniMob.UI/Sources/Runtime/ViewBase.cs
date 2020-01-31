@@ -37,6 +37,14 @@ namespace UniMob.UI
 
         void IView.SetSource(IViewState newSource)
         {
+            using (Atom.NoWatch)
+            {
+                if (ReferenceEquals(_source.Value, newSource))
+                {
+                    return;
+                }
+            }
+
             if (!(newSource is TState nextState))
             {
                 var expected = typeof(TState).Name;

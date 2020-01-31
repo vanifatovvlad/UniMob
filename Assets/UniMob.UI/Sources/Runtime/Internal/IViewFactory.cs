@@ -65,8 +65,19 @@ namespace UniMob.UI.Internal
 
         public GameObject Create()
         {
-            var go = new GameObject(NiceName, Components);
-            go.GetComponent<RectTransform>().sizeDelta = Vector2.zero;
+            var go = new GameObject(NiceName);
+            go.SetActive(false);
+            
+            foreach (var component in Components)
+            {
+                var added = go.AddComponent(component);
+
+                if (component == typeof(RectTransform))
+                {
+                    ((RectTransform) added).sizeDelta = Vector2.zero;
+                }
+            }
+            
             return go;
         }
     }
