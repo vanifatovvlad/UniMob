@@ -12,5 +12,8 @@ namespace UniMob
         void HandleUncaughtException(Exception exception);
         void Invoke(Action action);
         void InvokeDelayed(float delay, Action action);
+        
+        void AddTicker(Action action);
+        void RemoveTicker(Action action);
     }
 }

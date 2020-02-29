@@ -29,7 +29,7 @@ namespace UniMob.UI
         {
             get
             {
-                var elapsed = Time.unscaledTime - _startTime;
+                var elapsed = CurrentTime - _startTime;
 
                 switch (Status)
                 {
@@ -89,7 +89,7 @@ namespace UniMob.UI
             _completer?.TrySetResult(null);
             _completer = null;
 
-            _startTime = Time.unscaledTime;
+            _startTime = CurrentTime;
             UpdateStatus(status);
 
             if (Mathf.Approximately(d, 0))
@@ -133,6 +133,8 @@ namespace UniMob.UI
                 }
             }
         }
+
+        private static float CurrentTime => Time.unscaledTime;
     }
 
     internal class DrivenAnimation<T> : IAnimation<T>
@@ -172,6 +174,30 @@ namespace UniMob.UI
         {
             return new DrivenAnimation<T>(controller, parent);
         }
+    }
+
+    public sealed class ConstAnimation<T> : IAnimation<T>
+    {
+        public bool IsAnimating => false;
+        public bool IsCompleted => true;
+        public bool IsDismissed => false;
+        public AnimationStatus Status => AnimationStatus.Completed;
+        public T Value { get; }
+
+        public ConstAnimation(T value)
+        {
+            Value = value;
+        }
+
+        public void AddStatusListener(Action<AnimationStatus> listener)
+        {
+        }
+
+        public void RemoveStatusListener(Action<AnimationStatus> listener)
+        {
+        }
+
+        public static implicit operator ConstAnimation<T>(T value) => new ConstAnimation<T>(value);
     }
 
     public interface IAnimatable<out T>

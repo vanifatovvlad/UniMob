@@ -18,6 +18,7 @@ namespace UniMob
         private int _threadedDirty;
         private List<Action> _queue = new List<Action>();
         private List<Action> _toPass = new List<Action>();
+        private List<Action> _tickers = new List<Action>();
 
         internal bool ThreadedDirty => _threadedDirty == 1;
 
@@ -85,7 +86,43 @@ namespace UniMob
                     _exceptionHandler(ex);
                 }
             }
+            
+            for (var i = 0; i < _tickers.Count; i++)
+            {
+                try
+                {
+                    _tickers[i].Invoke();
+                }
+                catch (Exception ex)
+                {
+                    _exceptionHandler(ex);
+                }
+            }
         }
+
+        internal void AddTicker(Action action)
+        {
+            if (action == null) throw new ArgumentNullException(nameof(action));
+
+            if (Thread.CurrentThread.ManagedThreadId != _mainThreadId)
+            {
+                throw new InvalidOperationException($"{nameof(AddTicker)} must be called from MainThread");
+            }
+            
+            _tickers.Add(action);
+        }
+
+        internal void RemoveTicker(Action action)
+        {
+            if (action == null) throw new ArgumentNullException(nameof(action));
+            
+            if (Thread.CurrentThread.ManagedThreadId != _mainThreadId)
+            {
+                throw new InvalidOperationException($"{nameof(AddTicker)} must be called from MainThread");
+            }
+
+            _tickers.Remove(action);
+        }        
 
         internal void Invoke(Action action)
         {

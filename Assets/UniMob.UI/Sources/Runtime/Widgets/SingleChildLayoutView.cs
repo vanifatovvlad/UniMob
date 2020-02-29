@@ -8,6 +8,8 @@ namespace UniMob.UI.Widgets
     {
         private ViewMapperBase _mapper;
 
+        protected IView ChildView { get; private set; }
+
         protected override void Activate()
         {
             if (_mapper == null)
@@ -16,14 +18,21 @@ namespace UniMob.UI.Widgets
             base.Activate();
         }
 
+        protected override void Deactivate()
+        {
+            base.Deactivate();
+
+            ChildView = null;
+        }
+
         protected override void Render()
         {
             var alignment = State.Alignment;
-            
+
             using (var render = _mapper.CreateRender())
             {
                 var child = State.Child;
-                var childView = render.RenderItem(child);
+                ChildView = render.RenderItem(child);
                 var childSize = child.Size;
 
                 LayoutData layout;
@@ -31,7 +40,7 @@ namespace UniMob.UI.Widgets
                 layout.Alignment = alignment;
                 layout.Corner = alignment;
                 layout.CornerPosition = Vector2.zero;
-                ViewLayoutUtility.SetLayout(childView.rectTransform, layout);
+                ViewLayoutUtility.SetLayout(ChildView.rectTransform, layout);
             }
         }
     }

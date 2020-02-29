@@ -53,5 +53,15 @@ namespace UniMob
         {
             _dispatcher.InvokeDelayed(delay, action);
         }
+
+        public void AddTicker(Action action)
+        {
+            _dispatcher.AddTicker(action);
+        }
+
+        public void RemoveTicker(Action action)
+        {
+            _dispatcher.RemoveTicker(action);
+        }
     }
 }

@@ -10,7 +10,7 @@ namespace UniMob.UI.Widgets
     internal class FadeTransitionView : SingleChildLayoutView<IFadeTransitionState>
     {
         private CanvasGroup _canvasGroup;
-        private bool _animating;
+        private TransitionTicker<float> _opacity;
 
         protected override void Awake()
         {
@@ -23,37 +23,14 @@ namespace UniMob.UI.Widgets
         {
             base.Activate();
 
-            _animating = true;
-            UpdateOpacity(State.Opacity.Value);
+            _opacity = new TransitionTicker<float>(State.Opacity, val => _canvasGroup.alpha = val);
         }
 
         protected override void Deactivate()
         {
             base.Deactivate();
 
-            _animating = false;
-        }
-
-        private void Update()
-        {
-            if (!HasState)
-            {
-                return;
-            }
-
-            var opacity = State.Opacity;
-
-            if (_animating)
-            {
-                UpdateOpacity(opacity.Value);
-            }
-
-            _animating = opacity.IsAnimating;
-        }
-
-        private void UpdateOpacity(float value)
-        {
-            _canvasGroup.alpha = value;
+            _opacity.Dispose();
         }
     }
 

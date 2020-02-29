@@ -1,11 +1,13 @@
+using JetBrains.Annotations;
+
 namespace UniMob.UI.Widgets
 {
     public class FadeTransition : SingleChildLayoutWidget
     {
         public FadeTransition(
-            Widget child,
-            IAnimation<float> opacity,
-            Key key = null
+            [NotNull] Widget child,
+            [NotNull] IAnimation<float> opacity,
+            [CanBeNull] Key key = null
         ) : base(child, key)
         {
             Opacity = opacity;
