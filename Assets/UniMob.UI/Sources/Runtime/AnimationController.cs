@@ -10,9 +10,7 @@ namespace UniMob.UI
     {
         private List<Action<AnimationStatus>> _listeners;
         private TaskCompletionSource<object> _completer;
-
-        private Timer _finishTimer;
-        private float _startTime;
+        private float _prevDeltaTime;
 
         public float Duration { get; set; }
         public float ReverseDuration { get; set; }
@@ -25,22 +23,7 @@ namespace UniMob.UI
         public bool IsAnimating =>
             Status == AnimationStatus.Forward || Status == AnimationStatus.Reverse;
 
-        public float Value
-        {
-            get
-            {
-                var elapsed = CurrentTime - _startTime;
-
-                switch (Status)
-                {
-                    case AnimationStatus.Forward: return Mathf.Clamp01(elapsed / Duration);
-                    case AnimationStatus.Reverse: return Mathf.Clamp01(1f - elapsed / ReverseDuration);
-                    case AnimationStatus.Completed: return 1f;
-                    case AnimationStatus.Dismissed: return 0f;
-                    default: return 0f;
-                }
-            }
-        }
+        public float Value { get; private set; }
 
         public IAnimation<float> View => this;
 
@@ -77,48 +60,84 @@ namespace UniMob.UI
             _listeners?.Remove(listener);
         }
 
-        public Task Forward() => StartInternal(AnimationStatus.Forward, Duration);
-
-        public Task Reverse() => StartInternal(AnimationStatus.Reverse, ReverseDuration);
-
-        private Task StartInternal(AnimationStatus status, float d)
+        public Task Forward()
         {
-            _finishTimer?.Dispose();
-            _finishTimer = null;
+            return StartInternal(AnimationStatus.Forward, AnimationStatus.Completed, Duration);
+        }
 
-            _completer?.TrySetResult(null);
+        public Task Reverse()
+        {
+            return StartInternal(AnimationStatus.Reverse, AnimationStatus.Dismissed, ReverseDuration);
+        }
+
+        private Task StartInternal(AnimationStatus status, AnimationStatus endStatus, float d)
+        {
+            var completer = _completer;
             _completer = null;
+            completer?.TrySetResult(null);
 
-            _startTime = CurrentTime;
             UpdateStatus(status);
 
             if (Mathf.Approximately(d, 0))
             {
-                OnFinished();
+                UpdateStatus(endStatus);
                 return Task.CompletedTask;
             }
 
-            _finishTimer = Timer.Delayed(d, OnFinished);
+            _prevDeltaTime = Time.unscaledDeltaTime;
             _completer = new TaskCompletionSource<object>();
+
+            Zone.Current.RemoveTicker(Tick);
+            Zone.Current.AddTicker(Tick);
+
             return _completer.Task;
         }
 
-        private void OnFinished()
+        private void Tick()
         {
+            var nextDeltaTime = Time.unscaledDeltaTime;
+            var dt = Mathf.Min(nextDeltaTime * 0.8f + _prevDeltaTime * 0.2f, 1 / 5f);
+            _prevDeltaTime = nextDeltaTime;
+
             switch (Status)
             {
                 case AnimationStatus.Forward:
-                    Status = AnimationStatus.Completed;
+                    Value += dt / Duration;
+                    if (Value < 1f)
+                    {
+                        return;
+                    }
+
+                    Value = 1f;
+                    break;
+
+                case AnimationStatus.Reverse:
+                    Value -= dt / ReverseDuration;
+                    if (Value > 0f)
+                    {
+                        return;
+                    }
+
+                    Value = 0f;
+                    break;
+            }
+
+            Zone.Current.RemoveTicker(Tick);
+
+            switch (Status)
+            {
+                case AnimationStatus.Forward:
                     UpdateStatus(AnimationStatus.Completed);
                     break;
 
                 case AnimationStatus.Reverse:
-                    Status = AnimationStatus.Dismissed;
                     UpdateStatus(AnimationStatus.Dismissed);
                     break;
             }
 
-            _completer?.TrySetResult(null);
+            var completer = _completer;
+            _completer = null;
+            completer?.TrySetResult(null);
         }
 
         private void UpdateStatus(AnimationStatus status)
@@ -133,8 +152,6 @@ namespace UniMob.UI
                 }
             }
         }
-
-        private static float CurrentTime => Time.unscaledTime;
     }
 
     internal class DrivenAnimation<T> : IAnimation<T>

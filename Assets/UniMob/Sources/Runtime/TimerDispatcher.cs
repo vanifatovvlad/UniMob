@@ -13,12 +13,12 @@ namespace UniMob
         private readonly List<Action> _threadedQueue = new List<Action>();
         private readonly List<DelayedCall> _threadedDelayed = new List<DelayedCall>();
         private readonly BinaryHeap<float, Action> _delayed = new BinaryHeap<float, Action>(new TimeComparer());
+        private readonly List<Action> _tickers = new List<Action>();
 
         private float _time;
         private int _threadedDirty;
         private List<Action> _queue = new List<Action>();
         private List<Action> _toPass = new List<Action>();
-        private List<Action> _tickers = new List<Action>();
 
         internal bool ThreadedDirty => _threadedDirty == 1;
 
@@ -87,7 +87,7 @@ namespace UniMob
                 }
             }
             
-            for (var i = 0; i < _tickers.Count; i++)
+            for (var i = _tickers.Count - 1; i >= 0; i--)
             {
                 try
                 {
