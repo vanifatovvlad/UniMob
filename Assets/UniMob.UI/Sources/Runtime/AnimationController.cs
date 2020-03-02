@@ -80,6 +80,7 @@ namespace UniMob.UI
 
             if (Mathf.Approximately(d, 0))
             {
+                Value = endStatus == AnimationStatus.Completed ? 1f : 0f;
                 UpdateStatus(endStatus);
                 return Task.CompletedTask;
             }
