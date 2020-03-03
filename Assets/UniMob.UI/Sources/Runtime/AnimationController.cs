@@ -103,9 +103,10 @@ namespace UniMob.UI
             switch (Status)
             {
                 case AnimationStatus.Forward:
-                    Value += dt / Duration;
-                    if (Value < 1f)
+                    if (!Mathf.Approximately(Value, 1f))
                     {
+                        Value += dt / Duration;
+                        Value = Mathf.Clamp01(Value);
                         return;
                     }
 
@@ -113,9 +114,10 @@ namespace UniMob.UI
                     break;
 
                 case AnimationStatus.Reverse:
-                    Value -= dt / ReverseDuration;
-                    if (Value > 0f)
+                    if (!Mathf.Approximately(Value, 0f))
                     {
+                        Value -= dt / ReverseDuration;
+                        Value = Mathf.Clamp01(Value);
                         return;
                     }
 
