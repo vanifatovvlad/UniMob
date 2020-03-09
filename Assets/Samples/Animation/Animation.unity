@@ -333,7 +333,7 @@ GameObject:
   - component: {fileID: 614459448}
   - component: {fileID: 614459449}
   m_Layer: 0
-  m_Name: Sample Layout App
+  m_Name: Animation App
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -367,15 +367,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   root: {fileID: 603425699}
   duration: 1
-  opacityTween:
+  opacity:
     begin: 0
     end: 1
-  positionTween:
+  position:
     begin: {x: 0, y: 1}
     end: {x: 0, y: -1}
-  rotationTween:
-    begin: {x: 0, y: 0, z: 0, w: 1}
-    end: {x: 0, y: 0, z: 0.70710677, w: 0.70710677}
 --- !u!1 &1131162703
 GameObject:
   m_ObjectHideFlags: 0
