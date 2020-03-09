@@ -17,15 +17,15 @@ namespace UniMob.UI
         /// </summary>
         Center = 2,
 
-        /// <summary>
-        /// Place the free space evenly between the children as well as half
-        /// of that space before and after the first and last child.
-        /// </summary>
-        SpaceAround = 4,
+        ///// <summary>
+        ///// Place the free space evenly between the children as well as half
+        ///// of that space before and after the first and last child.
+        ///// </summary>
+        //SpaceAround = 4,
 
-        /// <summary>
-        /// Place the free space evenly between the children as well as before and after the first and last child.
-        /// </summary>
-        SpaceEvenly = 5,
+        ///// <summary>
+        ///// Place the free space evenly between the children as well as before and after the first and last child.
+        ///// </summary>
+        //SpaceEvenly = 5,
     }
 }
