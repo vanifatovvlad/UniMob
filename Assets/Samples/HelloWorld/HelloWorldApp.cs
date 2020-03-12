@@ -15,7 +15,7 @@ namespace Samples.HelloWorld
             return new Container(
                 backgroundColor: Color.white,
                 size: WidgetSize.Stretched,
-                child: new Text(
+                child: new UniMobText(
                     value: "Hello World!",
                     size: WidgetSize.Stretched,
                     color: Color.blue,
