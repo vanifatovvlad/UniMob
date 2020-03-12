@@ -28,7 +28,7 @@ namespace UniMob.UI.Widgets
         private readonly Atom<WidgetSize> _innerSize;
 
         public override WidgetViewReference View { get; }
-            = WidgetViewReference.Resource("ScrollList");
+            = WidgetViewReference.Resource("UniMob.ScrollList");
 
         public ScrollListState()
         {
