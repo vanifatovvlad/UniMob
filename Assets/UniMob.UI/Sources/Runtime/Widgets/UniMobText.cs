@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace UniMob.UI.Widgets
 {
-    public class Text : StatefulWidget
+    public class UniMobText : StatefulWidget
     {
-        public Text(
+        public UniMobText(
             WidgetSize size,
             [NotNull] string value,
             int? fontSize = null,
@@ -32,13 +32,13 @@ namespace UniMob.UI.Widgets
 
         public int FontSize { get; }
 
-        public override State CreateState() => new TextState();
+        public override State CreateState() => new UniMobTextState();
     }
 
-    internal class TextState : ViewState<Text>, ITextState
+    internal class UniMobTextState : ViewState<UniMobText>, IUniMobTextState
     {
         public override WidgetViewReference View { get; }
-            = WidgetViewReference.Resource("$$_Text");
+            = WidgetViewReference.Resource("UniMob.Text");
 
         public string Value => Widget.Value;
 
@@ -46,5 +46,7 @@ namespace UniMob.UI.Widgets
         public Color Color => Widget.Color;
         public MainAxisAlignment MainAxisAlignment => Widget.MainAxisAlignment;
         public CrossAxisAlignment CrossAxisAlignment => Widget.CrossAxisAlignment;
+
+        public override WidgetSize CalculateSize() => Widget.Size;
     }
 }

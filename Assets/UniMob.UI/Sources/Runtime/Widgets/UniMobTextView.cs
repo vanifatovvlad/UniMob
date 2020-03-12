@@ -1,30 +1,18 @@
-using UniMob.UI.Internal;
-using UniMob.UI.Widgets;
 using UnityEngine;
-using UIText = UnityEngine.UI.Text;
-
-[assembly: RegisterComponentViewFactory("$$_Text",
-    typeof(RectTransform), typeof(UIText), typeof(TextView))]
+using UnityEngine.UI;
 
 namespace UniMob.UI.Widgets
 {
-    public class TextView : View<ITextState>
+    [RequireComponent(typeof(Text))]
+    internal class UniMobTextView : View<IUniMobTextState>
     {
-        private static Font _defaultFont;
-
-        private UIText _text;
+        private Text _text;
 
         protected override void Awake()
         {
             base.Awake();
 
-            if (_defaultFont == null)
-            {
-                _defaultFont = Resources.GetBuiltinResource<Font>("Arial.ttf");
-            }
-
-            _text = GetComponent<UIText>();
-            _text.font = _defaultFont;
+            _text = GetComponent<Text>();
         }
 
         protected override void Render()
@@ -60,7 +48,7 @@ namespace UniMob.UI.Widgets
         }
     }
 
-    public interface ITextState : IViewState
+    internal interface IUniMobTextState : IViewState
     {
         string Value { get; }
         int FontSize { get; }
