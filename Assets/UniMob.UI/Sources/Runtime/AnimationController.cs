@@ -43,6 +43,7 @@ namespace UniMob.UI
             Duration = duration;
             ReverseDuration = reverseDuration ?? duration;
             Status = completed ? AnimationStatus.Completed : AnimationStatus.Dismissed;
+            Value = completed ? 1f : 0f;
         }
 
         public void AddStatusListener(Action<AnimationStatus> listener)
