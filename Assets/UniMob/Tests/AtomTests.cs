@@ -447,6 +447,45 @@ namespace UniMob.Tests
 
             reaction.Dispose();
         });
+        
+        [Test]
+        public void UnwatchedCyclicDependency() => TestZone.Run(tick =>
+        {
+            Atom<int> a, b = null;
+
+            a = Atom.Computed(() => b.Value);
+            b = Atom.Computed(() => a.Value);
+
+            Assert.AreEqual(a.SubscribersCount(), 0);
+            Assert.AreEqual(b.SubscribersCount(), 0);
+            Assert.Throws<CyclicAtomDependencyException>(() => a.Get());
+            Assert.Throws<CyclicAtomDependencyException>(() => b.Get());
+        });
+        
+        [Test]
+        public void WatchedCyclicDependency() => TestZone.Run(tick =>
+        {
+            Atom<int> a, b = null;
+
+            a = Atom.Computed(() => b.Value);
+            b = Atom.Computed(() => a.Value);
+
+            Exception exception = null;
+            
+            var reaction = Atom.AutoRun(() =>
+            {
+                a.Get();
+                b.Get();
+            }, ex => exception = ex);
+
+            Assert.AreEqual(a.SubscribersCount(), 1);
+            Assert.AreEqual(b.SubscribersCount(), 1);
+            Assert.Throws<CyclicAtomDependencyException>(() => a.Get());
+            Assert.Throws<CyclicAtomDependencyException>(() => b.Get());
+            Assert.IsTrue(exception is CyclicAtomDependencyException);
+            
+            reaction.Dispose();
+        });
 
         class TestComparer<T> : IEqualityComparer<T>
         {

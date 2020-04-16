@@ -43,16 +43,6 @@ namespace UniMob
             return ReferenceEquals(this, other);
         }
 
-        public void Update(bool force = false)
-        {
-            if (State == AtomState.Pulling)
-            {
-                throw new Exception("Cyclic atom dependency of " + this);
-            }
-
-            Actualize(force);
-        }
-
         public virtual void Deactivate()
         {
             if (_children != null)
@@ -90,8 +80,13 @@ namespace UniMob
             State = AtomState.Obsolete;
         }
 
-        private void Actualize(bool force = false)
+        public void Actualize(bool force = false)
         {
+            if (State == AtomState.Pulling)
+            {
+                throw new CyclicAtomDependencyException(this);
+            }
+
             if (!force && State == AtomState.Actual)
                 return;
 

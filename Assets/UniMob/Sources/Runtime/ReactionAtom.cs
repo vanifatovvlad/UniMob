@@ -22,7 +22,7 @@ namespace UniMob
 
         public void Get()
         {
-            Update();
+            Actualize();
         }
 
         protected override void Evaluate()

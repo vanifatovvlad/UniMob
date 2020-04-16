@@ -37,13 +37,28 @@ namespace UniMob
         {
             get
             {
+                if (State == AtomState.Pulling)
+                {
+                    throw new CyclicAtomDependencyException(this);
+                }
+
                 if (!IsActive && Stack == null && !KeepAlive)
                 {
                     WarnAboutUnTrackedRead();
-                    return _pull();
+
+                    var oldState = State;
+                    try
+                    {
+                        State = AtomState.Pulling;
+                        return _pull();
+                    }
+                    finally
+                    {
+                        State = oldState;
+                    }
                 }
 
-                Update();
+                Actualize();
                 SubscribeToParent();
 
                 if (_exception != null)

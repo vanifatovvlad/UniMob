@@ -230,7 +230,7 @@ namespace UniMob.UI
             if (_hasSource)
             {
                 Assert.IsNotNull(_renderAtom, "renderAtom == null");
-                _renderAtom.Update();
+                _renderAtom.Actualize();
             }
         }
 
