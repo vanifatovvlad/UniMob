@@ -447,7 +447,7 @@ namespace UniMob.Tests
 
             reaction.Dispose();
         });
-        
+
         [Test]
         public void UnwatchedCyclicDependency() => TestZone.Run(tick =>
         {
@@ -461,7 +461,7 @@ namespace UniMob.Tests
             Assert.Throws<CyclicAtomDependencyException>(() => a.Get());
             Assert.Throws<CyclicAtomDependencyException>(() => b.Get());
         });
-        
+
         [Test]
         public void WatchedCyclicDependency() => TestZone.Run(tick =>
         {
@@ -471,7 +471,7 @@ namespace UniMob.Tests
             b = Atom.Computed(() => a.Value);
 
             Exception exception = null;
-            
+
             var reaction = Atom.AutoRun(() =>
             {
                 a.Get();
@@ -483,9 +483,44 @@ namespace UniMob.Tests
             Assert.Throws<CyclicAtomDependencyException>(() => a.Get());
             Assert.Throws<CyclicAtomDependencyException>(() => b.Get());
             Assert.IsTrue(exception is CyclicAtomDependencyException);
+
+            reaction.Dispose();
+        });
+        
+        [Test]
+        public void SelfUpdateActualizeNextFrame() => TestZone.Run(tick =>
+        {
+            var source = Atom.Value(0);
+
+            int runs = 0;
+            var reaction = Atom.AutoRun(() =>
+            {
+                runs++;
+                
+                if (source.Value < 3)
+                {
+                    source.Value++;
+                }
+                else
+                {
+                    Assert.Fail("Unexpected reaction run. Possible infinite recursion");
+                }
+            });
+            
+            Assert.AreEqual(1, runs);
+            Assert.AreEqual(1, source.Value);
+
+            tick(0);
+            Assert.AreEqual(2, runs);
+            Assert.AreEqual(2, source.Value);
+
+            tick(0);
+            Assert.AreEqual(3, runs);
+            Assert.AreEqual(3, source.Value);
             
             reaction.Dispose();
         });
+
 
         class TestComparer<T> : IEqualityComparer<T>
         {

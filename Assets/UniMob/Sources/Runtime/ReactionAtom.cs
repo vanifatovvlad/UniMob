@@ -27,6 +27,8 @@ namespace UniMob
 
         protected override void Evaluate()
         {
+            State = AtomState.Actual;
+
             try
             {
                 _reaction();
@@ -34,10 +36,6 @@ namespace UniMob
             catch (Exception exception)
             {
                 _exceptionHandler(exception);
-            }
-            finally
-            {
-                State = AtomState.Actual;
             }
         }
 

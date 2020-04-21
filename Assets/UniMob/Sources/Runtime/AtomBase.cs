@@ -253,13 +253,14 @@ namespace UniMob
 
         private static readonly Action DoSyncAction = DoSync;
 
-        private static readonly Queue<AtomBase> Updating = new Queue<AtomBase>();
+        private static Queue<AtomBase> _updatingCurrentFrame = new Queue<AtomBase>();
+        private static Queue<AtomBase> _updatingNextFrame = new Queue<AtomBase>();
         private static readonly Queue<AtomBase> Reaping = new Queue<AtomBase>();
         private static IZone _scheduled;
 
         internal static void Actualize(AtomBase atom)
         {
-            Updating.Enqueue(atom);
+            _updatingNextFrame.Enqueue(atom);
             Schedule();
         }
 
@@ -302,11 +303,13 @@ namespace UniMob
 
         private static void Sync()
         {
-            Schedule();
-
-            while (Updating.Count > 0)
+            var toSwap = _updatingCurrentFrame;
+            _updatingCurrentFrame = _updatingNextFrame;
+            _updatingNextFrame = toSwap;
+            
+            while (_updatingCurrentFrame.Count > 0)
             {
-                var atom = Updating.Dequeue();
+                var atom = _updatingCurrentFrame.Dequeue();
 
                 if (atom.IsActive && !atom._reaping && atom.State != AtomState.Actual)
                 {
@@ -322,8 +325,6 @@ namespace UniMob
                     atom.Deactivate();
                 }
             }
-
-            _scheduled = null;
         }
 
         private static readonly Stack<List<AtomBase>> ListPool = new Stack<List<AtomBase>>();
