@@ -3,13 +3,30 @@ using UniMob.UI.Widgets;
 using UnityEngine;
 
 [assembly: RegisterComponentViewFactory("$$_Navigator",
-    typeof(RectTransform), typeof(NavigatorView))]
+    typeof(RectTransform), typeof(NavigatorView), typeof(CanvasGroup))]
 
 namespace UniMob.UI.Widgets
 {
     internal class NavigatorView : View<INavigatorState>
     {
+        private CanvasGroup canvasGroup;
+
         private ViewMapperBase _mapper;
+
+        private ReactionAtom _interactableReaction;
+
+        protected override void Awake()
+        {
+            base.Awake();
+
+            canvasGroup = GetComponent<CanvasGroup>();
+
+            _interactableReaction = new ReactionAtom(() =>
+            {
+                //
+                canvasGroup.interactable = State.Interactable;
+            });
+        }
 
         protected override void Activate()
         {
@@ -17,6 +34,15 @@ namespace UniMob.UI.Widgets
 
             if (_mapper == null)
                 _mapper = new PooledViewMapper(transform);
+
+            _interactableReaction.Get();
+        }
+
+        protected override void Deactivate()
+        {
+            _interactableReaction.Dispose();
+
+            base.Deactivate();
         }
 
         protected override void Render()
@@ -43,5 +69,7 @@ namespace UniMob.UI.Widgets
     public interface INavigatorState : IViewState
     {
         IState[] Screens { get; }
+
+        bool Interactable { get; }
     }
 }

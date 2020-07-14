@@ -16,6 +16,8 @@ namespace UniMob.UI.Widgets
         private readonly Queue<NavigatorCommand[]> _pendingCommands = new Queue<NavigatorCommand[]>();
         private readonly Stack<Route> _pendingPause = new Stack<Route>();
 
+        private readonly MutableAtom<bool> _interactable = Atom.Value(true);
+
         private Task _task = Task.CompletedTask;
 
         public override WidgetViewReference View { get; }
@@ -30,6 +32,8 @@ namespace UniMob.UI.Widgets
         public bool AutoFocus { get; set; } = true;
 
         public IState[] Screens => _states.Value;
+
+        public bool Interactable => _interactable.Value;
 
         public override void InitState()
         {
@@ -95,7 +99,7 @@ namespace UniMob.UI.Widgets
 
         public void PopTo(Route route)
         {
-            if (route == null) throw new ArgumentNullException(nameof(route));
+            //if (route == null) throw new ArgumentNullException(nameof(route));
 
             ApplyCommands(new NavigatorCommand.PopTo(route));
         }
@@ -169,9 +173,21 @@ namespace UniMob.UI.Widgets
 
         private async Task ProcessCommandsLoop()
         {
-            while (_pendingCommands.Count > 0)
+            _interactable.Value = false;
+            try
             {
-                await ProcessCommands(_pendingCommands.Dequeue());
+                while (_pendingCommands.Count > 0)
+                {
+                    await ProcessCommands(_pendingCommands.Dequeue());
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
+            finally
+            {
+                _interactable.Value = true;
             }
         }
 
