@@ -69,9 +69,23 @@ namespace UniMob.UI.Widgets
             return _builder(context, _tweenController.View);
         }
 
-        protected override Task OnResume() => _tweenController.Forward();
+        protected override Task OnResume()
+        {
+            _tweenController.Forward();
+            return base.OnResume();
+        }
 
-        protected override Task OnPause() => _tweenController.Reverse();
+        protected override Task OnPause()
+        {
+            _tweenController.Reverse();
+            return base.OnPause();
+        }
+
+        protected override async Task OnDestroy()
+        {
+            await _tweenController.Reverse();
+            await base.OnDestroy();
+        }
 
         public override bool HandleBack()
         {
