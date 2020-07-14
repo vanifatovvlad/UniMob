@@ -100,7 +100,7 @@ namespace UniMob.UI.Widgets
         {
             if (_machine.CanTrigger(screenEvent))
             {
-                return _machine.Trigger(screenEvent);
+                return _machine.Trigger(screenEvent) ?? Task.CompletedTask;
             }
 
             Debug.LogErrorFormat("Cannot {0} scene {1} in {2} state", screenEvent, GetType().Name, ScreenState);
