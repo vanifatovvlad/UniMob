@@ -1,3 +1,7 @@
+---
+## :warning: The repository has been moved to [codewriter-packages/UniMob](https://github.com/codewriter-packages/UniMob)
+---
+
 # UniMob [![Github license](https://img.shields.io/github/license/vanifatovvlad/UniMob.svg)](#) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#)
 Фреймворк для создания реактивных приложений
 <br>
